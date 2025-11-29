@@ -1,0 +1,15 @@
+/* Estilos para los botones con imagen en el panel administrador */
+.admin-btn-img {
+    display: block;
+    margin: 0 auto 10px auto;
+    max-width: 20vw;
+    max-height: 20vh;
+    width: auto;
+    height: auto;
+}
+.admin-btn-tile {
+    text-align: center;
+    padding: 40px 0;
+    font-size: 2rem;
+    font-weight: 500;
+}

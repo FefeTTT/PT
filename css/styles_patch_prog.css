@@ -1,0 +1,11 @@
+/* Estilos adicionales para menú de programación mejorado */
+#prog-breadcrumbs { flex-wrap: wrap; }
+#prog-breadcrumbs .prog-arrow { font-size: 1.25rem; font-weight: 600; color:#495057; margin: 0 .25rem; }
+/* El chip de resultado hereda estilos de Bootstrap: btn btn-primary btn-sm */
+.prog-chip { position: relative; display:inline-flex; align-items:center; gap:.25rem; }
+.prog-chip-text { font-weight:600; }
+/* Usamos btn-close de Bootstrap; mantener solo pequeños ajustes */
+.prog-chip-close { cursor:pointer; }
+#prog-results-wrap table thead th { white-space:nowrap; }
+#prog-results-wrap { animation: progFade .25s ease-in; }
+@keyframes progFade { from { opacity:0; transform:translateY(-4px);} to { opacity:1; transform:translateY(0);} }

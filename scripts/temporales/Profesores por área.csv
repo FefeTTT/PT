@@ -1,0 +1,95 @@
+﻿nombre,email,puesto,area
+Chávez Esquivel Gerardo,gce@azc.uam.mx,jefe,Química
+Ángeles Beltran Deyanira,dab@azc.uam.mx,miembro,Química
+Castañeda Briones María Teresa,tcb@azc.uam.mx,miembro,Química
+Cervantes Cuevas Humberto,hcc@azc.uam.mx,miembro,Química
+Chavez Martínez Margarita,cmm@azc.uam.mx,miembro,Química
+Cruz Colin María Del Rocio,ccmr@azc.uam.mx,miembro,Química
+Flores Valverde Erasmo,efv@azc.uam.mx,miembro,Química
+García Martínez Cirilo,gmc@azc.uam.mx,miembro,Química
+Holguin Quiñones Saul,shq@azc.uam.mx,miembro,Química
+Negron Silva Guillermo Enrique,gns@azc.uam.mx,miembro,Química
+Valladares Rodríguez María Rita,vrmr@azc.uam.mx,miembro,Química
+Resendis Ocampo Lino Feliciano,lfro@azc.uam.mx,jefe,Análisis Matemático y sus Aplicaciones
+Arellano Balderas Salvador,sab@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Baisón Olmo Antonio Luis,albo@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Cruz Barriguete Víctor Alberto,vacb@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Elizarraraz Martínez David,dem@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Espínola Rocha Jesús Adrian,jaer@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Esquivel Avila Jorge Alfredo,jaea@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+García Hernández Victor Cuauhtemoc,vcgh@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Grabinsky Steider Jaime,jags@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Martínez Melendez Ángel,amm@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Navarro Fuentes Jaime,jnfu@azc.uam.mx,miembro,Análisis Matemático y sus Aplicaciones
+Amezcua Gomez Raúl,rag@azc.uam.mx,jefe,"Álgebra, Geometría y Computación Científica"
+Aguilar Zavoznik Alejandro,aaz@azc.uam.mx,miembro,"Álgebra, Geometría y Computación Científica"
+Barron Romero Carlos,cbarron@azc.uam.mx,miembro,"Álgebra, Geometría y Computación Científica"
+Díaz Leal Guzmán Héctor,hdlg@azc.uam.mx,miembro,"Álgebra, Geometría y Computación Científica"
+García Martínez Cesareo,cgarcia@azc.uam.mx,miembro,"Álgebra, Geometría y Computación Científica"
+Gavito Ticozzi Silvia Claudia,sgt@azc.uam.mx,miembro,"Álgebra, Geometría y Computación Científica"
+Herrera Aguirre Rogelio,rha@azc.uam.mx,miembro,"Álgebra, Geometría y Computación Científica"
+Romero Melendez Cutberto Salvador,cutberto@azc.uam.mx,jefe,"Combinatoria, Control y Optimización"
+Chavez Lomeli Laura Elena,lelc@azc.uam.mx,miembro,"Combinatoria, Control y Optimización"
+Rodriguez Sánchez María Guadalupe,rsmg@azc.uam.mx,miembro,"Combinatoria, Control y Optimización"
+Gavito Ticozzi Silvia Claudia,sgt@azc.uam.mx,miembro,"Combinatoria, Control y Optimización"
+Zubieta Badillo Carlos,czb@azc.uam.mx,jefe,Enseñanza de las Ciencias Básicas
+Bastien Montoya Gustavo Mauricio,mbastien@azc.uam.mx,miembro,Enseñanza de las Ciencias Básicas
+González Cortés María Del Carmen,mcgc@azc.uam.mx,miembro,Enseñanza de las Ciencias Básicas
+Pérez Flores Rafael,pfr@azc.uam.mx,miembro,Enseñanza de las Ciencias Básicas
+Rubio Ponce Alberto,arp@azc.uam.mx,jefe,Física Atómica Molecular Aplicada
+Arellano Peraza Juan Salvador,jsap@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Del Valle Díaz Muñoz Luisa Gabriela,ddg@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+García Cruz Luz María,lmgc@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Luna García Héctor Martín,lghm@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Martínez Jimenez Anatolio,amartinez@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Morales Rivas Jesús,jmr@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Olvera Neria Oscar,oon@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Ovando Zuñiga Gerardo Antonio,gaoz@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Peña Gil José Juan,jjpg@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Poulain García Enrique Gabriel,enro@azc.uam.mx,miembro,Física Atómica Molecular Aplicada
+Vargas Carlos Alejandro,cvargas@azc.uam.mx,jefe,Física de Procesos Irreversibles
+Basurto Uribe Eduardo,ebasurto@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Gomez Vieyra Armando,agvte@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Haro Pérez Catalina Esther,cehp@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Ladino Luna Delfino,dll@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Luevano Enriquez José Ruben,jrle@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Odriozola Prego Gerardo Miguel,godriozo@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Paez Hernández Ricardo Teodoro,phrt@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Ramirez Rojas Alejandro,arr@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Sigalotti Díaz Leonardo Di Girolamo,ldgsd@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Velazquez Arcos Juan Manuel,jmva@azc.uam.mx,miembro,Física de Procesos Irreversibles
+Sandoval Juan Carlos,jcss@azc.uam.mx,jefe,Física Teórica y Materia Condensada
+Anzaldo Meneses Alfonso Moises,amam@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Baez Juarez María Gabriela,gbaez@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Cardoso Cortes José Luis,jlcc@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+García Villarreal Luis Ángel,lagv@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Guillaumin España Elisa,ege@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Hernández Saldaña Hugo,hhs@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Kunold Bello Alejandro,akb@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Pereyra Padilla Pedro,ppereyra@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Robledo Martínez Arturo,arm@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Salas Brito Alvaro Lorenzo,asb@azc.uam.mx,miembro,Física Teórica y Materia Condensada
+Domínguez Soria Victor Daniel,vdds@azc.uam.mx,jefe,Química Aplicada
+Aguilar Pliego Julia,apj@azc.uam.mx,miembro,Química Aplicada
+Fernández Sánchez Lilia,lfs@azc.uam.mx,miembro,Química Aplicada
+González Velez Virginia,vgv@azc.uam.mx,miembro,Química Aplicada
+Gutiérrez Arzaluz Mirella,gam@azc.uam.mx,miembro,Química Aplicada
+López Pérez Lidia,llp@azc.uam.mx,miembro,Química Aplicada
+Mugica Álvarez Violeta,vma@azc.uam.mx,miembro,Química Aplicada
+Noreña Franco Luis Enrique,lnf@azc.uam.mx,miembro,Química Aplicada
+Torres Rodriguez Miguel,trm@azc.uam.mx,miembro,Química Aplicada
+Valle Hernández Brenda Liz,blvh@azc.uam.mx,miembro,Química Aplicada
+Loreto Carmen,lgce@azc.uam.mx,jefe,Química y Fisicoquímica Ambiental
+Navarrete López Alejandra Montserrat,amnl@azc.uam.mx,miembro,Química y Fisicoquímica Ambiental
+Ortiz Romero Vargas María Elba,meorv@azc.uam.mx,miembro,Química y Fisicoquímica Ambiental
+Ramirez Quiros Yara,yararq@azc.uam.mx,miembro,Química y Fisicoquímica Ambiental
+Salazar Pelaez Mónica Liliana,monsalazar@azc.uam.mx,miembro,Química y Fisicoquímica Ambiental
+Santana Cruz Alejandra,sca@azc.uam.mx,jefe,Química de Materiales
+Beltrán Conde Hiram Isaac,hibc@azc.uam.mx,miembro,Química de Materiales
+Flores Moreno Jorge Luis,jflores@azc.uam.mx,miembro,Química de Materiales
+González Reyes Leonardo,lgr@azc.uam.mx,miembro,Química de Materiales
+Hernández Pérez Isaias,ihp@azc.uam.mx,miembro,Química de Materiales
+Loera Serna Sandra,sls@azc.uam.mx,miembro,Química de Materiales
+Maubert Franco Ana Marisela,amf@azc.uam.mx,miembro,Química de Materiales
+May Lozano Marcos,mml@azc.uam.mx,miembro,Química de Materiales
+Soto Portas María Lidice,masp@azc.uam.mx,miembro,Química de Materiales

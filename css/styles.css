@@ -1,0 +1,1791 @@
+/* Modal selección de profesor (SweetAlert) */
+.swal-prof-search {
+	display: block;
+}
+.swal-prof-search #swal-prof-input {
+	max-width: 100%;
+}
+.swal-prof-table tbody tr:hover {
+	background-color: #f2f2f2;
+}
+.swal-prof-table th, .swal-prof-table td {
+	white-space: nowrap;
+}
+*{
+	box-sizing: border-box;
+}
+
+body{
+	font-size: 16px !important;
+	font-family: 'Noto Sans', sans-serif !important;
+	/* Paleta de colores definida por el usuario */
+  --color1: #ffcdb8; /* pale peach */
+  --color2: #fdeecf; /* very light cream */
+  --color3: #c8c696; /* muted olive */
+  --color4: #97bea9; /* soft teal */
+  --color5: #37260c; /* deep brown */
+
+  background-color: var(--color5) !important; /* usar el color oscuro como fondo principal */
+	color: var(--color2) !important;
+}
+form{
+position:relative !important;
+}
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- Mensajeria ------------------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+#listaDeArchivos li{
+	margin-bottom: 15px;
+}
+.file-area {
+	width: 100%;
+	position: relative;
+	font-size: 18px;
+}
+.file-area input[type=file] {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+.file-area .file-dummy {
+	width: 100%;
+	padding: 50px 30px;
+	border: 2px dashed #ccc;
+	background-color: #fff;
+	text-align: center;
+	transition: background 0.3s ease-in-out;
+}
+.file-area .file-dummy .success {
+	display: none;
+}
+.file-area:hover .file-dummy {
+	border: 2px dashed #1abc9c;
+}
+.file-area input[type=file]:valid + .file-dummy {
+	border-color: #1abc9c;
+}
+.file-area input[type=file]:valid + .file-dummy .success {
+	display: inline-block;
+}
+.file-area input[type=file]:valid + .file-dummy .default {
+	display: none;
+}
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- LOGIN ------------------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+#usuario {
+	text-align: center !important;
+}
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- HEADER ------------------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+#header-nav{
+	background-color: #fefffe !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+}
+
+#logo {
+	background: url('../images/logo_UAM_1.jpg') no-repeat !important;
+	width: 300px !important;
+	height: 75px !important;
+	padding: 0 !important;
+	margin-left: 15% !important;
+}
+
+#nombre { /*Sistema de asignación...*/
+	font-size: 122% !important;
+	font-weight: bold !important;
+	text-align: center !important;
+	margin-right: 0 !important;
+}
+
+
+#main-menu {
+	padding: 45px 0 0 0 !important;
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- Asignación por profesor -------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+
+html, body.AsignacionP {
+	height: 100%;
+}
+
+.AsignacionP.wrapper .buscador {
+	min-height: 10vh;
+}
+.AsignacionP.footer {
+	height: 10vh;
+	background-color: #e2e2e2
+}
+
+.div-agregar-grupos {
+	position: relative;
+	display: inline-block;
+	height: 1em;
+	width: 1em;
+	font-size: 36px;
+	
+}
+.div-agregar-grupos .bi {
+	position: absolute;
+	transition: opacity 1s;
+}
+
+.bi-calendar-check{
+	display: inline-flex;
+	font-size: 36px;
+	clear: left;
+	text-align: right;
+	vertical-align: middle;
+}
+
+.grupo{
+	padding-right: 10vw;
+	padding-left: 0.5vw;
+}
+
+.div-agregar-grupos .agregar-grupo.bi-plus-circle-dotted, .agregar-grupo.bi-calendar-check {
+	opacity: 1;
+	
+}
+.div-agregar-grupos .agregar-grupo.bi-plus-circle-fill, .agregar-grupo.bi-calendar-x-fill{
+	opacity: 0;
+}
+
+.div-agregar-grupos:hover .agregar-grupo.bi-plus-circle-dotted, .div-agregar-grupos:hover .agregar-grupo.bi-calendar-check {
+	opacity: 0;
+}
+.div-agregar-grupos:hover .agregar-grupo.bi-plus-circle-fill, .div-agregar-grupos:hover .agregar-grupo.bi-calendar-x-fill {
+	opacity: 1;
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- LOG IN ------------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+ #correo, #passw, #inicio-sesion {
+	text-align: center !important;
+}
+
+form > p {	/*También afecta a los formularios de docentes.php*/
+	text-align: center;
+}
+/* removed empty .input rule to avoid empty-ruleset lint warning */
+#menu {
+	/* tarjeta del login: fondo claro y texto oscuro para máximo contraste sobre el fondo oscuro */
+	background-color: var(--color2);
+	color: var(--color5);
+}
+
+/* Estilos específicos para el card de login */
+.login-card {
+	max-width: 400px;
+	background: var(--color2);
+	color: var(--color5);
+}
+.login-card .card-title {
+	color: var(--color5);
+}
+.form-label {
+	color: var(--color5) !important;
+}
+
+/* Styles for UEA "Impartido" table */
+.uea-impartido-table th, .uea-impartido-table td{
+	vertical-align: middle;
+}
+.uea-impartido-table td .prof-buttons-wrap{
+	display:flex;
+	flex-wrap:wrap;
+	gap:6px;
+}
+.prof-buttons-wrap .btn{
+	white-space: nowrap;
+}
+.uea-impartido-wrap{
+	margin-top:8px;
+}
+
+/* Make UEA 'impartido' table header visually distinct and static when scrolling */
+.uea-impartido-wrap {
+	max-height: 48vh;
+	overflow: auto;
+}
+.uea-impartido-table thead th {
+	position: sticky;
+	top: 0;
+	background: #ffffff;
+	color: var(--color5);
+	z-index: 5;
+	font-weight: 700;
+	border-bottom: 2px solid rgba(0,0,0,0.08);
+}
+.uea-impartido-thead th {
+	background: #000000 !important; /* fondo negro */
+	color: #ffffff !important; /* texto blanco */
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+.uea-impartido-table thead th:first-child { box-shadow: inset 6px 0 6px -6px rgba(0,0,0,0.06); }
+.uea-impartido-table thead { background: transparent; }
+.campo_login {
+	background: var(--color1) !important;
+	color: var(--color5) !important;
+	border: 1px solid rgba(0,0,0,0.08);
+}
+.btn-login {
+	background: var(--color5) !important;
+	color: var(--color2) !important; /* texto claro sobre botón oscuro */
+	border: none !important;
+}
+
+/* Ajustes para pie de página y créditos para armonizar con paleta */
+#creditos {
+	color: var(--color1);
+}
+
+/* Estilos para el panel del directorio: disponibilidad de profesor */
+.dir-disponibilidad {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+.dir-trimestre-badge {
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.25rem;
+	font-weight: 600;
+	font-size: 0.85rem;
+}
+.dir-disponible {
+	background-color: #198754; /* bootstrap success */
+	color: #fff;
+}
+.dir-no-disponible {
+	background-color: #dc3545; /* bootstrap danger */
+	color: #fff;
+}
+.dir-sin-registro {
+	background-color: #6c757d; /* bootstrap secondary */
+	color: #fff;
+}
+
+/* Si el encabezado es blanco, forzar color de texto legible (oscuro) para el nombre de la app */
+header.bg-white a.fw-bold, header.bg-white .fw-bold {
+	color: #37260c !important;
+}
+
+/* Mensajes de intentos (usar paleta) */
+.intentos-info {
+	margin-top: 8px;
+	font-size: 0.95rem;
+	color: var(--color5); /* texto oscuro por defecto */
+}
+.intentos-info--warn {
+	color: var(--color3); /* aviso: oliva suave */
+	font-weight: 600;
+}
+.intentos-info--critical {
+	color: var(--color4); /* color llamativo pero armónico */
+	font-weight: 700;
+}
+.intentos-info--blocked {
+	color: #b00020; /* mantener rojo para bloqueo por accesibilidad */
+	font-weight: 800;
+}
+
+.intentos-info--muted {
+	color: rgba(55,38,12,0.65); /* versión atenuada del color5 */
+}
+
+/* SweetAlert2 custom classes to apply palette */
+.my-swal-popup {
+	background: var(--color2) !important; /* tarjeta clara */
+	color: var(--color5) !important; /* texto oscuro */
+}
+.my-swal-confirm {
+	background: var(--color5) !important; /* botón oscuro */
+	color: var(--color2) !important; /* texto claro */
+	border: none !important;
+}
+.my-swal-cancel {
+	background: transparent !important;
+	color: var(--color5) !important;
+	border: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+/* Ajustes para el botón 'Estado en el trimestre' en el panel derecho
+   Se quiere que aparezca como botón sin el fondo gris sobrante del contenedor
+*/
+#det-estado {
+	background: transparent !important;
+	padding: 0 !important;
+	display: inline-block;
+}
+
+/* Asegurar que el botón interno no herede paddings/colores extra y que sea compacto */
+#det-estado .btn {
+	margin: 0 !important;
+	padding: .25rem .5rem !important;
+	font-size: .875rem !important;
+}
+
+/* Apply palette to SweetAlert2 globally as fallback when customClass isn't provided */
+.swal2-popup {
+	background: var(--color2) !important;
+	color: var(--color5) !important;
+}
+.swal2-confirm.swal2-styled {
+	background-color: var(--color5) !important;
+	color: var(--color2) !important;
+	border: none !important;
+}
+.swal2-cancel.swal2-styled {
+	background: transparent !important;
+	color: var(--color5) !important;
+	border: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+/* Modal específico: asegurar que el título del modal nuevo profesor sea legible sobre fondo blanco */
+#modalNuevoProfesor .modal-title {
+    color: var(--color5) !important; /* texto oscuro para contraste */
+    font-weight: 700;
+}
+
+/* Modal específico: asegurar que el título del modal editar profesor sea legible sobre fondo blanco */
+#modalEditarProfesor .modal-title {
+	color: var(--color5) !important; /* texto oscuro para contraste */
+	font-weight: 700;
+}
+
+/* Modal específico: agregar estilos para los modales dinámicos de agregar área/grupo */
+#modalAgregarArea .modal-title,
+#modalAgregarGrupo .modal-title {
+    color: var(--color5) !important; /* texto oscuro para contraste */
+    font-weight: 700;
+}
+
+/* Modal específico: asegurar que el título del modal agregar contacto de emergencia sea legible */
+#modalAgregarContacto .modal-title {
+	color: var(--color5) !important;
+	font-weight: 700;
+}
+
+/* Ensure card text in the directory right panel is dark when card background is white
+   (the main page uses a dark site-wide text color; cards/modals are white so text needs to be dark)
+*/
+#dir-right-panel .card,
+#dir-right-panel .card .card-body {
+	background-color: #ffffff;
+	color: var(--color5) !important;
+}
+
+#dir-right-panel .card h5,
+#dir-right-panel .card h6,
+#dir-right-panel .card p,
+#dir-right-panel .card ul,
+#dir-right-panel .card li,
+#dir-right-panel .card span,
+#dir-right-panel .card small,
+#dir-right-panel .card strong {
+	color: var(--color5) !important;
+}
+
+/* Ensure dynamic modals (including those created by JS) render dark text over the white modal-content */
+.modal .modal-content,
+.modal .modal-title,
+.modal .modal-body,
+.modal .modal-footer {
+	color: var(--color5) !important;
+}
+
+#login {
+	padding-top: 10px;
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- FORM DOCENTE ------------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+/* Ajustes de estilo trasladados desde formularioPreferenciasDocentes.php */
+#contenedor-docente { margin-top: 1.5rem; }
+#docentes, #docentes h2, #docentes p, #docentes label, #docentes .form-text,
+#docentes .form-control, #docentes .form-select, #docentes .table,
+#docentes .form-check-input {
+	color: #0b0b0b !important;
+}
+#docentes ::placeholder { color: #6c757d !important; opacity: 1; }
+
+#contenedor-docente {
+	padding-top: 25px;
+	padding-left: 9%;
+	padding-right: 2%;
+}
+#docentes {
+	width: 90%;
+	background-color: #F5E2C8;
+}
+.container_label{
+	padding: 3px;
+	font-size: 0.9em;
+}
+#horarios {
+	border: 1.5px solid black;
+	border-collapse: collapse;
+	text-align: center;
+	width: 100%;
+	background-color: #F9C382;
+	border-color: #0000;
+}
+input[type=checkbox] {
+  transform: scale(1.5);
+}
+input[type=number] {
+  width: 110px;
+}
+#noGrup, #noEcon, #email {
+	width: 240px;
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- UEA Detalle (Submenú) ---------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+/* Grupo de botones del submenú */
+.uea-submenu { gap: .25rem; }
+
+/* Contenedor scrollable para la tabla ancha de preferencias */
+.pref-table-responsive { width: 100%; overflow:auto; }
+
+/* Utility: evitar que el contenido se envuelva (reemplaza inline style white-space:nowrap) */
+.nowrap { white-space: nowrap; }
+
+/* UEA toolbar sizing helpers (moved from inline styles) */
+.uea-search-input { max-width: 240px; }
+.uea-area-select { max-width: 200px; }
+.uea-estado-select { max-width: 180px; }
+
+/* Forzar un ancho mínimo para evitar saltos de columnas */
+.pref-table-minwidth { min-width: 1200px; }
+
+/* Primera columna pegajosa (Grupo) para mejor lectura horizontal */
+.pref-uea-table .sticky-col { position: sticky; left: 0; z-index: 2; background: #212529; color: #fff; }
+.pref-uea-table tbody .sticky-col { background: #fff; color: #212529; }
+
+/* Chips/botones de prioridad */
+.priority-chip { white-space: nowrap; }
+.priority-add-btn { white-space: nowrap; }
+
+.swal-uea-details{ font-size: .9rem; line-height: 1.3; text-align: left; }
+.swal-uea-details .label{ font-weight: 600; }
+
+/* Selección de UEA en la lista izquierda */
+.uea-table tbody tr.uea-selected{ background-color: #e9f7ff; }
+.uea-table tbody tr.uea-selected td{ font-weight: 600; }
+/* Celda de clave UEA seleccionada */
+.uea-table tbody td.uea-cell-selected{ background-color: #d1efff; border-left: 3px solid #7fd0ff; }
+/* Hacer la fila de cabeceras estática (sticky) dentro del contenedor scrollable */
+.pref-table-responsive { position: relative; }
+.pref-table-responsive .pref-uea-table thead th {
+	position: sticky;
+	top: 0;
+	z-index: 4; /* por encima de las celdas pegajosas de columna */
+	background: #212529; /* coincide con .table-dark */
+	color: #fff;
+}
+.pref-table-responsive .pref-uea-table thead th.sticky-col {
+	z-index: 5; /* cabecera + primera columna debe quedarse encima */
+}
+.container_submit{
+	padding: 7px;
+	font-size: 1.1em;
+	background-color: #F9C382;
+	border: 1.5px solid black;
+	border-radius: 10px;
+}
+select{
+	padding: 3px;
+	width: 50%;
+	font-size: 1em;
+}
+
+/* Small helper class for the year filter in the trimestres menu */
+.trimestres-filter-select {
+    max-width: 160px;
+    min-width: 110px;
+}
+
+/* Tabla de formulario de preferencias (vista admin) columnas adicionales */
+table.table.table-sm.table-striped.align-middle th:nth-child(3),
+table.table.table-sm.table-striped.align-middle td:nth-child(3){
+	white-space: nowrap;
+}
+table.table.table-sm.table-striped.align-middle th:nth-child(4),
+table.table.table-sm.table-striped.align-middle td:nth-child(4){
+	white-space: nowrap;
+}
+.container_submit:hover {
+	box-shadow: 1px 1px 2px 1px #490E12;
+}
+#resp-warning {
+		color: red;
+}
+
+/* Banner de alerta usada por docentesFormulario.js cuando no se encuentra el trimestre */
+.app-alert {
+	display: block;
+	padding: 12px 16px;
+	margin: 12px 0;
+	border-radius: 6px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+	font-size: 0.98rem;
+}
+.app-alert-error {
+	background-color: rgba(176, 0, 32, 0.07); /* ligero tono rojo */
+	border: 1px solid rgba(176, 0, 32, 0.18);
+	color: #b00020; /* color de texto de error consistente con la paleta */
+}
+.app-alert-title {
+	font-weight: 700;
+	margin-bottom: 6px;
+	color: var(--color5); /* título oscuro para contraste */
+}
+.app-alert-body {
+	color: var(--color5);
+	line-height: 1.3;
+}
+
+/* Asegurar que contenedor de respuesta está visible por defecto cuando JS lo muestra */
+#resp-warning {
+	display: block;
+	width: 100%;
+}
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- MENÚ PRINCIPAL ----------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+#bienvenido {
+	color: #fff;
+	text-shadow: 1px 1px 1px #220;
+}
+#datos-tile, #prog-tile, #preferencias-profesores, #profesores-trim {
+	height: 300px;
+	width: 100%;
+	margin-bottom: 15px;
+	position: relative;
+	border: 2px solid #3F0C1F;
+	overflow: hidden;
+}
+#filter-image{
+	filter:brightness(0.3);
+}
+#filter-image:hover{
+	filter:brightness(1);
+}
+
+/* Users menu: aplicar paleta a la tabla y botones */
+.users-table thead th {
+	background: var(--color2);
+	color: var(--color5);
+	border-bottom: 2px solid rgba(0,0,0,0.06);
+}
+.users-table tbody tr td {
+	background: transparent;
+	color: var(--color5);
+}
+.users-table tbody tr:hover {
+	background: rgba(255,255,255,0.03);
+}
+.users-tfoot-cell {
+	background: transparent;
+}
+
+/* Botón regresar en usuarios */
+.btn-back {
+	background: var(--color2);
+	color: var(--color5);
+	border: 1px solid rgba(0,0,0,0.06);
+	box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+.btn-back:hover, .btn-back:focus {
+	background: var(--color1);
+	color: var(--color5);
+}
+
+/* Botones de acción en la tabla de usuarios */
+.btn-user-delete {
+	background: #b00020; /* crítico */
+	color: var(--color2);
+	border: none;
+	padding: 4px 8px;
+	border-radius: 4px;
+	transition: background-color 180ms ease, color 180ms ease, transform 150ms ease;
+}
+.btn-user-delete:hover {
+	filter: brightness(1.05);
+	transform: translateY(-1px);
+}
+
+/* Estilo para el botón eliminar de administrativos (coherente con botones de usuario) */
+.btn-admin-delete {
+    background: #b00020;
+    color: var(--color2);
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+	min-width: 40px;
+	line-height: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Submenú UEA y tabla de preferencias */
+.uea-submenu .btn { min-width: 0; }
+.pref-uea-table thead th { white-space: nowrap; }
+.priority-chip { white-space: nowrap; }
+.priority-add-btn { white-space: nowrap; }
+.pref-table-responsive { overflow-x: auto; }
+.pref-table-minwidth { min-width: 900px; }
+
+/* Unificar colores para todos los botones de acción (excepto la X) */
+.btn-user-pwd,
+.btn-user-intento,
+.btn-user-func,
+.btn-add-user,
+.users-action-btn {
+	background: var(--color4); /* color base común */
+	color: var(--color2); /* texto claro para contraste */
+	border: none;
+	padding: 6px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 180ms ease, color 180ms ease, transform 120ms ease, box-shadow 120ms ease;
+	box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+}
+
+/* Hover: cambiar tanto fondo como color del texto */
+.btn-user-pwd:hover,
+.btn-user-intento:hover,
+.btn-user-func:hover,
+.btn-add-user:hover,
+.users-action-btn:hover {
+	background: var(--color1); /* fondo claro en hover */
+	color: var(--color5); /* texto oscuro para mejor legibilidad en fondo claro */
+	transform: translateY(-2px);
+	box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Si hay botones con fondo transparente (p.ej. func antes), darles el mismo look */
+.btn-user-func {
+	background: var(--color4);
+	color: var(--color2);
+	border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Asegurar foco accesible */
+.btn-user-pwd:focus,
+.btn-user-intento:focus,
+.btn-user-func:focus,
+.btn-add-user:focus,
+.btn-user-delete:focus {
+	outline: 3px solid rgba(151,190,169,0.18); /* leve halo con color4 */
+	outline-offset: 2px;
+}
+
+/* Forzar contraste/visibilidad del nombre de usuario en la tabla */
+.users-table tbody tr td a,
+.users-table tbody tr td span.username,
+.users-table tbody tr td .username {
+	color: var(--color2) !important; /* texto claro */
+	font-weight: 600;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+}
+
+/* Hover sobre los iconos del menú principal: mejorar contraste cambiando visual del icono */
+.admin-btn-img {
+	transition: filter 180ms ease, transform 180ms ease, opacity 160ms ease;
+	will-change: filter, transform, opacity;
+	cursor: pointer;
+}
+
+/* Cuando el tile se enfoca/hover, forzar una versión de alto contraste del icono */
+#filter-image:hover .admin-btn-img,
+.col-md-6:hover .admin-btn-img,
+.admin-btn-tile:hover .admin-btn-img {
+	/* Convertir iconos oscuros a blanco brillante y añadir sombra sutil para destacar sobre fondos rojos/claros */
+	filter: invert(1) brightness(1.6) drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+	transform: translateY(-2px) scale(1.03);
+	opacity: 0.98;
+}
+
+/* Accesibilidad: también aplicar en enfoque por teclado */
+.admin-btn-tile:focus-within .admin-btn-img,
+.admin-btn-tile:focus .admin-btn-img {
+	filter: invert(1) brightness(1.6) drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+	transform: translateY(-2px) scale(1.03);
+}
+#datos-tile:hover, #prog-tile:hover, #preferencias-profesores:hover, #profesores-trim:hover {
+	box-shadow: 0 1px 5px 1px #cccccc;
+}
+#datos-tile span, #prog-tile span, #preferencias-profesores span, #profesores-trim span{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	text-align: center;
+	font-size: 1.4em;
+	text-transform: uppercase;
+	background-color: #000;
+	color: #fff;
+	opacity: .8;
+}
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- PROGRAMACION.PHP --------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+#fisica-tile,#mate-tile,#quimica-tile,#tronco-tile,#admin-tile,#dere-tile,#econ-tile {
+	height: 60px;
+	width: 100%;
+	margin-bottom: 15px;
+	position: relative;
+	border: 2px solid #3F0C1F;
+	overflow: hidden;
+	background-color: #F5E2C8;
+	bottom: 0;
+	right: 0;
+	text-align: center;
+	font-size: 120%;
+	text-transform: uppercase;
+	color: #000;
+}
+#fisica-tile:hover, #mate-tile:hover, #quimica-tile:hover, #tronco-tile:hover,
+#admin-tile:hover, #dere-tile:hover, #econ-tile:hover {
+	box-shadow: 0 1px 5px 1px #cccccc;
+}
+#menu-cbi, #menu-desc {
+	width: 100%;
+	height: 1.4em;
+	color: #fff;
+	text-shadow: 2px 1px 1px #220;
+	margin-top: 10px;
+}
+.prog {
+	color: #fff;
+	text-shadow: 2px 1px 1px #220;
+	text-align: left;
+	padding-left: 30px;
+}
+.prog-uea {
+	width: 100%;
+	margin-left: 15px;
+	margin-right: 0px;
+}
+.docentes {
+	color: #ffff;
+	text-align: center;
+	text-shadow: 1px 1px 1px #220;
+	font-size: 1.2em;
+}
+.exportar {
+	color: black;
+	text-decoration: none;
+	border-radius: 2px;
+	padding: 10px 30px 10px 30px;
+	border: 1px solid black;
+	background-color: #F5E2C8;
+	text-transform: uppercase;
+	font-size: 120%;
+}
+.exportar:hover {
+	text-decoration: none;
+	box-shadow: 0 1px 5px 1px #cccccc;
+	color: black;
+}
+/* ------------------------------------------------------------------------------------------ */
+/* ------------------------------ DATOS.PHP (PREPARAR BD) ----------------------------------- */
+/* ------------------------------------------------------------------------------------------ */
+.titles {  /******* También se utiliza en los títulos de los menús de cada UEA******/
+	width: 100%;
+	height: 1.4em;
+	color: #fff;
+	text-shadow: 2px 1px 1px #220;
+	margin-top: 20px;
+	margin-bottom: 15px;
+}
+#carga, #envio {
+	margin-bottom: 10px;
+}
+.card {
+	min-height: 100%;
+}
+#import-file, #update-uea, #update-docentes { 
+	padding: 2px;
+	font-size: 95%;
+}
+#trimestre {
+	text-align: left;
+}
+#nuevo-trim {
+	margin-left: 13px;
+	margin-top: 4px;
+	margin-bottom: 6px;
+}
+#enviar-form {
+	padding-top: 10px;
+}
+#img_cat_uea,#img_cat_prof,#img_plan {
+	color: blue;
+	text-decoration: underline;
+}
+#img_cat_uea:hover,#img_cat_prof:hover,#img_plan:hover {
+  background-color: lightblue;
+  cursor: help;
+}
+#fecha-trim {
+	text-align: left;
+}
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------- UEA (QUÍMICA, FÍSICA, MATE, TRONCO) -------------------- */
+/* ------------------------------------------------------------------------------------------ */
+.ueaSelect {
+	width: 100%;
+}
+.volver {
+	position: absolute;
+	right: 10px;
+	top: 110px;
+	background-color: #F5E2C8;
+	border: 1.5px solid black;
+	border-radius: 10px;
+}
+.regresar {
+	background-color: #F5E2C8;
+	border: 1.5px solid black;
+	border-radius: 10px;
+}
+#hor-qui {
+	/*border: 1.5px solid black;*/
+	margin-left: 20px;
+	margin-right: 20px;
+}
+.div-grupo {
+	border: 0.5px solid black;
+	height: 100%;
+	min-height: 3em;
+}
+.div-grupo.hover {
+	background-color: #390B02;
+}
+.div-prior {
+	border: 0.5px solid black;
+	margin: 2px;
+	font-size: 0.7em;
+}
+.div-prior-Uno {
+	background-color: #3AD13A;
+	font-size: 0.88em;
+	font-weight: bold;
+	padding: 1px;
+}
+.div-prior-Dos {
+	background-color: #06BC06;
+	font-size: 0.88em;
+	font-weight: bold;
+	padding: 1px;
+}
+.div-prior-tres {
+	background-color: #C6C906;
+	font-size: 0.88em;
+	font-weight: bold;
+	padding: 1px;
+}
+.div-prior-cuatro {
+	background-color: #F1512A;
+	font-size: 0.88em;
+	font-weight: bold;
+	padding: 1px;
+}
+.td-espacio {
+	width: 170px;
+}
+.td-horario {
+	padding: 6px;
+	background-color: #F5E2C8;
+	border-bottom: 1.5px solid black;
+}
+.td-docentes {
+	border-bottom: 1.5px solid #F5E2C8;
+	min-width: 2em;
+}
+.btn-guardar {
+	padding: 10px 20px 10px 20px;
+	font-size: 1.1em;
+	font-weight: bold;
+	border: 1.5px solid black;
+	background-color: #F5E2C8;
+}
+.btn-guardar:hover {
+	box-shadow: 2px 2px 3px 2px #490E12;
+}
+.alinear {
+	width: 30%;
+	justify-content: center;
+	align-items: center;
+}
+.div_doc {
+	height: 200%;
+	min-height: 4em;
+	padding: 6px 4px 6px 4px;
+}
+.div_doc.hover {
+	background-color: #F5E2C8;
+}
+.doc-interesados {
+	color: #fff;
+	text-shadow: 1px 1px 1px #220;
+}
+.doc-interesados:hover {
+	color: #000;
+}
+#doc-interesados {
+	font-size: 0.9rem;
+	background-color: #F5E2C8;
+}
+#doc-interesados th {
+	text-align: center;
+}
+.prioridad {
+	color: #fff;
+	text-shadow: 1px 2px 1px #220;
+}
+/*************************  Créditos ***************/
+#creditos{
+	color: #CB8C80;
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* --------------------------------------- MEDIA QUERIES ------------------------------------ */
+/* ------------------------------------------------------------------------------------------ */
+
+/****** Dispositivos grandes ******/
+@media (min-width: 1200px){
+	#encabezado {
+		width: 60%;
+	}
+}
+/****** Dispositivos medianos ******/
+@media (min-width: 992px) and (max-width: 1199px){
+	#encabezado {
+		width: 65%;
+	}
+}
+
+/****** Dispositivos pequeños ******/
+@media (min-width: 768px) and (max-width: 991px){
+	#encabezado {
+		width: 45%;
+	}
+	#nombre {
+		padding-right: 25px;
+	}
+	#hora-semana { /*** para la tabla de horarios en docentes.php ****/
+		overflow: auto;
+	}
+}
+
+/****** Dispositivos extra pequeños ******/
+@media (min-width: 560px) and (max-width: 767px){
+	#logo {
+		background-position: left;
+		margin: 0;
+		padding: 0;
+	}
+	#nombre{
+		padding-left: 15px;
+		width: 100%;
+	}
+	#encabezado {
+		width: 45%;
+	}
+	#header-logo {
+		width: 90%;
+	}
+	#contenedor-docente { /*** para docentes.php ****/
+		padding-top: 25px;
+		padding-left: 6%;
+		padding-right: 0%;
+	}
+	#hora-semana { /*** para docentes.php ****/
+		overflow: auto;
+	}
+	#main-menu { /***  Para menu.php ****/
+		width: 80%;
+	}
+	.volver {
+		top: 170px;
+	}
+}
+
+@media (min-width: 366px) and (max-width: 559px){
+	#logo {
+		background-position: left;
+		margin: 0;
+	}
+	#nombre{
+		padding-left: 15px;
+		width: 100%;
+	}
+	#encabezado {
+		padding-left: 15%;
+	}
+	#header-logo {
+		width: 90%;
+	}
+	#contenedor-docente { /*** para docentes.php ****/
+		padding-top: 25px;
+		padding-left: 6%;
+		padding-right: 0%;
+	}
+	#hora-semana { /*** para docentes.php ****/
+		overflow: auto;
+	}
+	#main-menu { /***  Para menu.php ****/
+		width: 80%;
+	}
+	.volver {
+		top: 170px;
+	}
+
+}
+@media (max-width: 366px){
+	#logo {
+		background-position: left;
+		margin: 0;
+	}
+	#nombre{
+		padding-left: 15px;
+		width: 100%;
+	}
+	#encabezado {
+		padding-left: 2%;
+	}
+	#header-logo {
+		width: 90%;
+	}
+	#contenedor-docente { /*** para docentes.php ****/
+		padding-top: 25px;
+		padding-left: 6%;
+		padding-right: 0%;
+	}
+	#hora-semana { /*** para docentes.php ****/
+		overflow: auto;
+	}
+	#main-menu { /***  Para menu.php ****/
+		width: 80%;
+	}
+	.volver {
+		top: 170px;
+	}
+
+}
+
+/* Loader overlay used by js/menuTrimestres.js - moved from inline JS into stylesheet */
+.grupos-loader-overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.grupos-loader-text{
+  pointer-events: auto;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Circular spinner used during planeación upload */
+.grupos-spinner{
+	width: 80px;
+	height: 80px;
+	border: 8px solid rgba(255,255,255,0.18);
+	border-top-color: rgba(255,255,255,0.95);
+	border-radius: 50%;
+	animation: grSpin 1s linear infinite;
+	margin-bottom: 12px;
+}
+
+@keyframes grSpin{
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.grupos-loader-text .gr-ch{
+  display: inline-block;
+  opacity: .25;
+  margin: 0 1px;
+  transform-origin: center;
+  animation: grFlash 1.2s linear infinite;
+}
+
+@keyframes grFlash{
+  0% { opacity: .25; }
+  50% { opacity: 1; }
+  100% { opacity: .25; }
+}
+
+/* Inline editor display cell used in js/menuTrimestres.js */
+.grupo-horario-cell{
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	user-select: none;
+}
+
+/* ------------------------------ Modo UEA (resumen/detalle) ------------------------------ */
+.uea-layout{
+	display: grid;
+	grid-template-columns: 1.2fr 1fr;
+	gap: 16px;
+}
+.uea-list{
+	background: #fff;
+	color: var(--color5);
+	border: 1px solid rgba(0,0,0,0.06);
+	border-radius: 6px;
+	padding: 10px;
+}
+.uea-detail{
+	background: #fff;
+	color: var(--color5);
+	border: 1px solid rgba(0,0,0,0.06);
+	border-radius: 6px;
+	padding: 10px;
+}
+.uea-toolbar{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.uea-badge{
+	display: inline-block;
+	padding: .2rem .45rem;
+	border-radius: .35rem;
+	font-size: .75rem;
+	font-weight: 700;
+}
+.uea-badge-completo{ background: #198754; color: #fff; }
+.uea-badge-pendiente{ background: #dc3545; color: #fff; }
+.uea-badge-mixto{ background: #ffc107; color: #212529; }
+.uea-table thead th{ background: var(--color2); color: var(--color5); }
+.uea-table tbody tr:hover{ background: rgba(0,0,0,0.03); }
+.uea-pref-chip{
+	display:inline-block;
+	margin: 2px 4px 2px 0;
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: var(--color3);
+	color: var(--color5);
+	font-size: .8rem;
+	font-weight: 600;
+}
+.uea-pref-title{ font-weight:700; margin-top:8px; }
+
+.grupo-horario-display{
+	padding-right: 4px;
+	color: var(--color5);
+	font-weight: 600;
+}
+.grupo-horario-edit-icon{
+	font-size: 0.85em;
+	color: rgba(55,38,12,0.65);
+	opacity: 0.6;
+	transition: opacity 120ms ease, transform 120ms ease;
+	line-height: 1;
+}
+.grupo-horario-cell:hover .grupo-horario-edit-icon{
+	opacity: 1;
+	transform: translateY(-1px);
+}
+
+/* ------------------------------------------------------------------ */
+/* Selector de candidatos (modo "Libre")                                  */
+/* Las clases son usadas por `js/asignacionTrimestral.js`                  */
+/* ------------------------------------------------------------------ */
+.candidato-wrap{ position: relative; }
+.candidato-search{ display: inline-flex; align-items: center; gap: 6px; }
+.candidato-search input[type="search"],
+.candidato-search input[type="text"]{
+	padding: .35rem .5rem;
+	border: 1px solid rgba(0,0,0,0.12);
+	border-radius: 4px;
+	min-width: 220px;
+	background: #fff;
+	color: var(--color5);
+}
+.candidato-list{
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	right: 0;
+	background: #fff;
+	color: var(--color5);
+	border: 1px solid rgba(0,0,0,0.08);
+	border-radius: 6px;
+	z-index: 1050;
+	max-height: 220px;
+	overflow: auto;
+	box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.candidato-item{
+	padding: .45rem .6rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+.candidato-item:hover,
+.candidato-item.active{
+	background: var(--color2);
+	color: var(--color5);
+}
+.candidato-item.disabled{
+	color: rgba(55,38,12,0.35);
+	cursor: not-allowed;
+}
+.candidato-badge{
+	font-size: .78rem;
+	padding: 2px 6px;
+	background: var(--color3);
+	color: var(--color5);
+	border-radius: 10px;
+}
+
+/* Asegurar tablas incrustadas en SweetAlert sean responsivas */
+.my-swal-popup table{ width: 100%; }
+
+/* ------------------------------------------------------------------ */
+/* Responsive adjustments: candidato selector & UEA layout            */
+/* Ensures dropdowns and tables adapt on medium/small devices         */
+/* ------------------------------------------------------------------ */
+@media (max-width: 991px) {
+	.uea-layout{
+		grid-template-columns: 1fr; /* stack list + detail vertically */
+		gap: 10px;
+	}
+	.uea-list, .uea-detail{
+		padding: 8px;
+	}
+	.candidato-search input[type="search"],
+	.candidato-search input[type="text"]{
+		min-width: 140px;
+		width: 100%;
+	}
+	.candidato-list{
+		left: 0;
+		right: 0;
+		width: auto;
+		max-width: calc(100% - 2px);
+	}
+	.candidato-item{ font-size: .95rem; }
+	.uea-impartido-wrap{ max-height: 40vh; }
+	.pref-table-responsive .pref-uea-table, .uea-impartido-table{
+		min-width: 720px; /* allow horizontal scroll inside wrapper */
+	}
+}
+
+@media (max-width: 575px) {
+	/* On very small screens make the candidato-list flow as block under the input */
+	.candidato-list{
+		position: static;
+		box-shadow: none;
+		margin-top: 6px;
+		border-radius: 6px;
+		max-height: 200px;
+	}
+	.candidato-search{ width: 100%; }
+	.candidato-search input[type="search"], .candidato-search input[type="text"]{
+		min-width: 0;
+		width: 100%;
+	}
+	.candidato-item{ padding: .4rem .5rem; }
+	.uea-table thead th, .pref-uea-table thead th{ font-size: .82rem; }
+	.uea-impartido-wrap{ max-height: 36vh; }
+	/* Ensure SweetAlert detail blocks can scroll horizontally on tiny screens */
+	.swal-uea-details{ overflow-x: auto; }
+}
+
+/* Utility: force horizontal scrolling when a table is wider than container */
+.table-responsive-inline{ overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+
+
+/* Botón de grupo asignado: muestra una X en hover para eliminar la asignación */
+.assigned-group {
+	position: relative;
+	padding-right: 26px; /* espacio para la X */
+	display: inline-flex;
+	align-items: center;
+}
+.assigned-group-delete {
+	position: absolute;
+	right: 4px;
+	top: 2px;
+	width: 18px;
+	height: 18px;
+	line-height: 16px;
+	border-radius: 10px;
+	text-align: center;
+	font-size: 12px;
+	cursor: pointer;
+	background: #dc3545; /* bootstrap danger */
+	color: #fff;
+	display: none; /* se muestra solo en hover */
+	padding: 0 2px;
+}
+.assigned-group:hover .assigned-group-delete {
+	display: inline-block;
+}
+.assigned-group-delete:hover {
+	filter: brightness(0.9);
+}
+
+/* Icono de edición en el header: presentación consistente (moviéndolo a CSS evita styles inline) */
+.grupo-horario-edit-icon.header {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.95em;
+    vertical-align: middle;
+    color: rgba(55,38,12,0.7);
+}
+
+/* Clase aplicada a th/td de la columna GRUPO para controlar ancho y evitar wrap
+   Se redujo el ancho respecto a la versión previa para "quitar la tercera parte" */
+th.grupo-col, td.grupo-col {
+    white-space: nowrap;
+    min-width: 90px; /* ancho mínimo razonable */
+    width: 100px;    /* ancho sugerido (reducción respecto a 160px) */
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Switch visual verde/rojo para pertenencia al trimestre */
+.switch-state.form-check.form-switch { min-width: 54px; }
+.switch-state.switch-green .form-check-input {
+	background-color: #28a745 !important;
+	border-color: #28a745 !important;
+}
+.switch-state.switch-red .form-check-input {
+	background-color: #dc3545 !important;
+	border-color: #dc3545 !important;
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* -------------------------- Programación: grid de horarios (modal) ------------------------ */
+/* ------------------------------------------------------------------------------------------ */
+#modal-pref-horarios-grid{ /* contenedor del grid, permite scroll horizontal */
+	overflow-x: auto;
+}
+
+.table-horarios th,
+.table-horarios td{
+	white-space: nowrap;
+	padding: .25rem .5rem;
+	text-align: center;
+}
+
+/* Preferencias: contenedor de tabla con scroll vertical y horizontal
+   La clase .pref-table-responsive se aplica al wrapper (div) que contiene la <table>.
+   La clase .pref-table-minwidth se aplica a la propia <table> para forzar un ancho
+   mínimo y provocar scroll horizontal en pantallas estrechas. */
+.pref-table-responsive{
+	max-height: 60vh;
+	overflow-y: auto;
+	overflow-x: auto;
+	width: 100%;
+}
+.pref-table-minwidth{
+	/* Ajustar según la cantidad de columnas; 1100px es razonable por defecto */
+	min-width: 1100px;
+
+/* Select de tipo de contrato en modal de profesores faltantes */
+.profesor-tipo-select {
+	max-width: 280px;
+}
+}
+
+/* Celdas marcadas para horarios reales (programación) */
+.horario-cell{
+	background: var(--color4);
+	color: var(--color2) !important;
+	font-weight: 600;
+	border-radius: 4px;
+	padding: 2px 6px;
+	display: inline-block;
+	min-width: 76px;
+}
+/* Celdas vacías en la grilla de horarios */
+.horario-cell-empty{
+	background: transparent;
+	color: rgba(55,38,12,0.35);
+	font-size: .8rem;
+}
+
+/* Preferencias: mismo estilo pero tono diferente para distinguir de programación */
+.preferencia-cell{
+	background: var(--color3);
+	color: var(--color5) !important;
+	font-weight: 600;
+	border-radius: 4px;
+	padding: 2px 6px;
+	display: inline-block;
+	min-width: 76px;
+}
+.preferencia-cell-empty{
+	background: transparent;
+	color: rgba(55,38,12,0.35);
+	font-size: .8rem;
+}
+
+/* Tabla combinada horarios/preferencias (modal directorio) */
+.dir-horarios-table th,
+.dir-horarios-table td{
+	vertical-align: middle;
+}
+
+/* Estilos adicionales para menú de programación / preferencias mejorado */
+#prog-breadcrumbs { flex-wrap: wrap; }
+#prog-breadcrumbs .prog-arrow { font-size: 1.25rem; font-weight: 600; color:#495057; margin: 0 .25rem; }
+/* Reutilizar los mismos estilos para el breadcrumb de preferencias */
+#pref-breadcrumbs { flex-wrap: wrap; }
+#pref-breadcrumbs .prog-arrow, #pref-breadcrumbs .pref-arrow { font-size: 1.25rem; font-weight: 600; color:#495057; margin: 0 .25rem; }
+/* El chip de resultado hereda estilos de Bootstrap: btn btn-primary btn-sm */
+.prog-chip { position: relative; display:inline-flex; align-items:center; gap:.25rem; }
+.prog-chip-text { font-weight:600; }
+/* Usamos btn-close de Bootstrap; mantener solo pequeños ajustes */
+.prog-chip-close { cursor:pointer; }
+
+/* Animación para resultados en programación */
+@keyframes progFade { from { opacity:0; transform:translateY(-4px);} to { opacity:1; transform:translateY(0);} }
+#prog-results-wrap { animation: progFade .25s ease-in; }
+.dir-horarios-table thead th{
+	background: var(--color2);
+	color: var(--color5);
+}
+.dir-horarios-table tbody tr:nth-child(even){
+	background: rgba(255,255,255,0.55);
+}
+.dir-horarios-table tbody tr:hover{
+	background: rgba(255,255,255,0.75);
+}
+
+/* Grid de preferencias: días como filas y horarios como columnas */
+.dir-preferencias-grid thead th{
+	white-space: nowrap;
+}
+.dir-preferencias-grid td.pref-slot{
+	min-width: 68px;
+	text-align: center;
+}
+.preferencia-slot-active{
+	/* el contenido (span.preferencia-cell) ya da el color; este agrega un pequeño centrado */
+	display: inline-block;
+}
+.preferencia-slot-empty{
+	opacity: 0.35;
+}
+
+/* Columna fija (día) a la izquierda */
+.table-horarios .sticky-col{
+	position: sticky;
+	left: 0;
+	/* por defecto usar fondo claro para cuerpos de tabla; la cabecera se sobrescribe abajo */
+	background: #ffffff;
+	z-index: 2;
+	text-align: left;
+}
+.table-horarios thead .sticky-col{
+	z-index: 4;
+	/* asegurar que la cabecera sticky muestre fondo oscuro y texto claro (coincide con .table-dark) */
+	background: #343a40; /* bootstrap .table-dark bg */
+	color: #fff;
+}
+
+/* Marcadores visuales para selección de horarios */
+.cell-ok{
+	color: #198754; /* verde bootstrap */
+	font-weight: 700;
+}
+.cell-empty{
+	color: #adb5bd; /* gris claro */
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* ------------------ SweetAlert: grilla de comparación de conflictos ----------------------- */
+/* ------------------------------------------------------------------------------------------ */
+/* Estilos auxiliares para los cuadros de conflicto en SweetAlert */
+.swal-conflict-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+.swal-conflict-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+.swal-conflict-card {
+	flex: 1 1 320px;
+	padding: 10px;
+	border: 1px solid #dee2e6;
+	border-radius: 6px;
+	background: #f8f9fa;
+}
+.swal-conflict-title {
+	font-weight: 600;
+	margin-bottom: 6px;
+}
+
+/* -------------------- Filtro lateral para Programación (profesores) -------------------- */
+.filter-panel{
+	background: #ffffff;
+	border: 1px solid rgba(0,0,0,0.06);
+	padding: 8px;
+	border-radius: 6px;
+	color: var(--color5);
+}
+.filter-panel .form-select, .filter-panel .btn{
+	font-size: 0.85rem;
+}
+.filter-panel .form-select-sm{
+	min-width: 120px;
+}
+
+/* Estilo para el nuevo select de Tipo de administrativo y para el select de Tipo de profesor
+   asegurando que sean legibles y tengan ancho mínimo coherente en el panel de filtros */
+.filter-panel .form-select.admin-type,
+.filter-panel .form-select.prof-type {
+    min-width: 160px;
+}
+
+/* -------------------- Paneles colapsables (izquierda/derecha) -------------------- */
+.view-two-col { position: relative; }
+.view-two-col .left-panel-toggle-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.btn-toggle-left,
+.btn-toggle-show {
+	font-size: .85rem;
+	padding: .25rem .5rem;
+	border: 1px solid rgba(0,0,0,0.12);
+	border-radius: 4px;
+	background: #ffffff;
+	color: var(--color5);
+}
+.btn-toggle-left:hover,
+.btn-toggle-show:hover { filter: brightness(0.97); }
+
+/* Cuando el panel izquierdo está colapsado, ocultarlo y expandir el derecho */
+.view-two-col.left-collapsed .left-col { display: none !important; }
+.view-two-col.left-collapsed .right-col { flex: 0 0 100% !important; max-width: 100% !important; }
+
+/* Contenedor para el botón de mostrar (aparece en el panel derecho al colapsar) */
+.right-panel-show-btn { margin-bottom: 8px; }
+
+/* Botón de profesor con conflicto de horario (impartido) */
+.prof-conflict {
+	border-color: #dc3545 !important;
+	color: #dc3545 !important;
+	position: relative;
+}
+.prof-conflict:disabled { opacity: .65; }
+.prof-conflict::after {
+	content: '\26A0'; /* símbolo advertencia */
+	font-size: .85rem;
+	margin-left: 4px;
+}
+
+/* Resaltar filas con conflicto de horario en el modal de selección de profesor */
+.conflict-row {
+	background-color: #fff3cd; /* tono amarillo claro */
+}
+.conflict-icon {
+	color: #856404; /* color de advertencia (oscuro) */
+	font-weight: 700;
+	margin-left: 6px;
+}
+.conflict-indicator { width: 36px; }
+
+/* Mejor contraste en filas conflictivas: texto oscuro y peso para legibilidad */
+.conflict-row {
+	/* fondo claro y texto oscuro para contraste accesible */
+	background-color: #fff3cd; /* amarillo claro */
+	color: #4b2e00; /* marrón oscuro que contrasta con el amarillo */
+}
+.conflict-row th,
+.conflict-row td {
+	color: #4b2e00;
+	font-weight: 600;
+}
+/* Asegurar que elementos con clases específicas (chips, badges) también contrasten */
+.conflict-row .horario-cell,
+.conflict-row .preferencia-cell,
+.conflict-row .swal-prof-info,
+.conflict-row span,
+.conflict-row div {
+	color: #4b2e00 !important;
+}
+/* Resaltar icono sobre el fondo y dar un pequeño padding para mejorar visibilidad */
+.conflict-row .conflict-icon {
+	color: #704700;
+	font-weight: 800;
+}
+
+/* Para filas en tablas oscuras (thead oscuro), asegurar borde suave para separar */
+.conflict-row { border-left: 3px solid rgba(167,118,0,0.18); }
+
+/* Override: mostrar filas con traslape como fondo negro y texto blanco */
+.conflict-row {
+	background-color: #000000 !important; /* fondo negro */
+	color: #ffffff !important; /* texto blanco */
+}
+.conflict-row th,
+.conflict-row td {
+	color: #ffffff !important;
+	font-weight: 700 !important;
+}
+.conflict-row .conflict-icon {
+	color: #ffffff !important;
+}
+.conflict-row .horario-cell,
+.conflict-row .preferencia-cell,
+.conflict-row .swal-prof-info,
+.conflict-row span,
+.conflict-row div {
+	color: #ffffff !important;
+}
+.conflict-row { border-left: 3px solid rgba(255,255,255,0.06) !important; }
+
+/* Forzar fondo negro en celdas de la fila conflictiva y anular fondos internos */
+.conflict-row, .conflict-row th, .conflict-row td {
+	background-color: #000000 !important;
+	color: #ffffff !important;
+}
+/* Anular fondos de elementos internos (badges, chips, horario-cell, preferencia-cell) */
+.conflict-row .horario-cell,
+.conflict-row .preferencia-cell,
+.conflict-row .uea-pref-chip,
+.conflict-row .priority-chip,
+.conflict-row .assigned-group,
+.conflict-row .candidato-item,
+.conflict-row .prof-buttons-wrap,
+.conflict-row .btn,
+.conflict-row .badge {
+	background-color: transparent !important;
+	color: #ffffff !important;
+	border-color: rgba(255,255,255,0.12) !important;
+}
+/* Si hay celdas con fondo específico (p.ej. .td-horario), anularlas */
+.conflict-row td.td-horario, .conflict-row td.td-docentes {
+	background-color: transparent !important;
+}
+/* Asegurar que los elementos sticky no queden con fondo distinto */
+.pref-table-responsive .pref-uea-table tbody tr.conflict-row .sticky-col,
+.table-horarios tbody tr.conflict-row .sticky-col {
+	background-color: #000000 !important;
+	color: #ffffff !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Ajustes adicionales para mejorar ancho de columnas y fila de títulos */
+/* Evitan que la fila de títulos quede demasiado pequeña y mejoran lectura */
+/* ------------------------------------------------------------------ */
+/* Asegurar que tablas anchas ocupen el 100% del contenedor y permitan scroll */
+.pref-uea-table, .uea-impartido-table, .table-horarios, table.pref-uea-table {
+	width: 100%;
+	table-layout: auto; /* permitir ancho automático pero respetar min-widths */
+}
+
+/* Encabezados: más espacio vertical y mejor legibilidad (soporta wrap) */
+.pref-uea-table thead th,
+.uea-impartido-table thead th,
+.table-horarios thead th,
+.uea-table thead th,
+.pref-uea-table thead th {
+	padding: .6rem .65rem;
+	font-size: .95rem;
+	line-height: 1.15;
+	white-space: normal; /* permitir varias líneas si es necesario */
+}
+
+/* Evitar que las celdas se encojan demasiado: aplicar min-width razonable */
+.pref-uea-table th, .pref-uea-table td,
+.uea-impartido-table th, .uea-impartido-table td,
+.table-horarios th, .table-horarios td {
+	min-width: 88px;
+}
+
+/* Primera columna (grupo/clave) debe ser más ancha y pegajosa para lectura */
+.pref-uea-table th:first-child, .pref-uea-table td:first-child,
+.uea-impartido-table th:first-child, .uea-impartido-table td:first-child {
+	min-width: 160px;
+	max-width: 320px;
+}
+
+/* Columnas de días/horarios suelen ser estrechas pero legibles */
+.pref-uea-table th.day-col, .pref-uea-table td.day-col,
+.table-horarios th, .table-horarios td {
+	min-width: 64px;
+	text-align: center;
+}
+
+/* Forzar truncamiento con elipsis cuando el contenido excede la celda */
+.pref-uea-table td, .uea-impartido-table td, .table-horarios td {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* En dispositivos pequeños: reducir mínimas para permitir scroll horizontal */
+@media (max-width: 991px) {
+	.pref-uea-table th, .pref-uea-table td,
+	.uea-impartido-table th, .uea-impartido-table td,
+	.table-horarios th, .table-horarios td {
+		min-width: 64px;
+	}
+	.pref-uea-table th:first-child, .pref-uea-table td:first-child {
+		min-width: 120px;
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/* SweetAlert: separación y título para la sección de programación       */
+/* ------------------------------------------------------------------ */
+.swal-divider{
+    height:1px;
+    background:#dee2e6;
+    margin:.5rem 0 1rem 0;
+}
+.swal-programacion-title{
+    margin-bottom:.5rem;
+    font-size:0.95rem;
+}
+.swal-group-data{
+    margin-bottom:.5rem;
+}
+.swal-programacion-wrap{
+    margin-top:.25rem;
+}
+
+
