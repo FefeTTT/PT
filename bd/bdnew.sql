@@ -200,7 +200,7 @@ COLLATE = utf8mb4_spanish_ci;
 CREATE TABLE IF NOT EXISTS `dbappcb`.`usuario` (
   `idUsuario` INT NOT NULL AUTO_INCREMENT,
   `usuario` VARCHAR(50) NOT NULL,
-  `contraseña` VARCHAR(50) NOT NULL,
+  `contraseña` TEXT NOT NULL,
   `intento` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`idUsuario`))
   ENGINE = InnoDB
