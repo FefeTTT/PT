@@ -1,5 +1,5 @@
 Array
 (
-    [usuario] => admin
-    [pwd] => admin
+    [usuario] => ayudante_cb$$
+    [pwd] => 11
 )

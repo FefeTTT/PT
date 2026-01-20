@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `dbappcb`.`trimestreestado` (
 INSERT IGNORE INTO `dbappcb`.`trimestreestado` (`idTrimestreEstado`, `estado`)
 VALUES
   (1, 'Terminado'),
-  (2, 'En proceso'),
+  (2, 'En proceso'), 
   (3, 'A programar');
 
 -- 3) Añadir la columna a `trimestre` de forma segura (añadir como NULL primero)
