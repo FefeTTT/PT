@@ -136,5 +136,54 @@
         "usuario": "error",
         "pwd": "435...",
         "reason": "Usuario no encontrado."
+    },
+    "20260121021723_0662321001768958243": {
+        "timestamp": "2026-01-21T02:17:23+01:00",
+        "usuario": "error",
+        "pwd": "423...",
+        "reason": "Usuario no encontrado."
+    },
+    "20260121035223_0616302001768963943": {
+        "timestamp": "2026-01-21T03:52:23+01:00",
+        "usuario": "ayudante_cb$0",
+        "pwd": "_CB...",
+        "reason": "Usuario no encontrado."
+    },
+    "20260121035231_0372469001768963951": {
+        "timestamp": "2026-01-21T03:52:31+01:00",
+        "usuario": "ayudante_cb$",
+        "pwd": "_CB...",
+        "reason": "Usuario no encontrado."
+    },
+    "20260121225836_0312170001769032716": {
+        "timestamp": "2026-01-21T22:58:36+01:00",
+        "usuario": "ayudante_cb$$",
+        "reason": "Contraseña inválida."
+    },
+    "20260121230047_0338924001769032847": {
+        "timestamp": "2026-01-21T23:00:47+01:00",
+        "usuario": "ayudante_cb$$",
+        "reason": "Contraseña inválida."
+    },
+    "20260121230106_0683304001769032866": {
+        "timestamp": "2026-01-21T23:01:06+01:00",
+        "usuario": "ayudante",
+        "reason": "Usuario no encontrado."
+    },
+    "20260121230213_0316618001769032933": {
+        "timestamp": "2026-01-21T23:02:13+01:00",
+        "usuario": "ayudante",
+        "reason": "Usuario no encontrado."
+    },
+    "20260121230219_0966922001769032939": {
+        "timestamp": "2026-01-21T23:02:19+01:00",
+        "usuario": "ayudante",
+        "reason": "Usuario no encontrado."
+    },
+    "20260121231819_0658639001769033899": {
+        "timestamp": "2026-01-21T23:18:19+01:00",
+        "usuario": "ayudante",
+        "pwd": "ayu...",
+        "reason": "Usuario no encontrado."
     }
 }

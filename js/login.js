@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Simple protección contra envíos dobles
     if (submitBtn) {
       submitBtn.disabled = true;
-      var originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Validando...';
+      var originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando...';
     }
 
     // Enviar por POST usando Fetch (Promise) con FormData
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
+            submitBtn.innerHTML = originalText;
           }
           return;
         }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
         showAlertMessage(err.message || 'Error de conexión al validar. Intente más tarde.', 'error');
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
+          submitBtn.innerHTML = originalText;
         }
       });
   });
