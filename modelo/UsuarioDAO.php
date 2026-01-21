@@ -35,9 +35,18 @@ class UsuarioDAO {
 
     // Insertar nuevo usuario
     public function insertarUsuario(UsuarioVO $usuarioVO): bool {
-        // Hashear la contraseña antes de insertar
-        $opciones = array('cost' => 12);
-        $hash_password = password_hash($usuarioVO->getContraseña(), PASSWORD_BCRYPT, $opciones);
+        $mem = getenv('ARGON2_MEMORY_COST') ?: 1024 * 1024; // 1GiB
+        $time = getenv('ARGON2_TIME_COST') ?: 3;
+        $threads = getenv('ARGON2_THREADS') ?: 1;
+
+        $opciones = [
+            'memory_cost' => (int)$mem,
+            'time_cost'   => (int)$time,
+            'threads'     => (int)$threads
+        ];
+        
+        $hash_password = password_hash($usuarioVO->getContraseña(), PASSWORD_ARGON2ID, $opciones);
+        
         // Use ASCII parameter names to avoid encoding issues in parameter keys
         $sql = "INSERT INTO usuario (usuario, contraseña, intento) VALUES (:usuario, :pwd, :intento)";
         $stmt = $this->conexion->prepare($sql);
@@ -163,14 +172,20 @@ class UsuarioDAO {
         }
     }
 
-     // Cambiar la contraseña de un usuario
+
     public function actualizarUsuarioContraseña(UsuarioVO $usuarioVO): bool {
         $this->conexion->exec("SET FOREIGN_KEY_CHECKS = 0;");
-        // Hashear la nueva contraseña
-        $opciones = array('cost' => 12);
-        $hash_password = password_hash($usuarioVO->getContraseña(), PASSWORD_BCRYPT, $opciones);
+        $mem = getenv('ARGON2_MEMORY_COST') ?: 1024 * 1024; // 1GiB
+        $time = getenv('ARGON2_TIME_COST') ?: 3;
+        $threads = getenv('ARGON2_THREADS') ?: 1;
 
-        // Actualizar la contraseña en la base de datos
+        $opciones = [
+            'memory_cost' => (int)$mem,
+            'time_cost'   => (int)$time,
+            'threads'     => (int)$threads
+        ];
+        $hash_password = password_hash($usuarioVO->getContraseña(), PASSWORD_ARGON2ID, $opciones);
+
         $sql = "UPDATE usuario SET contraseña = :pwd WHERE idUsuario = :idUsuario";
         $stmt = $this->conexion->prepare($sql);
         $resultado = $stmt->execute([

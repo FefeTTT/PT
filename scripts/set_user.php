@@ -15,10 +15,14 @@ require_once $baseDir . "modelo/pdo.php";
 
 try {
 
+    $mem = getenv('ARGON2_MEMORY_COST') ?: 1024 * 1024; // 1GiB
+    $time = getenv('ARGON2_TIME_COST') ?: 3;
+    $threads = getenv('ARGON2_THREADS') ?: 1;
+
     $argon2Options = [
-        'memory_cost' => 1048576, // 1 GiB of RAM
-        'time_cost'   => 3,
-        'threads'     => 1,
+        'memory_cost' => (int)$mem,
+        'time_cost'   => (int)$time,
+        'threads'     => (int)$threads,
     ];
 
     echo "Verificando usuario: '$inputUsername'...\n";

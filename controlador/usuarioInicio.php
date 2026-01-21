@@ -20,17 +20,17 @@ try {
   echo "Error al obtener la lista de usuarios.<br/>";
   echo htmlspecialchars($e->getMessage()) . "<br/><br/>";
 }
-//Introducir los datos del usuario
-// Nombre de usuario a crear (evita reusar la variable $usr usada arriba)
-$usuarioNuevo = 'admin';
-//password
-$pwd = 'holaadmin';
 
-// hashear contraseña
-$opciones = array(
-        'cost' => 12
-);
-$hash_password = password_hash($pwd, PASSWORD_BCRYPT, $opciones);
+$mem = getenv('ARGON2_MEMORY_COST') ?: 1024 * 1024;
+$time = getenv('ARGON2_TIME_COST') ?: 3;
+$threads = getenv('ARGON2_THREADS') ?: 1;
+
+$opciones = [
+    'memory_cost' => (int)$mem,
+    'time_cost'   => (int)$time,
+    'threads'     => (int)$threads
+];
+$hash_password = password_hash($pwd, PASSWORD_ARGON2ID, $opciones);
 
 try {
   // iniciar transacción para insertar usuario y asignar rol

@@ -23,7 +23,7 @@ class FuncionVO {
     // getters
     public function getIdFuncion(): ?int { return $this->idFuncion; }
     public function getNombre(): string { return $this->nombre; }
-    public function getDescripcion(): string { return $this->descripcion; }
+    public function getDescripcion(): ?string { return $this->descripcion; }
     public function getUsuarioVO(): UsuarioVO { return $this->usuarioVO; }
 
     public function toString(): string {

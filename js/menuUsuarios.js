@@ -49,22 +49,22 @@ function crearMenuAdministrador() {
             var fid = parseInt(window.FUNCION_ID, 10);
             // Si es usuario consulta (2) => solo Directorio
             if (fid === 2) {
-                botones = botones.filter(function(b){ return b.id === 'menu-directorio'; });
+                botones = botones.filter(function (b) { return b.id === 'menu-directorio'; });
             }
             // Si es secretaria (3) => solo Reserva + Directorio
             else if (fid === 3) {
-                botones = botones.filter(function(b){ return b.id === 'menu-reserva' || b.id === 'menu-directorio'; });
+                botones = botones.filter(function (b) { return b.id === 'menu-reserva' || b.id === 'menu-directorio'; });
             }
             // Si es encargado de horarios (4) => Trimestres + Directorio
             else if (fid === 4) {
-                botones = botones.filter(function(b){ return b.id === 'menu-trimestre' || b.id === 'menu-directorio'; });
+                botones = botones.filter(function (b) { return b.id === 'menu-trimestre' || b.id === 'menu-directorio'; });
             }
         }
     } catch (e) {
         console.warn('No se pudo aplicar filtro por FUNCION_ID:', e);
     }
 
-    botones.forEach(function(btn) {
+    botones.forEach(function (btn) {
         var colDiv = document.createElement('div');
         colDiv.className = 'col-md-6 col-sm-6 col-xs-12';
         colDiv.id = 'filter-image';
@@ -92,7 +92,7 @@ function crearMenuAdministrador() {
         adminMenu.appendChild(colDiv);
 
         // Evento click condicional para cada botón
-        a.addEventListener('click', function(e) {
+        a.addEventListener('click', function (e) {
             switch (btn.id) {
                 case 'menu-usuario':
                     e.preventDefault();
@@ -133,7 +133,7 @@ function crearMenuAdministrador() {
                             if (!existingScript) {
                                 var s = document.createElement('script');
                                 s.src = scriptUrl;
-                                s.onload = function(){
+                                s.onload = function () {
                                     try {
                                         if (window && typeof window.crearMenuTrimestres === 'function') {
                                             window.crearMenuTrimestres(adminMenuEl);
@@ -149,7 +149,7 @@ function crearMenuAdministrador() {
                                         }
                                     } catch (e) { console.error('Error al invocar crearMenuTrimestres después de cargar script:', e); alert('No se pudo abrir Trimestres. Revisa la consola.'); }
                                 };
-                                s.onerror = function(ev){
+                                s.onerror = function (ev) {
                                     console.error('Error cargando', scriptUrl, ev);
                                     if (window.Swal && typeof Swal.fire === 'function') {
                                         Swal.fire({ title: 'Trimestres', text: 'No se pudo cargar el módulo de Trimestres. Revisa la consola.', icon: 'error' });
@@ -179,16 +179,16 @@ function crearMenuAdministrador() {
                     } else if (window.swal && typeof swal === 'function') {
                         try { swal('Sistema de reserva', 'Funcionalidad de Sistema de reserva: aquí puedes mostrar el sistema de reservas.', 'info'); } catch (e) { alert('Funcionalidad de Sistema de reserva: aquí puedes mostrar el sistema de reservas.'); }
                     } else {
-                            // Si existe el módulo menuPrincipalAdmin, úsalo para montar el panel de directorio
-                            try {
-                                const adminMenuEl = document.getElementById('admin-menu');
-                                if (window.crearMenuPrincipalAdmin) {
-                                    window.crearMenuPrincipalAdmin(adminMenuEl);
-                                }
-                            } catch(e){
-                                // no crítico
-                                console.warn('No se pudo inicializar menuPrincipalAdmin:', e);
+                        // Si existe el módulo menuPrincipalAdmin, úsalo para montar el panel de directorio
+                        try {
+                            const adminMenuEl = document.getElementById('admin-menu');
+                            if (window.crearMenuPrincipalAdmin) {
+                                window.crearMenuPrincipalAdmin(adminMenuEl);
                             }
+                        } catch (e) {
+                            // no crítico
+                            console.warn('No se pudo inicializar menuPrincipalAdmin:', e);
+                        }
                         alert('Funcionalidad de Sistema de reserva: aquí puedes mostrar el sistema de reservas.');
                     }
                     break;
@@ -233,7 +233,7 @@ function postForm(url, dataObj) {
     const body = new URLSearchParams(dataObj).toString();
     return fetch(url, {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: body
     }).then(async response => {
         // Always attempt to parse JSON body so callers can inspect validation details
@@ -270,7 +270,7 @@ function menuUsuarios(usuarios) {
     backBtn.title = 'Volver';
     // Mostrar flecha + texto para mayor claridad
     backBtn.innerHTML = '&#8592; Volver'; // flecha izquierda + texto
-    backBtn.addEventListener('click', function() {
+    backBtn.addEventListener('click', function () {
         // Reconstruir el menú administrador (volver)
         try { crearMenuAdministrador(); } catch (e) { window.location.reload(); }
     });
@@ -292,15 +292,16 @@ function menuUsuarios(usuarios) {
     if (Array.isArray(usuarios) && usuarios.length > 0) {
         headers = Object.keys(usuarios[0]);
         // Quitar columnas de id (variantes: id, idUsuario, usuarioId, id_usuario, userId, etc.)
-        headers = headers.filter(function(h){
+        headers = headers.filter(function (h) {
             var n = String(h).toLowerCase();
             if (n === 'id' || n === 'idusuario' || n === 'id_usuario' || n === 'id_user' || n === 'userid') return false;
+            if (n === 'intento') return false;
             if (n.endsWith('id')) return false; // elimina 'usuarioId', 'userId', etc.
             return true;
         });
     } else {
         // Fallback razonable si no hay usuarios
-        headers = ['usuario', 'contraseña', 'intento'];
+        headers = ['usuario', 'contraseña'];
     }
 
     var trHead = document.createElement('tr');
@@ -337,7 +338,7 @@ function menuUsuarios(usuarios) {
                     send.textContent = 'Enviar';
                     send.className = 'btn btn-success btn-sm';
                     send.style.marginTop = '4px';
-                    send.addEventListener('click', function() {
+                    send.addEventListener('click', function () {
                         var newPwd = (input.value || '').trim();
                         // Validaciones cliente: no vacío y no igual a la actual (si está disponible)
                         if (!newPwd) {
@@ -368,9 +369,9 @@ function menuUsuarios(usuarios) {
                         var data = new URLSearchParams();
                         data.append('usuario', u.usuario);
                         data.append('contraseña', input.value);
-                        postForm('controlador/actualizarUsuarioContraseña.php', {'usuario': u.usuario, 'contraseña': input.value})
-                        .then(json => {
-                            if (json && json.ok) {
+                        postForm('controlador/actualizarUsuarioContraseña.php', { 'usuario': u.usuario, 'contraseña': input.value })
+                            .then(json => {
+                                if (json && json.ok) {
                                     td.innerHTML = '';
                                     // Restaurar botón
                                     var okBtn = document.createElement('button');
@@ -389,48 +390,23 @@ function menuUsuarios(usuarios) {
                                     }
                                     send.disabled = false;
                                 }
-                        }).catch(err => {
-                            console.error('Error actualizar contraseña:', err);
-                            var msg = (err && err.message) ? err.message : JSON.stringify(err);
-                            if (window.Swal && typeof Swal.fire === 'function') {
-                                Swal.fire({ title: 'Error', text: 'Error al actualizar contraseña: ' + msg, icon: 'error' });
-                            } else if (window.swal && typeof swal === 'function') {
-                                try { swal('Error', 'Error al actualizar contraseña', 'error'); } catch (e) { alert('Error al actualizar contraseña'); }
-                            } else {
-                                alert('Error al actualizar contraseña');
-                            }
-                            send.disabled = false;
-                        });
+                            }).catch(err => {
+                                console.error('Error actualizar contraseña:', err);
+                                var msg = (err && err.message) ? err.message : JSON.stringify(err);
+                                if (window.Swal && typeof Swal.fire === 'function') {
+                                    Swal.fire({ title: 'Error', text: 'Error al actualizar contraseña: ' + msg, icon: 'error' });
+                                } else if (window.swal && typeof swal === 'function') {
+                                    try { swal('Error', 'Error al actualizar contraseña', 'error'); } catch (e) { alert('Error al actualizar contraseña'); }
+                                } else {
+                                    alert('Error al actualizar contraseña');
+                                }
+                                send.disabled = false;
+                            });
                     });
                     td.appendChild(input);
                     td.appendChild(send);
                 });
                 td.appendChild(btnPwd);
-            } else if (h === 'intento') {
-                // Botón para resetear intento directamente (envía intento=0)
-                var btnInt = document.createElement('button');
-                btnInt.textContent = u[h];
-                btnInt.className = 'btn btn-secondary btn-sm btn-user-intento';
-                btnInt.addEventListener('click', function () {
-                    btnInt.disabled = true;
-                    var data = new URLSearchParams();
-                    data.append('usuario', u.usuario);
-                    data.append('intento', 0);
-                    postForm('controlador/insertarUsuarioIntento.php', {'usuario': u.usuario, 'intento': 0})
-                    .then(json => {
-                        if (json && json.ok) {
-                            btnInt.textContent = json.intento !== undefined ? json.intento : '0';
-                        } else {
-                            alert('No se pudo resetear intento: ' + (json.msg || JSON.stringify(json)));
-                        }
-                    }).catch(err => {
-                        console.error('Error reset intento:', err);
-                        alert('Error al resetear intento');
-                    }).finally(() => {
-                        btnInt.disabled = false;
-                    });
-                });
-                td.appendChild(btnInt);
             } else {
                 // Mostrar botón de eliminar a la izquierda del nombre de usuario
                 if (h === 'usuario') {
@@ -445,7 +421,7 @@ function menuUsuarios(usuarios) {
                     delBtn.textContent = '\u00D7'; // Multiplication sign (×)
 
                     // Handler: confirmar y luego llamar al endpoint que elimina por nombre
-                    delBtn.addEventListener('click', function() {
+                    delBtn.addEventListener('click', function () {
                         var nombre = u.usuario;
                         if (!nombre) return;
 
@@ -482,53 +458,53 @@ function menuUsuarios(usuarios) {
                         }
 
                         // Use SweetAlert if available, otherwise fallback to native confirm
-                        var doDelete = function() {
+                        var doDelete = function () {
                             delBtn.disabled = true;
                             // Show SweetAlert2 loading if available
                             var showedLoading = false;
                             if (window.Swal && typeof Swal.fire === 'function') {
                                 showedLoading = true;
-                                Swal.fire({ title: 'Eliminando...', allowOutsideClick: false, didOpen: function() { Swal.showLoading(); } });
+                                Swal.fire({ title: 'Eliminando...', allowOutsideClick: false, didOpen: function () { Swal.showLoading(); } });
                             }
 
                             postForm('controlador/eliminarUsuarioNombre.php', { usuario: nombre })
-                            .then(function(resp) {
-                                if (showedLoading && window.Swal && typeof Swal.close === 'function') {
-                                    try { Swal.close(); } catch (e) { /* ignore */ }
-                                }
-                                if (resp && resp.ok) {
-                                    if (window && typeof window.swalAlertOpt === 'function') {
-                                        window.swalAlertOpt('Eliminado', resp.msg || 'Usuario eliminado', 'success');
+                                .then(function (resp) {
+                                    if (showedLoading && window.Swal && typeof Swal.close === 'function') {
+                                        try { Swal.close(); } catch (e) { /* ignore */ }
                                     }
-                                    // Refrescar la tabla de usuarios
-                                    obtenerUsuarios().then(function(usuarios) { menuUsuarios(usuarios); }).catch(function(err){
-                                        console.error('Error al refrescar usuarios tras eliminar:', err);
-                                    });
-                                } else {
-                                    var msg = resp && resp.msg ? resp.msg : JSON.stringify(resp);
-                                    if (window.Swal && typeof Swal.fire === 'function') {
-                                        Swal.fire({ title: 'Error', text: 'No se pudo eliminar el usuario: ' + msg, icon: 'error' });
-                                    } else if (window.swal && typeof swal === 'function') {
-                                        try { swal('Error', 'No se pudo eliminar el usuario: ' + msg, 'error'); } catch (e) { alert('No se pudo eliminar el usuario: ' + msg); }
+                                    if (resp && resp.ok) {
+                                        if (window && typeof window.swalAlertOpt === 'function') {
+                                            window.swalAlertOpt('Eliminado', resp.msg || 'Usuario eliminado', 'success');
+                                        }
+                                        // Refrescar la tabla de usuarios
+                                        obtenerUsuarios().then(function (usuarios) { menuUsuarios(usuarios); }).catch(function (err) {
+                                            console.error('Error al refrescar usuarios tras eliminar:', err);
+                                        });
                                     } else {
-                                        alert('No se pudo eliminar el usuario: ' + msg);
+                                        var msg = resp && resp.msg ? resp.msg : JSON.stringify(resp);
+                                        if (window.Swal && typeof Swal.fire === 'function') {
+                                            Swal.fire({ title: 'Error', text: 'No se pudo eliminar el usuario: ' + msg, icon: 'error' });
+                                        } else if (window.swal && typeof swal === 'function') {
+                                            try { swal('Error', 'No se pudo eliminar el usuario: ' + msg, 'error'); } catch (e) { alert('No se pudo eliminar el usuario: ' + msg); }
+                                        } else {
+                                            alert('No se pudo eliminar el usuario: ' + msg);
+                                        }
+                                        delBtn.disabled = false;
+                                    }
+                                }).catch(function (err) {
+                                    if (showedLoading && window.Swal && typeof Swal.close === 'function') {
+                                        try { Swal.close(); } catch (e) { /* ignore */ }
+                                    }
+                                    console.error('Error eliminando usuario:', err);
+                                    if (window.Swal && typeof Swal.fire === 'function') {
+                                        Swal.fire({ title: 'Error', text: 'Error al eliminar usuario', icon: 'error' });
+                                    } else if (window.swal && typeof swal === 'function') {
+                                        try { swal('Error', 'Error al eliminar usuario', 'error'); } catch (e) { alert('Error al eliminar usuario'); }
+                                    } else {
+                                        alert('Error al eliminar usuario');
                                     }
                                     delBtn.disabled = false;
-                                }
-                            }).catch(function(err) {
-                                if (showedLoading && window.Swal && typeof Swal.close === 'function') {
-                                    try { Swal.close(); } catch (e) { /* ignore */ }
-                                }
-                                console.error('Error eliminando usuario:', err);
-                                if (window.Swal && typeof Swal.fire === 'function') {
-                                    Swal.fire({ title: 'Error', text: 'Error al eliminar usuario', icon: 'error' });
-                                } else if (window.swal && typeof swal === 'function') {
-                                    try { swal('Error', 'Error al eliminar usuario', 'error'); } catch (e) { alert('Error al eliminar usuario'); }
-                                } else {
-                                    alert('Error al eliminar usuario');
-                                }
-                                delBtn.disabled = false;
-                            });
+                                });
                         };
 
                         if (window.Swal && typeof Swal.fire === 'function') {
@@ -540,7 +516,7 @@ function menuUsuarios(usuarios) {
                                 confirmButtonText: 'Sí, eliminar',
                                 cancelButtonText: 'Cancelar',
                                 dangerMode: true
-                            }).then(function(result) {
+                            }).then(function (result) {
                                 if (result && (result.isConfirmed || result.value)) {
                                     doDelete();
                                 }
@@ -556,7 +532,7 @@ function menuUsuarios(usuarios) {
                                     dangerMode: true
                                 });
                                 if (prom && typeof prom.then === 'function') {
-                                    prom.then(function(willDelete) { if (willDelete) doDelete(); });
+                                    prom.then(function (willDelete) { if (willDelete) doDelete(); });
                                 } else {
                                     // Fallback: immediate confirm
                                     if (confirm('¿Eliminar el usuario "' + nombre + '"? Esta acción no se puede deshacer.')) doDelete();
@@ -586,30 +562,30 @@ function menuUsuarios(usuarios) {
         var tdFunc = document.createElement('td');
         tdFunc.id = 'funciones_' + u.idUsuario;
         // Botón para mostrar el nombre de la(s) función(es) asignada(s) y permitir ver detalle
-    var btn = document.createElement('button');
-    btn.textContent = 'Cargando...';
-    btn.className = 'btn btn-info btn-sm btn-user-func';
+        var btn = document.createElement('button');
+        btn.textContent = 'Cargando...';
+        btn.className = 'btn btn-info btn-sm btn-user-func';
         btn.disabled = true;
 
         // Obtener nombre(s) de función por nombre de usuario (POST)
         postForm('controlador/recuperaFuncionUsuarioNombre.php', { 'usuario': u.usuario })
-        .then(json => {
-            if (json && json.ok && Array.isArray(json.funciones) && json.funciones.length > 0) {
-                // Unir los nombres si hay varias funciones
-                var nombres = json.funciones.map(f => (f.nombre ? f.nombre : (typeof f === 'string' ? f : ''))).filter(Boolean);
-                btn.textContent = nombres.length > 0 ? nombres.join(', ') : 'Sin nombre';
-            } else {
-                btn.textContent = 'Sin funciones';
-            }
-        }).catch(err => {
-            console.error('Error al obtener funciones por nombre:', err);
-            btn.textContent = 'Error';
-        }).finally(() => {
-            btn.disabled = false;
-        });
+            .then(json => {
+                if (json && json.ok && Array.isArray(json.funciones) && json.funciones.length > 0) {
+                    // Unir los nombres si hay varias funciones
+                    var nombres = json.funciones.map(f => (f.nombre ? f.nombre : (typeof f === 'string' ? f : ''))).filter(Boolean);
+                    btn.textContent = nombres.length > 0 ? nombres.join(', ') : 'Sin nombre';
+                } else {
+                    btn.textContent = 'Sin funciones';
+                }
+            }).catch(err => {
+                console.error('Error al obtener funciones por nombre:', err);
+                btn.textContent = 'Error';
+            }).finally(() => {
+                btn.disabled = false;
+            });
 
         // Al hacer clic, reemplazar el botón por un select deslizable con las funciones disponibles
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             // Obtener funciones actuales del usuario y la lista completa de funciones en paralelo
             Promise.all([
                 postForm('controlador/recuperaFuncionUsuarioNombre.php', { 'usuario': u.usuario }),
@@ -668,13 +644,13 @@ function menuUsuarios(usuarios) {
                 tdFunc.appendChild(btnSave);
                 tdFunc.appendChild(btnCancel);
 
-                btnCancel.addEventListener('click', function() {
+                btnCancel.addEventListener('click', function () {
                     // Restaurar botón original
                     tdFunc.innerHTML = '';
                     tdFunc.appendChild(btn);
                 });
 
-                btnSave.addEventListener('click', function() {
+                btnSave.addEventListener('click', function () {
                     var nueva = select.value;
                     if (!nueva) return;
                     btnSave.disabled = true;
@@ -730,7 +706,7 @@ function menuUsuarios(usuarios) {
     var addBtn = document.createElement('button');
     addBtn.className = 'btn btn-success btn-sm btn-add-user';
     addBtn.innerHTML = '<span style="font-weight:bold; font-size:18px;">+</span> Agregar usuario';
-    addBtn.addEventListener('click', function() {
+    addBtn.addEventListener('click', function () {
         mostrarModalAgregarUsuario();
     });
     tdAdd.appendChild(addBtn);
@@ -740,10 +716,7 @@ function menuUsuarios(usuarios) {
 }
 
 
-// Función para obtener funciones de usuario (debes implementar el backend y el render)
 function obtenerFuncioUsuario(idUsuario, tdFunc) {
-    // Aquí deberías hacer el fetch al backend para obtener las funciones
-    // Ejemplo:
     fetch('controlador/recuperaFuncionesUsuario.php?id=' + idUsuario)
         .then(resp => resp.json())
         .then(funciones => {
@@ -774,27 +747,27 @@ function obtenerFuncioUsuarioNombre(usuario, tdFunc) {
     tdFunc.appendChild(cargando);
 
     postForm('controlador/recuperaFuncionUsuarioNombre.php', { 'usuario': usuario })
-    .then(json => {
-        tdFunc.innerHTML = '';
-        if (!json || !json.ok || !Array.isArray(json.funciones) || json.funciones.length === 0) {
-            tdFunc.textContent = 'Sin funciones asignadas';
-            return;
-        }
-        var ul = document.createElement('ul');
-        json.funciones.forEach(f => {
-            var li = document.createElement('li');
-            li.textContent = f.nombre || f;
-            ul.appendChild(li);
+        .then(json => {
+            tdFunc.innerHTML = '';
+            if (!json || !json.ok || !Array.isArray(json.funciones) || json.funciones.length === 0) {
+                tdFunc.textContent = 'Sin funciones asignadas';
+                return;
+            }
+            var ul = document.createElement('ul');
+            json.funciones.forEach(f => {
+                var li = document.createElement('li');
+                li.textContent = f.nombre || f;
+                ul.appendChild(li);
+            });
+            tdFunc.appendChild(ul);
+        }).catch(err => {
+            tdFunc.textContent = 'Error al cargar funciones';
+            console.error('Error funciones usuario por nombre:', err);
         });
-        tdFunc.appendChild(ul);
-    }).catch(err => {
-        tdFunc.textContent = 'Error al cargar funciones';
-        console.error('Error funciones usuario por nombre:', err);
-    });
 }
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var bienvenido = document.getElementById('bienvenido');
     var urlParams = new URLSearchParams(window.location.search);
     var userName = urlParams.get('user');
@@ -880,28 +853,28 @@ function mostrarModalAgregarUsuario() {
     var select = modal.querySelector('#nuevo_funcion');
     select.innerHTML = '<option value="">Cargando...</option>';
     fetch('controlador/recuperarTodasFunciones.php')
-      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(json => {
-          select.innerHTML = '';
-          var funcs = [];
-          if (Array.isArray(json)) funcs = json;
-          else if (json && Array.isArray(json.funciones)) funcs = json.funciones;
-          if (!funcs || funcs.length === 0) {
-              select.innerHTML = '<option value="">(Sin funciones)</option>';
-          } else {
-              funcs.forEach(f => {
-                  var name = (typeof f === 'string') ? f : (f.nombre || '');
-                  if (!name) return;
-                  var opt = document.createElement('option');
-                  opt.value = name;
-                  opt.textContent = name;
-                  select.appendChild(opt);
-              });
-          }
-      }).catch(err => {
-          console.error('Error al cargar funciones para el modal:', err);
-          select.innerHTML = '<option value="">Error al cargar funciones</option>';
-      });
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(json => {
+            select.innerHTML = '';
+            var funcs = [];
+            if (Array.isArray(json)) funcs = json;
+            else if (json && Array.isArray(json.funciones)) funcs = json.funciones;
+            if (!funcs || funcs.length === 0) {
+                select.innerHTML = '<option value="">(Sin funciones)</option>';
+            } else {
+                funcs.forEach(f => {
+                    var name = (typeof f === 'string') ? f : (f.nombre || '');
+                    if (!name) return;
+                    var opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    select.appendChild(opt);
+                });
+            }
+        }).catch(err => {
+            console.error('Error al cargar funciones para el modal:', err);
+            select.innerHTML = '<option value="">Error al cargar funciones</option>';
+        });
 
     // Initialize bootstrap modal (works with Bootstrap 5)
     var bsModal = null;
@@ -914,11 +887,11 @@ function mostrarModalAgregarUsuario() {
     }
 
     // Handle save
-    modal.querySelector('#guardarNuevoUsuario').addEventListener('click', function() {
+    modal.querySelector('#guardarNuevoUsuario').addEventListener('click', function () {
         var usuario = modal.querySelector('#nuevo_usuario').value.trim();
         var pwd = modal.querySelector('#nuevo_pwd').value.trim();
         var funcion = modal.querySelector('#nuevo_funcion').value;
-            if (!usuario || usuario.length === 0) {
+        if (!usuario || usuario.length === 0) {
             if (window && typeof window.swalAlertOpt === 'function') {
                 window.swalAlertOpt('Error', 'El nombre de usuario no puede estar vacío', 'error');
             } else {
@@ -934,37 +907,45 @@ function mostrarModalAgregarUsuario() {
             }
             return;
         }
+
+        var originalBtnContent = this.innerHTML;
         this.disabled = true;
+
+        var creatingText = 'Creando ' + (funcion);
+        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + creatingText + '...';
+
         postForm('controlador/agregarUsuario.php', { usuario: usuario, contraseña: pwd, funcion: funcion })
-        .then(resp => {
+            .then(resp => {
                 if (resp && resp.ok) {
-                if (window && typeof window.swalAlertOpt === 'function') {
-                    window.swalAlertOpt('Correcto', resp.msg || 'Usuario agregado', 'success');
+                    if (window && typeof window.swalAlertOpt === 'function') {
+                        window.swalAlertOpt('Correcto', resp.msg || 'Usuario agregado', 'success');
+                    } else {
+                        alert(resp.msg || 'Usuario agregado');
+                    }
+                    // Cerrar modal
+                    try { bsModal.hide(); } catch (e) { modal.parentNode.removeChild(modal); }
+                    // Refresh users table
+                    obtenerUsuarios().then(usuarios => { menuUsuarios(usuarios); });
                 } else {
-                    alert(resp.msg || 'Usuario agregado');
+                    var msg = resp && resp.msg ? resp.msg : JSON.stringify(resp);
+                    if (window && typeof window.swalAlertOpt === 'function') {
+                        window.swalAlertOpt('Error', msg, 'error');
+                    } else {
+                        alert(msg);
+                    }
+                    this.disabled = false;
+                    this.innerHTML = originalBtnContent;
                 }
-                // Cerrar modal
-                try { bsModal.hide(); } catch (e) { modal.parentNode.removeChild(modal); }
-                // Refresh users table
-                obtenerUsuarios().then(usuarios => { menuUsuarios(usuarios); });
-            } else {
-                var msg = resp && resp.msg ? resp.msg : JSON.stringify(resp);
+            }).catch(err => {
+                console.error('Error agregando usuario:', err);
                 if (window && typeof window.swalAlertOpt === 'function') {
-                    window.swalAlertOpt('Error', msg, 'error');
+                    window.swalAlertOpt('Error', 'Error al agregar usuario', 'error');
                 } else {
-                    alert(msg);
+                    alert('Error al agregar usuario');
                 }
                 this.disabled = false;
-            }
-        }).catch(err => {
-            console.error('Error agregando usuario:', err);
-            if (window && typeof window.swalAlertOpt === 'function') {
-                window.swalAlertOpt('Error', 'Error al agregar usuario', 'error');
-            } else {
-                alert('Error al agregar usuario');
-            }
-            this.disabled = false;
-        });
+                this.innerHTML = originalBtnContent;
+            });
     });
 }
 
