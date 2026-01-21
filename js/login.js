@@ -1,7 +1,7 @@
 // js/login.js
 // Mejora UX del formulario de login: evita envíos dobles, muestra estado y valida campos mínimos.
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('login');
   if (!form) return;
   var submitBtn = form.querySelector('button[type="submit"]');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  form.addEventListener('submit', function(e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     // Simple protección contra envíos dobles
@@ -79,75 +79,57 @@ document.addEventListener('DOMContentLoaded', function() {
         'Accept': 'application/json'
       }
     })
-    .then(function(response) {
-      if (!response.ok) throw new Error('HTTP error ' + response.status);
-      return response.json();
-    })
-    .then(function(result) {
-      if (!result || !result.success) {
-        // Preparar mensaje de error general (debajo del título "Iniciar sesión")
-        var serverMsg = (result && (result.error || result.msg)) ? (result.error || result.msg) : null;
-        // Filtrar mensajes técnicos no deseados (por ejemplo 'Intento incrementado')
-        if (serverMsg && /incrementa|increment|incrementado/i.test(serverMsg)) {
-          serverMsg = null;
+      .then(function (response) {
+        if (response.status === 429) {
+          return response.json().then(result => {
+            throw new Error(result.msg || 'Demasiados intentos. Intente más tarde.');
+          });
         }
-        var displayMsg = serverMsg ? serverMsg : 'Usuario o contraseña incorrecto.';
+        if (!response.ok) throw new Error('HTTP error ' + response.status);
+        return response.json();
+      })
+      .then(function (result) {
+        if (!result || !result.success) {
+          var serverMsg = (result && (result.error || result.msg)) ? (result.error || result.msg) : null;
+          var displayMsg = serverMsg ? serverMsg : 'Usuario o contraseña incorrecto.';
 
-        // Mostrar el mensaje general usando SweetAlert (fallback inline)
-        showAlertMessage(displayMsg, 'error');
 
-        // Borrar y enfocar el campo de contraseña para seguridad/UX
-        if (pwdInput) {
-          try { pwdInput.value = ''; pwdInput.focus(); } catch (e) { /* ignore */ }
-        }
+          showAlertMessage(displayMsg, 'error');
 
-        // Mostrar sólo los intentos restantes justo debajo de la contraseña
-        var intento = (result && typeof result.intento !== 'undefined') ? parseInt(result.intento, 10) : null;
-        var max = (result && typeof result.max !== 'undefined') ? parseInt(result.max, 10) : 3;
-        if (intento !== null && !isNaN(intento)) {
-          var restantes = max - intento;
-          if (restantes <= 0) {
-            intentosInfo.textContent = 'Cuenta bloqueada (0 intentos restantes).';
-            intentosInfo.className = 'intentos-info intentos-info--blocked';
-          } else if (restantes === 1) {
-            intentosInfo.textContent = '1 intento restante antes del bloqueo.';
-            intentosInfo.className = 'intentos-info intentos-info--warn';
-          } else {
-            intentosInfo.textContent = 'Intentos restantes: ' + restantes + ' / ' + max;
-            intentosInfo.className = 'intentos-info';
+          if (pwdInput) {
+            try { pwdInput.value = ''; pwdInput.focus(); } catch (e) { console.log(e); }
           }
-        } else {
-          // No hay info de intentos: limpiar la zona de intentos para no mostrar mensajes mezclados
-          intentosInfo.textContent = '';
+
+          if (intentosInfo) {
+            intentosInfo.textContent = '';
+          }
+
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+          return;
         }
 
+        var destino = 'index.php';
+        window.location.href = destino + '?user=' + encodeURIComponent(result.user_name || '');
+      })
+      .catch(function (err) {
+        console.error('Error en validación de login:', err);
+
+        showAlertMessage(err.message || 'Error de conexión al validar. Intente más tarde.', 'error');
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
         }
-        return;
-      }
-      // Login exitoso — redirigir según función
-      // Redirigir siempre a `index.php`; la página decidirá qué mostrar según el id de función en la sesión
-      var destino = 'index.php';
-      window.location.href = destino + '?user=' + encodeURIComponent(result.user_name || '');
-    })
-    .catch(function(err) {
-      console.error('Error en validación de login:', err);
-      // Mostrar aviso de error con SweetAlert (intentos se mantienen en su zona)
-      showAlertMessage('Error de conexión al validar. Intente más tarde.', 'error');
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    });
+      });
   });
 
   // Mejora: permitir mostrar/ocultar contraseña si se agrega un control
   var pwdInput = document.getElementById('passw');
   if (pwdInput) {
     // Limpiar mensaje general al modificar la contraseña
-    pwdInput.addEventListener('input', function() {
+    pwdInput.addEventListener('input', function () {
       if (errorInfo) errorInfo.textContent = '';
     });
     // Crear toggle si no existe
@@ -160,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
       toggle.textContent = 'Mostrar';
       toggle.style.marginTop = '6px';
       pwdInput.parentNode.appendChild(toggle);
-      toggle.addEventListener('click', function() {
+      toggle.addEventListener('click', function () {
         if (pwdInput.type === 'password') {
           pwdInput.type = 'text';
           toggle.textContent = 'Ocultar';
@@ -169,58 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
           toggle.textContent = 'Mostrar';
         }
       });
-    }
-  }
-
-  // Cuando cambie o pierda foco el campo usuario, consultar intentos
-  var usuarioInput = document.getElementById('usuario');
-  if (usuarioInput) {
-    var consultaIntentos = function() {
-      var usuarioVal = usuarioInput.value.trim();
-      if (!usuarioVal) {
-        intentosInfo.textContent = '';
-        return;
-      }
-      fetch('controlador/recuperaUsuarioIntentos.php?usuario=' + encodeURIComponent(usuarioVal), { credentials: 'same-origin' })
-        .then(resp => {
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
-          return resp.json();
-        })
-        .then(data => {
-          if (!data || !data.success) {
-            intentosInfo.textContent = data && data.error ? 'Error: ' + data.error : '';
-            intentosInfo.className = 'intentos-info intentos-info--muted';
-            return;
-          }
-          var restantes = data.restantes;
-          var max = data.max || 3;
-          if (restantes <= 0) {
-            intentosInfo.textContent = 'Usuario bloqueado (0 intentos restantes).';
-            intentosInfo.className = 'intentos-info intentos-info--blocked';
-          } else if (restantes === 1) {
-            intentosInfo.textContent = 'Cuidado: 1 intento restante antes de bloqueo.';
-            intentosInfo.className = 'intentos-info intentos-info--warn';
-          } else {
-            intentosInfo.textContent = 'Intentos restantes: ' + restantes + ' / ' + max;
-            intentosInfo.className = 'intentos-info';
-          }
-        })
-        .catch(err => {
-          console.error('Error al consultar intentos:', err);
-          intentosInfo.textContent = 'No se pudo consultar intentos.';
-          intentosInfo.className = 'intentos-info intentos-info--muted';
-        });
-    };
-
-    usuarioInput.addEventListener('blur', consultaIntentos);
-    usuarioInput.addEventListener('input', function() {
-      // opcional: debounce - aquí simple cancel previous text
-      intentosInfo.textContent = '';
-      if (errorInfo) errorInfo.textContent = '';
-    });
-    // si ya hay valor en carga, consultar
-    if (usuarioInput.value && usuarioInput.value.trim().length > 0) {
-      consultaIntentos();
     }
   }
 });
