@@ -4,6 +4,9 @@
 function crearMenuDirectorio() {
     const adminMenu = document.getElementById('admin-menu');
     if (!adminMenu) return;
+
+    let isBulkMode = false; // Moved to top to avoid TDZ
+
     while (adminMenu.firstChild) adminMenu.removeChild(adminMenu.firstChild);
 
     // Header (back button + title)
@@ -74,6 +77,21 @@ function crearMenuDirectorio() {
             window.location.href = 'scripts/formImportarProfesores.php';
         });
         nav.appendChild(importarProfBtn);
+
+        // Bulk Edit Button
+        const bulkBtn = document.createElement('button');
+        bulkBtn.className = 'btn btn-warning btn-sm mb-2 ms-2';
+        bulkBtn.textContent = 'Modo Edición Masiva';
+        bulkBtn.onclick = function () {
+            isBulkMode = !isBulkMode;
+            if (isBulkMode) {
+                document.getElementById('bulk-toolbar').classList.remove('d-none');
+            } else {
+                document.getElementById('bulk-toolbar').classList.add('d-none');
+            }
+            loadList(state.q);
+        };
+        nav.appendChild(bulkBtn);
     }
 
 
@@ -110,6 +128,17 @@ function crearMenuDirectorio() {
     const thead = document.createElement('thead');
     // Build table header using DOM methods (avoid innerHTML)
     const trHead = document.createElement('tr');
+    if (isBulkMode) {
+        const thCheck = document.createElement('th');
+        const checkAll = document.createElement('input');
+        checkAll.type = 'checkbox';
+        checkAll.onclick = function () {
+            const boxes = document.querySelectorAll('.prof-check');
+            boxes.forEach(b => b.checked = checkAll.checked);
+        };
+        thCheck.appendChild(checkAll);
+        trHead.appendChild(thCheck);
+    }
     const thName = document.createElement('th'); thName.textContent = 'Nombre';
     const thNum = document.createElement('th'); thNum.textContent = 'No. Económico';
     trHead.appendChild(thName);
@@ -134,9 +163,122 @@ function crearMenuDirectorio() {
     placeholderCard.appendChild(placeholderBody);
     right.appendChild(placeholderCard);
 
+    // Bulk Action Toolbar (Initially Hidden)
+    const bulkToolbar = document.createElement('div');
+    bulkToolbar.id = 'bulk-toolbar';
+    bulkToolbar.className = 'd-none alert alert-info mt-2';
+    bulkToolbar.style.display = 'flex';
+    bulkToolbar.style.alignItems = 'center';
+    bulkToolbar.style.gap = '10px';
+
+    // Select Tipo Dropdown
+    const selTipo = document.createElement('select');
+    selTipo.className = 'form-select form-select-sm';
+    selTipo.style.maxWidth = '200px';
+    selTipo.innerHTML = '<option value="">Seleccione tipo...</option>';
+    // Load types
+    fetch('controlador/recuperarProfesorTipos.php')
+        .then(r => r.json())
+        .then(res => {
+            if (res.ok && res.data) {
+                res.data.forEach(t => {
+                    const op = document.createElement('option');
+                    op.value = t.idProfesorTipo;
+                    op.textContent = t.nombre;
+                    selTipo.appendChild(op);
+                });
+            }
+        });
+    bulkToolbar.appendChild(selTipo);
+
+    // Select All Button
+    const btnSelectAll = document.createElement('button');
+    btnSelectAll.className = 'btn btn-outline-secondary btn-sm';
+    btnSelectAll.textContent = 'Seleccionar todos';
+    btnSelectAll.onclick = function () {
+        const boxes = document.querySelectorAll('.prof-check');
+        const allChecked = Array.from(boxes).every(b => b.checked);
+        boxes.forEach(b => b.checked = !allChecked);
+        // Also update the header checkbox if it exists
+        const headerCheck = document.querySelector('thead input[type="checkbox"]');
+        if (headerCheck) headerCheck.checked = !allChecked;
+    };
+    bulkToolbar.appendChild(btnSelectAll);
+
+    // Apply Button
+    const btnApply = document.createElement('button');
+    btnApply.className = 'btn btn-primary btn-sm';
+    btnApply.textContent = 'Aplicar cambios';
+    btnApply.onclick = function () {
+        const checked = document.querySelectorAll('.prof-check:checked');
+
+        const showSwal = (title, text, icon) => {
+            if (window.Swal && typeof Swal.fire === 'function') Swal.fire(title, text, icon);
+            else if (window.swal) try { new swal(title, text, icon); } catch (_) { alert(text); }
+            else alert(text);
+        };
+
+        if (checked.length === 0) { showSwal('Atención', 'Seleccione al menos un profesor.', 'warning'); return; }
+        const tipoId = selTipo.value;
+        if (!tipoId) { showSwal('Atención', 'Seleccione un tipo de investigador.', 'warning'); return; }
+
+        const ids = Array.from(checked).map(c => c.value);
+
+        const confirmCallback = (isConfirmed) => {
+            if (!isConfirmed) return;
+            fetch('controlador/actualizarTipoProfesorMasivo.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: ids, idTipo: tipoId })
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.ok) {
+                        showSwal('Éxito', `Actualizados: ${res.updated}, Errores: ${res.errors}`, 'success');
+                        // exit bulk mode
+                        isBulkMode = false;
+                        bulkToolbar.classList.add('d-none');
+                        loadList(state.q);
+                    } else {
+                        showSwal('Error', (res.error || 'Desconocido'), 'error');
+                    }
+                })
+                .catch(e => showSwal('Error', 'Error de red: ' + e, 'error'));
+        };
+
+        if (window.Swal && typeof Swal.fire === 'function') {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Asignar el tipo seleccionado a ${ids.length} profesores?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, aplicar',
+                cancelButtonText: 'Cancelar'
+            }).then(result => confirmCallback(result.isConfirmed));
+        } else if (confirm(`¿Asignar el tipo seleccionado a ${ids.length} profesores?`)) {
+            confirmCallback(true);
+        }
+    };
+    bulkToolbar.appendChild(btnApply);
+
+    // Cancel Button
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-secondary btn-sm';
+    btnCancel.textContent = 'Cancelar';
+    btnCancel.onclick = function () {
+        isBulkMode = false;
+        bulkToolbar.classList.add('d-none');
+        loadList(state.q);
+    };
+    bulkToolbar.appendChild(btnCancel);
+
+    left.insertBefore(bulkToolbar, listWrap);
+
     container.appendChild(left);
     container.appendChild(right);
     adminMenu.appendChild(container);
+
+    // let isBulkMode = false; // Moved to top
 
     // Helper: fetch list of profesores with optional params (returns a Promise)
     function fetchProfesores(params = {}) {
@@ -246,6 +388,20 @@ function crearMenuDirectorio() {
                 const tr = document.createElement('tr');
                 tr.dataset.id = item.id;
                 tr.dataset.tipo = item.tipo;
+
+                if (isBulkMode) {
+                    const tdCheck = document.createElement('td');
+                    if (item.tipo === 'profesor') {
+                        const chk = document.createElement('input');
+                        chk.type = 'checkbox';
+                        chk.className = 'prof-check';
+                        chk.value = item.numeroEconomico;
+                        // stop propagation to prevent row click selection
+                        chk.onclick = function (e) { e.stopPropagation(); };
+                        tdCheck.appendChild(chk);
+                    }
+                    tr.appendChild(tdCheck);
+                }
 
                 const tdName = document.createElement('td');
                 const nameSpan = document.createElement('span'); nameSpan.textContent = item.nombre;

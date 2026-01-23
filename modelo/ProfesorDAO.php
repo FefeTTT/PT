@@ -907,5 +907,26 @@
 			$row = $s2->fetch(PDO::FETCH_ASSOC);
 			return $row ?: null;
 		}
+
+		/**
+		 * Actualizar o insertar el tipo de contrato para un profesor.
+		 */
+		public function actualizarTipoContrato(int $numeroEconomico, int $idTipo): bool {
+			// Verificar si existe contrato previo
+			$sql = "SELECT idProfesorContrato FROM profesorcontrato WHERE profesor_numeroEconomico = ? LIMIT 1";
+			$stmt = $this->conexion->prepare($sql);
+			$stmt->execute([$numeroEconomico]);
+			$row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+			if ($row) {
+				$sqlUpd = "UPDATE profesorcontrato SET profesortipo_idProfesorTipo = ? WHERE idProfesorContrato = ?";
+				$stmtUpd = $this->conexion->prepare($sqlUpd);
+				return $stmtUpd->execute([$idTipo, $row['idProfesorContrato']]);
+			} else {
+				$sqlIns = "INSERT INTO profesorcontrato (profesor_numeroEconomico, profesortipo_idProfesorTipo, descripcion) VALUES (?, ?, '')";
+				$stmtIns = $this->conexion->prepare($sqlIns);
+				return $stmtIns->execute([$numeroEconomico, $idTipo]);
+			}
+		}
 	}
 ?>
