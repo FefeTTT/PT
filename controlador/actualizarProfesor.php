@@ -33,8 +33,11 @@ try{
     }
 
     $dao = new ProfesorDAO($pdo);
-    $vo = new ProfesorVO($id, (int)$numeroEconomico, $nombre, $correo_uam, $correo_personal, $gradoEstudios, $celular);
-    $updated = $dao->actualizarProfesor($vo);
+    // Remove old ID from constructor. Constructor expects: numEco, name, emailU, emailP, degree, cell
+    $vo = new ProfesorVO((int)$numeroEconomico, $nombre, $correo_uam, $correo_personal, $gradoEstudios, $celular);
+    
+    // Pass $id (original ID) as second argument to support PK update if needed
+    $updated = $dao->actualizarProfesor($vo, $id);
     if (!$updated) throw new Exception('No se pudo actualizar el profesor');
 
     $response = ['ok' => true, 'profesor' => $updated];

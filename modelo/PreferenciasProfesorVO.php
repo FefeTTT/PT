@@ -5,8 +5,7 @@
 		private $observaciones;
 
 		function __construct( $profesor, $noGrupos, $observaciones){
-				$this->profesor= new ProfesorVO($profesor->getIdProfesor(),
-                    $profesor->getNumeroEconomico(),
+				$this->profesor= new ProfesorVO($profesor->getNumeroEconomico(),
                     $profesor->getNombre(),
                     $profesor->getCorreoUAM(),
                     $profesor->getCorreoP());

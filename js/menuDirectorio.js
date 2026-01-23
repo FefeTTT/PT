@@ -65,7 +65,17 @@ function crearMenuDirectorio() {
         nuevoAdminBtn.textContent = 'Nuevo administrativo';
         nuevoAdminBtn.addEventListener('click', mostrarModalNuevoAdministrativo);
         nav.appendChild(nuevoAdminBtn);
+
+        // Importar profesores (botón junto a Nuevo administrativo)
+        const importarProfBtn = document.createElement('button');
+        importarProfBtn.className = 'btn btn-info btn-sm mb-2 ms-2';
+        importarProfBtn.textContent = 'Importar profesores (CSV)';
+        importarProfBtn.addEventListener('click', function () {
+            window.location.href = 'scripts/formImportarProfesores.php';
+        });
+        nav.appendChild(importarProfBtn);
     }
+
 
     // Toggle button to show/hide filters and sort controls
     const toggleFiltersBtn = document.createElement('button');
@@ -602,8 +612,8 @@ function crearMenuDirectorio() {
             body.appendChild(contDisponProfesor);
 
             (function () {
-                try { console.debug('Solicitando disponibilidad para profesor', p.idProfesor); } catch (e) { }
-                fetch('controlador/recuperaDisponibilidadProfesorTrimestre.php?idProfesor=' + encodeURIComponent(p.idProfesor), { credentials: 'same-origin' })
+                try { console.debug('Solicitando disponibilidad para profesor', p.numeroEconomico); } catch (e) { }
+                fetch('controlador/recuperaDisponibilidadProfesorTrimestre.php?numeroEconomico=' + encodeURIComponent(p.numeroEconomico), { credentials: 'same-origin' })
                     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
                     .then(function (json) {
                         while (contDisponProfesor.firstChild) contDisponProfesor.removeChild(contDisponProfesor.firstChild);

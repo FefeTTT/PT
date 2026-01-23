@@ -10,11 +10,10 @@
 
 		public function obtenerProfesoresTodosSimple(): array{
 			$profesores = array();
-			$sql = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor;";
+			$sql = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor;";
 			$result = $this->conexion->query($sql);
 			while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 				$profesorVO = new ProfesorVO(
-					$row['idProfesor'],
 					$row['numeroEconomico'],
 					$row['nombre'],
 					$row['correo_uam'],
@@ -32,7 +31,6 @@
 		 */
 		private function buildProfesorVOFromRow(array $row): ProfesorVO {
 			return new ProfesorVO(
-				$row['idProfesor'],
 				$row['numeroEconomico'],
 				$row['nombre'],
 				$row['correo_uam'],
@@ -47,7 +45,7 @@
 		 * Devuelve array JSON (como toJSON) o null si no existe.
 		 */
 		public function obtenerProfesorPorNumeroEconomico(int $numeroEconomico): ?array {
-			$sql = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE numeroEconomico = ? LIMIT 1";
+			$sql = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE numeroEconomico = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$numeroEconomico]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -57,15 +55,15 @@
 		}
 
 		/**
-		 * Obtener idProfesor por número económico y correo (correo_uam o correo_personal)
-		 * Retorna int idProfesor o null si no existe.
+		 * Obtener ID (ahora numeroEconomico) por número económico y correo (correo_uam o correo_personal)
+		 * Retorna int numeroEconomico o null si no existe.
 		 */
 		public function obtenerIdPorNoEcoYCorreo($noEco, $correo): ?int {
-			$sql = "SELECT idProfesor FROM profesor WHERE (correo_uam = :correo OR correo_personal = :correo) AND numeroEconomico = :noEcon LIMIT 1";
+			$sql = "SELECT numeroEconomico FROM profesor WHERE (correo_uam = :correo OR correo_personal = :correo) AND numeroEconomico = :noEcon LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([':correo' => $correo, ':noEcon' => $noEco]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
-			if ($row && isset($row['idProfesor'])) return (int)$row['idProfesor'];
+			if ($row && isset($row['numeroEconomico'])) return (int)$row['numeroEconomico'];
 			return null;
 		}
 
@@ -74,7 +72,7 @@
 		 * Devuelve array JSON (como toJSON) o null si no existe.
 		 */
 		public function obtenerProfesorPorCorreoUAM(string $correoUAM): ?array {
-			$sql = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE correo_uam = ? LIMIT 1";
+			$sql = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE correo_uam = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$correoUAM]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -88,7 +86,7 @@
 		 * Devuelve array JSON (como toJSON) o null si no existe.
 		 */
 		public function obtenerProfesorPorCorreoPersonal(string $correoPersonal): ?array {
-			$sql = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE correo_personal = ? LIMIT 1";
+			$sql = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE correo_personal = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$correoPersonal]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -103,7 +101,7 @@
 		 */
 		public function obtenerProfesorPorNombre(string $nombre): ?array {
 			// Ensure uniqueness: there should not be more than one professor with the same name
-			$sql = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE nombre = ?";
+			$sql = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE nombre = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombre]);
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -118,17 +116,12 @@
 		}
 
 		/**
-		 * Obtener un profesor por su id.
-		 * Devuelve array JSON (como toJSON) o null si no existe.
+		 * Obtener un profesor por su id (ahora numeroEconomico).
+		 * Mantenido por compatibilidad pero redirige a buscar por numeroEconomico.
 		 */
 		public function obtenerProfesorPorId(int $idProfesor): ?array {
-			$sql = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE idProfesor = ? LIMIT 1";
-			$stmt = $this->conexion->prepare($sql);
-			$stmt->execute([$idProfesor]);
-			$row = $stmt->fetch(PDO::FETCH_ASSOC);
-			if (!$row) return null;
-			$vo = $this->buildProfesorVOFromRow($row);
-			return $vo->toJSON();
+            // idProfesor ya no existe, usamos numeroEconomico
+			return $this->obtenerProfesorPorNumeroEconomico($idProfesor);
 		}
 
 		/**
@@ -148,7 +141,7 @@
 			$sql = "SELECT a.idAreaAcademica AS idAreaAcademica, a.nombre, a.puesto
 				FROM areaacademica a
 				JOIN areaacademica_has_profesor ap ON a.idAreaAcademica = ap.areaAcademica_idAreaAcademica
-				JOIN profesor p ON ap.profesor_idProfesor = p.idProfesor
+				JOIN profesor p ON ap.profesor_numeroEconomico = p.numeroEconomico
 				WHERE p.nombre = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombreProfesor]);
@@ -165,7 +158,7 @@
 			$sql = "SELECT a.idAreaAcademica AS idAreaAcademica, a.nombre, a.puesto
 				FROM areaacademica a
 				JOIN areaacademica_has_profesor ap ON a.idAreaAcademica = ap.areaAcademica_idAreaAcademica
-				WHERE ap.profesor_idProfesor = ?";
+				WHERE ap.profesor_numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor]);
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -187,7 +180,7 @@
 			$sql = "SELECT g.idGrupoTematico, g.nombreGrupo, g.puesto
 				FROM grupotematico g
 				JOIN grupotematico_has_profesor gp ON g.idGrupoTematico = gp.grupoTematico_idGrupoTematico
-				JOIN profesor p ON gp.profesor_idProfesor = p.idProfesor
+				JOIN profesor p ON gp.profesor_numeroEconomico = p.numeroEconomico
 				WHERE p.nombre = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombreProfesor]);
@@ -203,7 +196,7 @@
 			$sql = "SELECT g.idGrupoTematico, g.nombreGrupo, g.puesto
 				FROM grupotematico g
 				JOIN grupotematico_has_profesor gp ON g.idGrupoTematico = gp.grupoTematico_idGrupoTematico
-				WHERE gp.profesor_idProfesor = ?";
+				WHERE gp.profesor_numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor]);
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -222,7 +215,7 @@
 			$sql = "SELECT pc.idProfesorContrato, pc.descripcion, pt.idProfesorTipo, pt.nombre AS tipoNombre
 				FROM profesorcontrato pc
 				JOIN profesortipo pt ON pc.profesortipo_idProfesorTipo = pt.idProfesorTipo
-				JOIN profesor p ON pc.profesor_idProfesor = p.idProfesor
+				JOIN profesor p ON pc.profesor_numeroEconomico = p.numeroEconomico
 				WHERE p.nombre = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombre]);
@@ -243,7 +236,7 @@
 			$sql = "SELECT pc.idProfesorContrato, pc.descripcion, pt.idProfesorTipo, pt.nombre AS tipoNombre
 				FROM profesorcontrato pc
 				JOIN profesortipo pt ON pc.profesortipo_idProfesorTipo = pt.idProfesorTipo
-				WHERE pc.profesor_idProfesor = ?";
+				WHERE pc.profesor_numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor]);
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -260,13 +253,13 @@
 		 * Retorna la fila insertada como arreglo asociativo o null en caso de error.
 		 */
 		public function insertarProfesorContrato(int $idProfesor, int $idProfesorTipo, ?string $descripcion){
-			$sql = "INSERT INTO profesorcontrato (profesor_idProfesor, profesortipo_idProfesorTipo, descripcion) VALUES (?, ?, ?)";
+			$sql = "INSERT INTO profesorcontrato (profesor_numeroEconomico, profesortipo_idProfesorTipo, descripcion) VALUES (?, ?, ?)";
 			$stmt = $this->conexion->prepare($sql);
 			$ok = $stmt->execute([$idProfesor, $idProfesorTipo, $descripcion]);
 			if (!$ok) return null;
 			$newId = (int)$this->conexion->lastInsertId();
 			// retrieve inserted row
-			$sql2 = "SELECT idProfesorContrato, profesor_idProfesor, profesortipo_idProfesorTipo, descripcion FROM profesorcontrato WHERE idProfesorContrato = ? LIMIT 1";
+			$sql2 = "SELECT idProfesorContrato, profesor_numeroEconomico, profesortipo_idProfesorTipo, descripcion FROM profesorcontrato WHERE idProfesorContrato = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
 			$s2->execute([$newId]);
 			$row = $s2->fetch(PDO::FETCH_ASSOC);
@@ -278,7 +271,7 @@
 		 * Retorna true si se eliminó alguna fila.
 		 */
 		public function eliminarProfesorContrato(int $idProfesorContrato, int $idProfesor): bool {
-			$stmt = $this->conexion->prepare('DELETE FROM profesorcontrato WHERE idProfesorContrato = ? AND profesor_idProfesor = ?');
+			$stmt = $this->conexion->prepare('DELETE FROM profesorcontrato WHERE idProfesorContrato = ? AND profesor_numeroEconomico = ?');
 			return $stmt->execute([$idProfesorContrato, $idProfesor]);
 		}
 
@@ -287,11 +280,11 @@
 		 * Retorna la fila actualizada como arreglo asociativo o null si no existe/ocurre error.
 		 */
 		public function actualizarProfesorContrato(int $idProfesorContrato, int $idProfesor, int $idProfesorTipo, ?string $descripcion): ?array {
-			$sql = "UPDATE profesorcontrato SET profesortipo_idProfesorTipo = ?, descripcion = ? WHERE idProfesorContrato = ? AND profesor_idProfesor = ?";
+			$sql = "UPDATE profesorcontrato SET profesortipo_idProfesorTipo = ?, descripcion = ? WHERE idProfesorContrato = ? AND profesor_numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$ok = $stmt->execute([$idProfesorTipo, $descripcion, $idProfesorContrato, $idProfesor]);
 			if (!$ok) return null;
-			$sql2 = "SELECT idProfesorContrato, profesor_idProfesor, profesortipo_idProfesorTipo, descripcion FROM profesorcontrato WHERE idProfesorContrato = ? AND profesor_idProfesor = ? LIMIT 1";
+			$sql2 = "SELECT idProfesorContrato, profesor_numeroEconomico, profesortipo_idProfesorTipo, descripcion FROM profesorcontrato WHERE idProfesorContrato = ? AND profesor_numeroEconomico = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
 			$s2->execute([$idProfesorContrato, $idProfesor]);
 			$row = $s2->fetch(PDO::FETCH_ASSOC);
@@ -304,7 +297,7 @@
 		public function obtenerContactosEmergenciaPorProfesorNombre(string $nombre): array {
 			$sql = "SELECT pe.idProfesorEmergencia, pe.nombre, pe.parentesco, pe.celular
 				FROM profesoremergencia pe
-				JOIN profesor p ON pe.profesor_idProfesor = p.idProfesor
+				JOIN profesor p ON pe.profesor_numeroEconomico = p.numeroEconomico
 				WHERE p.nombre = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombre]);
@@ -318,7 +311,7 @@
 		public function obtenerContactosEmergenciaPorProfesorId(int $idProfesor): array {
 			$sql = "SELECT idProfesorEmergencia, nombre, parentesco, celular
 				FROM profesoremergencia
-				WHERE profesor_idProfesor = ?";
+				WHERE profesor_numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor]);
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -330,13 +323,13 @@
 		 * Retorna la fila insertada como arreglo asociativo o null en caso de error.
 		 */
 		public function insertarProfesorEmergencia(int $idProfesor, string $nombre, string $parentesco, string $celular){
-			$sql = "INSERT INTO profesoremergencia (profesor_idProfesor, nombre, parentesco, celular) VALUES (?, ?, ?, ?)";
+			$sql = "INSERT INTO profesoremergencia (profesor_numeroEconomico, nombre, parentesco, celular) VALUES (?, ?, ?, ?)";
 			$stmt = $this->conexion->prepare($sql);
 			$ok = $stmt->execute([$idProfesor, $nombre, $parentesco, $celular]);
 			if (!$ok) return null;
 			$newId = (int)$this->conexion->lastInsertId();
 			// retrieve inserted row (safest using both keys)
-			$sql2 = "SELECT idProfesorEmergencia, profesor_idProfesor, nombre, parentesco, celular FROM profesoremergencia WHERE idProfesorEmergencia = ? AND profesor_idProfesor = ? LIMIT 1";
+			$sql2 = "SELECT idProfesorEmergencia, profesor_numeroEconomico, nombre, parentesco, celular FROM profesoremergencia WHERE idProfesorEmergencia = ? AND profesor_numeroEconomico = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
 			$s2->execute([$newId, $idProfesor]);
 			$row = $s2->fetch(PDO::FETCH_ASSOC);
@@ -352,9 +345,9 @@
 		 * Devuelve la fila encontrada o null si no existe.
 		 */
 		public function buscarProfesordisposicionPorNombreYTrimestre(string $nombreProfesor, int $idTrimestre): ?array {
-			$sql = "SELECT pd.idProfesorDisposicion, pd.trimestre_idTrimestre, pd.profesor_idProfesor, pd.estado, pd.notas
+			$sql = "SELECT pd.idProfesorDisposicion, pd.trimestre_idTrimestre, pd.profesor_numeroEconomico, pd.estado, pd.notas
 				FROM profesordisposicion pd
-				JOIN profesor p ON pd.profesor_idProfesor = p.idProfesor
+				JOIN profesor p ON pd.profesor_numeroEconomico = p.numeroEconomico
 				WHERE p.nombre = ? AND pd.trimestre_idTrimestre = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombreProfesor, $idTrimestre]);
@@ -366,9 +359,9 @@
 		 * Alterna: Buscar profesordisposicion por id de profesor y trimestre.
 		 */
 		public function buscarProfesordisposicionPorProfesorIdYTrimestre(int $idProfesor, int $idTrimestre): ?array {
-			$sql = "SELECT idProfesorDisposicion, trimestre_idTrimestre, profesor_idProfesor, estado, notas
+			$sql = "SELECT idProfesorDisposicion, trimestre_idTrimestre, profesor_numeroEconomico, estado, notas
 				FROM profesordisposicion
-				WHERE profesor_idProfesor = ? AND trimestre_idTrimestre = ? LIMIT 1";
+				WHERE profesor_numeroEconomico = ? AND trimestre_idTrimestre = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor, $idTrimestre]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -403,17 +396,17 @@
 				$selectExtra = '';
 			}
 
-			$sql = "SELECT DISTINCT p.idProfesor, p.numeroEconomico, p.nombre, p.gradoEstudios, p.celular, p.correo_uam, p.correo_personal" . $selectExtra . "
+			$sql = "SELECT DISTINCT p.numeroEconomico, p.nombre, p.gradoEstudios, p.celular, p.correo_uam, p.correo_personal" . $selectExtra . "
 				FROM profesor p
-				LEFT JOIN areaacademica_has_profesor aap ON p.idProfesor = aap.profesor_idProfesor
+				LEFT JOIN areaacademica_has_profesor aap ON p.numeroEconomico = aap.profesor_numeroEconomico
 				LEFT JOIN areaacademica aa ON aap.areaAcademica_idAreaAcademica = aa.idAreaAcademica
-				LEFT JOIN grupotematico_has_profesor gtp ON p.idProfesor = gtp.profesor_idProfesor
+				LEFT JOIN grupotematico_has_profesor gtp ON p.numeroEconomico = gtp.profesor_numeroEconomico
 				LEFT JOIN grupotematico gt ON gtp.grupoTematico_idGrupoTematico = gt.idGrupoTematico
-				LEFT JOIN profesor_has_area pha ON p.idProfesor = pha.profesor_idProfesor
+				LEFT JOIN profesor_has_area pha ON p.numeroEconomico = pha.profesor_numeroEconomico
 				LEFT JOIN area ar ON pha.area_idArea = ar.idArea
-				LEFT JOIN profesorcontrato pc ON p.idProfesor = pc.profesor_idProfesor
+				LEFT JOIN profesorcontrato pc ON p.numeroEconomico = pc.profesor_numeroEconomico
 				LEFT JOIN profesortipo pt ON pc.profesortipo_idProfesorTipo = pt.idProfesorTipo
-				LEFT JOIN profesordisposicion pd ON p.idProfesor = pd.profesor_idProfesor
+				LEFT JOIN profesordisposicion pd ON p.numeroEconomico = pd.profesor_numeroEconomico
 				WHERE 1=1";
 
 			// Search q
@@ -486,14 +479,14 @@
 			$jefeAreaIds = [];
 			$jefeGrupoIds = [];
 			if (isset($filters['areaAcademicaName']) && $filters['areaAcademicaName'] !== ''){
-				$sqlJ = "SELECT ap.profesor_idProfesor FROM areaacademica aax JOIN areaacademica_has_profesor ap ON aax.idAreaAcademica = ap.areaAcademica_idAreaAcademica WHERE aax.nombre = ? AND aax.puesto LIKE '%jef%'";
+				$sqlJ = "SELECT ap.profesor_numeroEconomico FROM areaacademica aax JOIN areaacademica_has_profesor ap ON aax.idAreaAcademica = ap.areaAcademica_idAreaAcademica WHERE aax.nombre = ? AND aax.puesto LIKE '%jef%'";
 				$stj = $this->conexion->prepare($sqlJ);
 				$stj->execute([$filters['areaAcademicaName']]);
 				$jrows = $stj->fetchAll(PDO::FETCH_COLUMN, 0);
 				$jefeAreaIds = array_map('intval', $jrows ?: []);
 			}
 			if (isset($filters['grupoTematicoName']) && $filters['grupoTematicoName'] !== ''){
-				$sqlG = "SELECT gp.profesor_idProfesor FROM grupotematico gx JOIN grupotematico_has_profesor gp ON gx.idGrupoTematico = gp.grupoTematico_idGrupoTematico WHERE gx.nombreGrupo = ? AND gx.puesto LIKE '%jef%'";
+				$sqlG = "SELECT gp.profesor_numeroEconomico FROM grupotematico gx JOIN grupotematico_has_profesor gp ON gx.idGrupoTematico = gp.grupoTematico_idGrupoTematico WHERE gx.nombreGrupo = ? AND gx.puesto LIKE '%jef%'";
 				$stg = $this->conexion->prepare($sqlG);
 				$stg->execute([$filters['grupoTematicoName']]);
 				$grows = $stg->fetchAll(PDO::FETCH_COLUMN, 0);
@@ -503,7 +496,6 @@
 			$profes = [];
 			foreach ($rows as $row) {
 				$vo = new ProfesorVO(
-					$row['idProfesor'],
 					$row['numeroEconomico'],
 					$row['nombre'],
 					$row['correo_uam'],
@@ -513,8 +505,8 @@
 				);
 				$json = $vo->toJSON();
 				// attach jefe flags computed from separate queries when name-filters are used
-				$json['isJefeArea'] = (!empty($jefeAreaIds) && in_array((int)$row['idProfesor'], $jefeAreaIds)) ? 1 : 0;
-				$json['isJefeGrupo'] = (!empty($jefeGrupoIds) && in_array((int)$row['idProfesor'], $jefeGrupoIds)) ? 1 : 0;
+				$json['isJefeArea'] = (!empty($jefeAreaIds) && in_array((int)$row['numeroEconomico'], $jefeAreaIds)) ? 1 : 0;
+				$json['isJefeGrupo'] = (!empty($jefeGrupoIds) && in_array((int)$row['numeroEconomico'], $jefeGrupoIds)) ? 1 : 0;
 				array_push($profes, $json);
 			}
 			return $profes;
@@ -577,7 +569,7 @@
 					FROM profesorpreferencias pp
 					JOIN trimestre t ON pp.trimestre_idTrimestre = t.idTrimestre
 					JOIN trimestreperiodo tp ON t.trimestreperiodo_idTrimestrePeriodo = tp.idTrimestrePeriodo
-					WHERE pp.profesor_idProfesor = ?
+					WHERE pp.profesor_numeroEconomico = ?
 					ORDER BY t.idTrimestre DESC";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor]);
@@ -593,7 +585,7 @@
 		public function obtenerProfesConPreferenciasEnTrimestre(array $ids, int $idTrimestre): array {
 			if (empty($ids) || $idTrimestre <= 0) return [];
 			$placeholders = implode(',', array_fill(0, count($ids), '?'));
-			$sql = "SELECT DISTINCT profesor_idProfesor FROM profesorpreferencias WHERE trimestre_idTrimestre = ? AND profesor_idProfesor IN ($placeholders)";
+			$sql = "SELECT DISTINCT profesor_numeroEconomico FROM profesorpreferencias WHERE trimestre_idTrimestre = ? AND profesor_numeroEconomico IN ($placeholders)";
 			$stmt = $this->conexion->prepare($sql);
 			$params = array_merge([(int)$idTrimestre], array_values($ids));
 			$stmt->execute($params);
@@ -610,7 +602,7 @@
 		public function obtenerProfesConProgramacionEnTrimestre(array $ids, int $idTrimestre): array {
 			if (empty($ids) || $idTrimestre <= 0) return [];
 			$placeholders = implode(',', array_fill(0, count($ids), '?'));
-			$sql = "SELECT DISTINCT pd.profesor_idProfesor FROM profesordisposicion pd JOIN programacion pr ON pr.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion WHERE pd.trimestre_idTrimestre = ? AND pd.profesor_idProfesor IN ($placeholders)";
+			$sql = "SELECT DISTINCT pd.profesor_numeroEconomico FROM profesordisposicion pd JOIN programacion pr ON pr.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion WHERE pd.trimestre_idTrimestre = ? AND pd.profesor_numeroEconomico IN ($placeholders)";
 			$stmt = $this->conexion->prepare($sql);
 			$params = array_merge([(int)$idTrimestre], array_values($ids));
 			$stmt->execute($params);
@@ -628,7 +620,7 @@
 					JOIN profesordisposicion pd ON pr.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion
 					JOIN trimestre t ON pd.trimestre_idTrimestre = t.idTrimestre
 					JOIN trimestreperiodo tp ON t.trimestreperiodo_idTrimestrePeriodo = tp.idTrimestrePeriodo
-					WHERE pd.profesor_idProfesor = ?
+					WHERE pd.profesor_numeroEconomico = ?
 					ORDER BY t.idTrimestre DESC";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor]);
@@ -648,7 +640,7 @@
 					JOIN uea u ON g.uea_idUEA = u.idUEA
 					JOIN grupo_has_horario gh ON g.idGrupo = gh.grupo_idGrupo
 					JOIN horario h ON gh.horario_idHorario = h.idHorario
-					WHERE pd.profesor_idProfesor = ? AND pd.trimestre_idTrimestre = ?
+					WHERE pd.profesor_numeroEconomico = ? AND pd.trimestre_idTrimestre = ?
 					ORDER BY u.claveUEA, g.claveGrupo, FIELD(h.dia,'Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'), h.horaInicio";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idProfesor, $idTrimestre]);
@@ -671,8 +663,10 @@
 				$vo->getCorreoUAM(),
 				$vo->getCorreoP()
 			]);
-			$newId = (int)$this->conexion->lastInsertId();
-			$sql2 = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE idProfesor = ? LIMIT 1";
+			// No lastInsertId needed, we inserted numeroEconomico manually as PK
+			$newId = (int)$vo->getNumeroEconomico();
+			
+			$sql2 = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE numeroEconomico = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
 			$s2->execute([$newId]);
 			$row = $s2->fetch(PDO::FETCH_ASSOC);
@@ -687,25 +681,25 @@
 			$this->conexion->beginTransaction();
 			try {
 				// eliminar asociaciones con areaacademica
-				$stmt = $this->conexion->prepare('DELETE FROM areaacademica_has_profesor WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM areaacademica_has_profesor WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				// eliminar asociaciones con grupotematico
-				$stmt = $this->conexion->prepare('DELETE FROM grupotematico_has_profesor WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM grupotematico_has_profesor WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				// eliminar asociaciones con area (profesor_has_area)
-				$stmt = $this->conexion->prepare('DELETE FROM profesor_has_area WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM profesor_has_area WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				// manejar lugares ligados: primero obtener ids, desasociar del profesor,
 				// y luego eliminar solo aquellos lugares que ya no estén asociados a ningún otro profesor
-				$stmt = $this->conexion->prepare('SELECT lugar_idLugar FROM profesor_has_lugar WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('SELECT lugar_idLugar FROM profesor_has_lugar WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 				$idsLugar = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 				if (!empty($idsLugar)){
 					// Desasociar todas las filas profesor_has_lugar para este profesor
-					$stmtDelAssoc = $this->conexion->prepare('DELETE FROM profesor_has_lugar WHERE profesor_idProfesor = ?');
+					$stmtDelAssoc = $this->conexion->prepare('DELETE FROM profesor_has_lugar WHERE profesor_numeroEconomico = ?');
 					$stmtDelAssoc->execute([$idProfesor]);
 
 					// Ahora borrar únicamente los lugares que ya no estén asociados a ningún profesor
@@ -716,15 +710,15 @@
 				}
 
 				// eliminar prestamos
-				$stmt = $this->conexion->prepare('DELETE FROM prestamo WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM prestamo WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				// eliminar contratos
-				$stmt = $this->conexion->prepare('DELETE FROM profesorcontrato WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM profesorcontrato WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				// manejar profesordisposicion + programacion
-				$stmt = $this->conexion->prepare('SELECT idProfesorDisposicion FROM profesordisposicion WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('SELECT idProfesorDisposicion FROM profesordisposicion WHERE profesor_numeroEconomico = ?');
 				$st = $stmt;
 				$st->execute([$idProfesor]);
 				$idsDisp = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
@@ -735,11 +729,11 @@
 					$stmtDelProg->execute($idsDisp);
 				}
 				// eliminar profesordisposicion
-				$stmt = $this->conexion->prepare('DELETE FROM profesordisposicion WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM profesordisposicion WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				// manejar profesorpreferencias y sus tablas asociadas
-				$stmt = $this->conexion->prepare('SELECT idProfesorPreferencias FROM profesorpreferencias WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('SELECT idProfesorPreferencias FROM profesorpreferencias WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 				$idsPref = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 				if (!empty($idsPref)){
@@ -756,11 +750,11 @@
 				}
 
 				// eliminar contactos de emergencia
-				$stmt = $this->conexion->prepare('DELETE FROM profesoremergencia WHERE profesor_idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM profesoremergencia WHERE profesor_numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				// finalmente eliminar el profesor
-				$stmt = $this->conexion->prepare('DELETE FROM profesor WHERE idProfesor = ?');
+				$stmt = $this->conexion->prepare('DELETE FROM profesor WHERE numeroEconomico = ?');
 				$stmt->execute([$idProfesor]);
 
 				$this->conexion->commit();
@@ -775,9 +769,12 @@
 		 * Actualizar datos básicos de un profesor.
 		 * Retorna el registro actualizado como arreglo asociativo.
 		 */
-		public function actualizarProfesor(ProfesorVO $vo): array {
-			$sql = "UPDATE profesor SET numeroEconomico = ?, nombre = ?, gradoEstudios = ?, celular = ?, correo_uam = ?, correo_personal = ? WHERE idProfesor = ?";
+		public function actualizarProfesor(ProfesorVO $vo, ?int $oldNumeroEconomico = null): array {
+			$sql = "UPDATE profesor SET numeroEconomico = ?, nombre = ?, gradoEstudios = ?, celular = ?, correo_uam = ?, correo_personal = ? WHERE numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
+			
+			$targetId = ($oldNumeroEconomico !== null) ? $oldNumeroEconomico : (int)$vo->getNumeroEconomico();
+
 			$stmt->execute([
 				(int)$vo->getNumeroEconomico(),
 				$vo->getNombre(),
@@ -785,12 +782,14 @@
 				$vo->getCelular(),
 				$vo->getCorreoUAM(),
 				$vo->getCorreoP(),
-				(int)$vo->getIdProfesor()
+				$targetId
 			]);
+			
 			// retornar fila actualizada
-			$sql2 = "SELECT idProfesor, numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE idProfesor = ? LIMIT 1";
+			$sql2 = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal FROM profesor WHERE numeroEconomico = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
-			$s2->execute([(int)$vo->getIdProfesor()]);
+			// Use the NEW numeroEconomico to fetch
+			$s2->execute([(int)$vo->getNumeroEconomico()]);
 			$row = $s2->fetch(PDO::FETCH_ASSOC);
 			return $row ?: [];
 		}
@@ -821,7 +820,7 @@
 		}
 
 		public function obtenerProfesorVinculadoAreaAcademica(int $idAreaAcademica): ?array {
-			$sql = "SELECT p.idProfesor, p.numeroEconomico, p.nombre FROM areaacademica_has_profesor aap JOIN profesor p ON aap.profesor_idProfesor = p.idProfesor WHERE aap.areaAcademica_idAreaAcademica = ? LIMIT 1";
+			$sql = "SELECT p.numeroEconomico, p.nombre FROM areaacademica_has_profesor aap JOIN profesor p ON aap.profesor_numeroEconomico = p.numeroEconomico WHERE aap.areaAcademica_idAreaAcademica = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idAreaAcademica]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -830,13 +829,13 @@
 
 		public function insertarAreaAcademicaHasProfesor(int $idAreaAcademica, int $idProfesor): bool {
 			try{
-				$stmt = $this->conexion->prepare('INSERT IGNORE INTO areaacademica_has_profesor (areaAcademica_idAreaAcademica, profesor_idProfesor) VALUES (?, ?)');
+				$stmt = $this->conexion->prepare('INSERT IGNORE INTO areaacademica_has_profesor (areaAcademica_idAreaAcademica, profesor_numeroEconomico) VALUES (?, ?)');
 				return $stmt->execute([$idAreaAcademica, $idProfesor]);
 			} catch (Exception $e){ return false; }
 		}
 
 		public function eliminarAreaAcademicaHasProfesor(int $idAreaAcademica, int $idProfesor): bool {
-			$stmt = $this->conexion->prepare('DELETE FROM areaacademica_has_profesor WHERE areaAcademica_idAreaAcademica = ? AND profesor_idProfesor = ?');
+			$stmt = $this->conexion->prepare('DELETE FROM areaacademica_has_profesor WHERE areaAcademica_idAreaAcademica = ? AND profesor_numeroEconomico = ?');
 			return $stmt->execute([$idAreaAcademica, $idProfesor]);
 		}
 
@@ -854,7 +853,7 @@
 		}
 
 		public function obtenerProfesorVinculadoGrupoTematico(int $idGrupoTematico): ?array {
-			$sql = "SELECT p.idProfesor, p.numeroEconomico, p.nombre FROM grupotematico_has_profesor gtp JOIN profesor p ON gtp.profesor_idProfesor = p.idProfesor WHERE gtp.grupoTematico_idGrupoTematico = ? LIMIT 1";
+			$sql = "SELECT p.numeroEconomico, p.nombre FROM grupotematico_has_profesor gtp JOIN profesor p ON gtp.profesor_numeroEconomico = p.numeroEconomico WHERE gtp.grupoTematico_idGrupoTematico = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idGrupoTematico]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -874,13 +873,13 @@
 
 		public function insertarGrupoTematicoHasProfesor(int $idGrupoTematico, int $idProfesor): bool {
 			try{
-				$stmt = $this->conexion->prepare('INSERT IGNORE INTO grupotematico_has_profesor (grupoTematico_idGrupoTematico, profesor_idProfesor) VALUES (?, ?)');
+				$stmt = $this->conexion->prepare('INSERT IGNORE INTO grupotematico_has_profesor (grupoTematico_idGrupoTematico, profesor_numeroEconomico) VALUES (?, ?)');
 				return $stmt->execute([$idGrupoTematico, $idProfesor]);
 			} catch (Exception $e){ return false; }
 		}
 
 		public function eliminarGrupoTematicoHasProfesor(int $idGrupoTematico, int $idProfesor): bool {
-			$stmt = $this->conexion->prepare('DELETE FROM grupotematico_has_profesor WHERE grupoTematico_idGrupoTematico = ? AND profesor_idProfesor = ?');
+			$stmt = $this->conexion->prepare('DELETE FROM grupotematico_has_profesor WHERE grupoTematico_idGrupoTematico = ? AND profesor_numeroEconomico = ?');
 			return $stmt->execute([$idGrupoTematico, $idProfesor]);
 		}
 
@@ -889,7 +888,7 @@
 		 * Retorna true si se eliminó alguna fila.
 		 */
 		public function eliminarProfesorEmergencia(int $idProfesorEmergencia, int $idProfesor): bool {
-			$stmt = $this->conexion->prepare('DELETE FROM profesoremergencia WHERE idProfesorEmergencia = ? AND profesor_idProfesor = ?');
+			$stmt = $this->conexion->prepare('DELETE FROM profesoremergencia WHERE idProfesorEmergencia = ? AND profesor_numeroEconomico = ?');
 			return $stmt->execute([$idProfesorEmergencia, $idProfesor]);
 		}
 
@@ -898,11 +897,11 @@
 		 * Retorna la fila actualizada como arreglo asociativo o null si no existe/ocurre error.
 		 */
 		public function actualizarProfesorEmergencia(int $idProfesorEmergencia, int $idProfesor, string $nombre, string $parentesco, string $celular): ?array {
-			$sql = "UPDATE profesoremergencia SET nombre = ?, parentesco = ?, celular = ? WHERE idProfesorEmergencia = ? AND profesor_idProfesor = ?";
+			$sql = "UPDATE profesoremergencia SET nombre = ?, parentesco = ?, celular = ? WHERE idProfesorEmergencia = ? AND profesor_numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$ok = $stmt->execute([$nombre, $parentesco, $celular, $idProfesorEmergencia, $idProfesor]);
 			if (!$ok) return null;
-			$sql2 = "SELECT idProfesorEmergencia, profesor_idProfesor, nombre, parentesco, celular FROM profesoremergencia WHERE idProfesorEmergencia = ? AND profesor_idProfesor = ? LIMIT 1";
+			$sql2 = "SELECT idProfesorEmergencia, profesor_numeroEconomico, nombre, parentesco, celular FROM profesoremergencia WHERE idProfesorEmergencia = ? AND profesor_numeroEconomico = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
 			$s2->execute([$idProfesorEmergencia, $idProfesor]);
 			$row = $s2->fetch(PDO::FETCH_ASSOC);

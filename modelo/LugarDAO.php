@@ -16,7 +16,7 @@ class LugarDAO{
         $sql = "SELECT l.idLugar, l.edificio, l.piso, l.cubiculo, l.nombre, l.notas
                 FROM profesor_has_lugar pl
                 JOIN lugar l ON pl.lugar_idLugar = l.idLugar
-                WHERE pl.profesor_idProfesor = ?
+                WHERE pl.profesor_numeroEconomico = ?
                 ORDER BY l.edificio, l.piso, l.nombre";
         $stmt = $this->conexion->prepare($sql);
         $stmt->execute([$idProfesor]);
@@ -48,7 +48,7 @@ class LugarDAO{
             if (!$ok){ $this->conexion->rollBack(); return null; }
             $idLugar = (int)$this->conexion->lastInsertId();
 
-            $stmt2 = $this->conexion->prepare('INSERT IGNORE INTO profesor_has_lugar (profesor_idProfesor, lugar_idLugar) VALUES (?, ?)');
+            $stmt2 = $this->conexion->prepare('INSERT IGNORE INTO profesor_has_lugar (profesor_numeroEconomico, lugar_idLugar) VALUES (?, ?)');
             $stmt2->execute([$idProfesor, $idLugar]);
 
             $this->conexion->commit();
@@ -80,7 +80,7 @@ class LugarDAO{
      * Desasocia un lugar de un profesor (elimina fila profesor_has_lugar)
      */
     public function desasociarLugar(int $idProfesor, int $idLugar): bool {
-        $sql = "DELETE FROM profesor_has_lugar WHERE profesor_idProfesor = ? AND lugar_idLugar = ?";
+        $sql = "DELETE FROM profesor_has_lugar WHERE profesor_numeroEconomico = ? AND lugar_idLugar = ?";
         $stmt = $this->conexion->prepare($sql);
         return $stmt->execute([$idProfesor, $idLugar]);
     }

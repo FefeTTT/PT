@@ -18,7 +18,8 @@
         <label for="csvfile">Archivo CSV: <input type="file" id="csvfile" name="csvfile" accept="text/csv,.csv" required /></label>
       </div>
       <div style="margin-top:12px;">
-        <button type="submit">Subir e importar</button>
+        <button type="submit" style="padding: 6px 12px; cursor: pointer; background-color: #0d6efd; color: white; border: none; border-radius: 4px;">Ejecutar importación</button>
+        <button type="button" onclick="history.back()" style="padding: 6px 12px; cursor: pointer; margin-left: 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px;">Volver</button>
       </div>
     </form>
 

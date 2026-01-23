@@ -13,8 +13,8 @@ if (!isset($_SESSION['success']) || !$_SESSION['success']) {
     exit;
 }
 
-$idProfesor = isset($_GET['idProfesor']) ? (int)$_GET['idProfesor'] : (isset($_GET['id']) ? (int)$_GET['id'] : 0);
-if ($idProfesor <= 0) {
+$numeroEconomico = isset($_GET['numeroEconomico']) ? (int)$_GET['numeroEconomico'] : (isset($_GET['id']) ? (int)$_GET['id'] : 0);
+if ($numeroEconomico <= 0) {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'PROF_INVALID']);
     exit;
@@ -43,7 +43,7 @@ try {
     $idTrimestre = (int)$target['idTrimestre'];
 
     $profDao = new ProfesordisposicionDAO($pdo);
-    $disp = $profDao->buscarPorProfesorYTrimestre($idProfesor, $idTrimestre);
+    $disp = $profDao->buscarPorProfesorYTrimestre($numeroEconomico, $idTrimestre);
 
     echo json_encode(['ok' => true, 'trimestre' => $target, 'disposicion' => $disp]);
 } catch (Exception $e) {

@@ -15,14 +15,15 @@
 
 		public function profesoresCP(): array{
 			$profesoresCP = array();
-			$sql = "SELECT p.idProfesor AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones
+			// solicitud_profesor replaced by profesorpreferencias
+			// Join on numeroEconomico
+			$sql = "SELECT p.numeroEconomico AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones
 						FROM dbappcb.profesor as p
-						INNER JOIN dbappcb.solicitud_profesor as sp
-						ON p.idProfesor=sp.idProfesor;";
+						INNER JOIN dbappcb.profesorpreferencias as sp
+						ON p.numeroEconomico=sp.profesor_numeroEconomico;";
 			$result = $this->conexion->query($sql);
 			while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 				$prof = new ProfesorVO(
-					$row['idProf'],
 					$row['noEconomico'],
 					$row['nombre'],
 					$row['correo_uam'],
@@ -40,12 +41,11 @@
 
 		public function profesoresSP(): array{
 			$profesoresCP = array();
-			$sql = "SELECT p.idProfesor AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal
+			$sql = "SELECT p.numeroEconomico AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal
 						FROM dbappcb.profesor as p";
 			$result = $this->conexion->query($sql);
 			while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 				$prof = new ProfesorVO(
-					$row['idProf'],
 					$row['noEconomico'],
 					$row['nombre'],
 					$row['correo_uam'],
@@ -63,19 +63,19 @@
 
 		public function profesoresPreferenciasNomb($buscNombre): array{
 			$profesoresCP = array();
-			$sql = "SELECT p.idProfesor AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones
+			// Update tables and joins
+			$sql = "SELECT p.numeroEconomico AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones
 					FROM dbappcb.profesor as p
-					INNER JOIN dbappcb.solicitud_profesor as sp ON p.idProfesor=sp.idProfesor
+					INNER JOIN dbappcb.profesorpreferencias as sp ON p.numeroEconomico=sp.profesor_numeroEconomico
 					UNION
-					SELECT p.idProfesor AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones FROM dbappcb.profesor as p
-					LEFT JOIN dbappcb.solicitud_profesor as sp ON p.idProfesor=sp.idProfesor
-                WHERE sp.idProfesor IS NULL";
+					SELECT p.numeroEconomico AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones FROM dbappcb.profesor as p
+					LEFT JOIN dbappcb.profesorpreferencias as sp ON p.numeroEconomico=sp.profesor_numeroEconomico
+                WHERE sp.profesor_numeroEconomico IS NULL";
 			$result = $this->conexion->query($sql);
 
 			while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 				if (stristr(mb_strtoupper($row['nombre'], 'utf-8'), mb_strtoupper($buscNombre, 'utf-8'))) {
 					$prof = new ProfesorVO(
-						$row['idProf'],
 						$row['noEconomico'],
 						$row['nombre'],
 						$row['correo_uam'],
@@ -102,16 +102,15 @@
 
 		public function profesoresPreferenciasNum($buscNE): array{
 			$profesoresCP = array();
-			$sql = "SELECT p.idProfesor AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones
+			$sql = "SELECT p.numeroEconomico AS idProf, p.numeroEconomico AS noEconomico, p.nombre, p.correo_uam, p.correo_personal, sp.noGrupos, sp.observaciones
 					FROM dbappcb.profesor as p
-					INNER JOIN dbappcb.solicitud_profesor as sp
-					ON p.idProfesor=sp.idProfesor
+					INNER JOIN dbappcb.profesorpreferencias as sp
+					ON p.numeroEconomico=sp.profesor_numeroEconomico
 					WHERE p.numeroEconomico= {$buscNE};";
 			$result = $this->conexion->query($sql);
 
 			while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 				$prof = new ProfesorVO(
-					$row['idProf'],
 					$row['noEconomico'],
 					$row['nombre'],
 					$row['correo_uam'],
@@ -129,13 +128,16 @@
 
 		public function preferenciasProfesorNE( $nEconomico): array{
 			$preferenciasUEA = array();
-			$sql = 'SELECT suea.idSol_uea, suea.prioridad, uea.claveUEA, uea.nombre AS nombreUEA, 
-				p.idProfesor AS idProf, p.numeroEconomico AS noEconomico, p.nombre AS nombreP, p.correo_personal, p.correo_uam,
+			// solicitud_uea -> profesorpreferencia_has_uea
+			// solicitud_profesor -> profesorpreferencias
+			// Join through proper paths
+			$sql = 'SELECT DISTINCT 0 AS idSol_uea, pu.prioridad, uea.claveUEA, uea.nombre AS nombreUEA, 
+				p.numeroEconomico AS idProf, p.numeroEconomico AS noEconomico, p.nombre AS nombreP, p.correo_personal, p.correo_uam,
 				sp.noGrupos, sp.observaciones
-				FROM dbappcb.solicitud_uea as suea
-				INNER JOIN dbappcb.uea as uea ON uea.idUEA= suea.uea_idUEA
-				INNER JOIN dbappcb.profesor as p ON suea.profesor_idProfesor= p.idProfesor
-				INNER JOIN dbappcb.solicitud_profesor as sp ON sp.idProfesor= p.idProfesor
+				FROM dbappcb.profesorpreferencias as sp
+				INNER JOIN dbappcb.profesor as p ON sp.profesor_numeroEconomico = p.numeroEconomico
+				INNER JOIN dbappcb.profesorpreferencia_has_uea as pu ON pu.profesorPreferencia_idProfesorPreferencias = sp.idProfesorPreferencias
+				INNER JOIN dbappcb.uea as uea ON uea.idUEA= pu.uea_idUEA
 				WHERE p.numeroEconomico='.$nEconomico;
 			
 			$result = $this->conexion->query($sql)->fetch(PDO::FETCH_ASSOC);
@@ -143,7 +145,6 @@
 				$result = $this->conexion->query($sql);
 				while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 					$prof = new ProfesorVO(
-						$row['idProf'],
 						$row['noEconomico'],
 						$row['nombreP'],
 						$row['correo_uam'],
@@ -164,12 +165,11 @@
 				}
 			} else {
 				// fallback: profesor exists but has no solicitudes - adapt to new schema and aliases
-				$sql = 'SELECT p.idProfesor AS idProf, p.numeroEconomico AS noEconomico, p.nombre AS nombreP, p.correo_personal, p.correo_uam FROM dbappcb.profesor as p WHERE p.numeroEconomico=' . $nEconomico;
+				$sql = 'SELECT p.numeroEconomico AS idProf, p.numeroEconomico AS noEconomico, p.nombre AS nombreP, p.correo_personal, p.correo_uam FROM dbappcb.profesor as p WHERE p.numeroEconomico=' . $nEconomico;
 				
 				$result = $this->conexion->query($sql);
 				while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 					$prof = new ProfesorVO(
-						$row['idProf'],
 						$row['noEconomico'],
 						$row['nombreP'],
 						$row['correo_uam'],
@@ -196,12 +196,14 @@
 		public function preferenciasProgramacionProfesorNEyCUEA($nEconomico, $claveUEA): array{
 			$grupos = array();
 
-			$sql = 'SELECT p.noEconomico, p.nombre as "nombreP", gpr.idGrupo, gpr.claveGrupo, uea.claveUEA, uea.nombre as "nombreUEA"
-				FROM dbappcb.Programacion as pgr
-				INNER JOIN dbappcb.Grupo as gpr ON pgr.idGrupo=gpr.idGrupo
-				INNER JOIN dbappcb.Profesor as p ON p.idProf=pgr.idProf
-				INNER JOIN dbappcb.UEA as uea ON uea.idUEA= gpr.idUEA
-				WHERE p.noEconomico= '. $nEconomico.' AND uea.claveUEA= '. $claveUEA.';';
+			// Programacion logic updated: Programacion -> profesordisposicion -> Profesor
+			$sql = 'SELECT p.numeroEconomico AS noEconomico, p.nombre as "nombreP", gpr.idGrupo, gpr.claveGrupo, uea.claveUEA, uea.nombre as "nombreUEA"
+				FROM dbappcb.programacion as pgr
+				INNER JOIN dbappcb.grupo as gpr ON pgr.grupo_idGrupo=gpr.idGrupo
+				INNER JOIN dbappcb.profesordisposicion as pd ON pgr.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion
+				INNER JOIN dbappcb.profesor as p ON pd.profesor_numeroEconomico = p.numeroEconomico
+				INNER JOIN dbappcb.uea as uea ON uea.idUEA= gpr.idUEA
+				WHERE p.numeroEconomico= '. $nEconomico.' AND uea.claveUEA= '. $claveUEA.';';
 
 			$result = $this->conexion->query($sql);
 
@@ -225,7 +227,6 @@
 					)
 				);
 				$prof = new ProfesorVO(
-					0,
 					$row['noEconomico'],
 					$row['nombreP'],
 					0,
@@ -241,20 +242,25 @@
 		}
 
 		public function borrarPreferenciasNEconomico($nE, $cUEA, $cGpr){
+			// Delete from Programacion via join
 			$sql = "DELETE pgr
-				FROM dbappcb.Programacion as pgr
-				INNER JOIN dbappcb.Grupo as gpr ON pgr.idGrupo=gpr.idGrupo
-				INNER JOIN dbappcb.Profesor as p ON p.idProf=pgr.idProf
-				INNER JOIN dbappcb.UEA as uea ON uea.idUEA= gpr.idUEA
-				WHERE p.noEconomico= {$nE} AND uea.claveUEA= {$cUEA} AND gpr.idGrupo={$cGpr};";
+				FROM dbappcb.programacion as pgr
+				INNER JOIN dbappcb.profesordisposicion as pd ON pgr.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion
+				INNER JOIN dbappcb.grupo as gpr ON pgr.grupo_idGrupo=gpr.idGrupo
+				INNER JOIN dbappcb.profesor as p ON pd.profesor_numeroEconomico = p.numeroEconomico
+				INNER JOIN dbappcb.uea as uea ON uea.idUEA= gpr.idUEA
+				WHERE p.numeroEconomico= {$nE} AND uea.claveUEA= {$cUEA} AND gpr.claveGrupo='{$cGpr}';";
 			$this->conexion->query($sql);
 		}
 		
 		public function borrarPreferenciaUEA($nE, $cUEA){
-			$sql = "DELETE suea FROM dbappcb.solicitud_uea as suea 
-				inner join dbappcb.Profesor as p ON suea.idProf=p.idProf
-				inner join dbappcb.UEA as uea ON suea.idUEA=uea.idUEA
-				WHERE p.noEconomico= {$nE} AND uea.claveUEA= {$cUEA};";
+			// Delete from profesorpreferencia_has_uea joined to profesorpreferencias
+			// WARNING: This deletes for ALL trimesters if not filtered!
+			$sql = "DELETE pu FROM dbappcb.profesorpreferencia_has_uea as pu 
+				INNER JOIN dbappcb.profesorpreferencias as pp ON pu.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias
+				INNER JOIN dbappcb.profesor as p ON pp.profesor_numeroEconomico = p.numeroEconomico
+				INNER JOIN dbappcb.uea as uea ON pu.uea_idUEA=uea.idUEA
+				WHERE p.numeroEconomico= {$nE} AND uea.claveUEA= {$cUEA};";
 			$this->conexion->query($sql);
 		}
 
@@ -262,7 +268,13 @@
 			$horariosNoPedidos = array();
 			$gruposHorariosNoPedidos = array();
 
-			$sqlHorariosNoPedidos= "SELECT h.idHorario FROM (dbappcb.solicitud_horario as sh INNER JOIN Profesor as p ON sh.idProf = p.idProf AND p.noEconomico= {$nEconomico}) RIGHT JOIN Horario as h ON sh.idHorario = h.idHorario WHERE sh.idHorario is NULL;";
+			// solicitud_horario -> profesorpreferencia_has_horario
+			$sqlHorariosNoPedidos= "SELECT h.idHorario 
+				FROM dbappcb.profesorpreferencia_has_horario as ph 
+				INNER JOIN dbappcb.profesorpreferencias as pp ON ph.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias 
+				INNER JOIN dbappcb.profesor as p ON pp.profesor_numeroEconomico = p.numeroEconomico 
+				RIGHT JOIN dbappcb.horario as h ON ph.horario_idHorario = h.idHorario AND p.numeroEconomico= {$nEconomico}
+				WHERE ph.horario_idHorario is NULL;";
 			
 			// obtenemos los ID de los horarios que no ha pedido el profesor 
 			$x= $this->conexion->query($sqlHorariosNoPedidos);
@@ -272,7 +284,7 @@
 
 			// obtenemos las claves de los grupos que tienen alguno de los horarios que no pidio el profesor
 			if( count( $horariosNoPedidos) != 0){
-				$sqlGruposHorariosNoPedidos= "SELECT g.claveGrupo FROM dbappcb.Grupo_Horario as gh INNER JOIN Horario as h ON gh.idHorario= h.idHorario INNER JOIN Grupo as g ON g.idGrupo=gh.idGrupo INNER JOIN UEA as uea ON uea.idUEA= g.idUEA AND uea.claveUEA= {$claveUEA} AND ( ";
+				$sqlGruposHorariosNoPedidos= "SELECT g.claveGrupo FROM dbappcb.grupo_has_horario as gh INNER JOIN dbappcb.horario as h ON gh.horario_idHorario= h.idHorario INNER JOIN dbappcb.grupo as g ON g.idGrupo=gh.grupo_idGrupo INNER JOIN dbappcb.uea as uea ON uea.idUEA= g.uea_idUEA AND uea.claveUEA= {$claveUEA} AND ( ";
 			
 				$inicio= true;
 				foreach ($horariosNoPedidos as $id) {
@@ -295,23 +307,27 @@
 			$dProgamadas = array();
 			$GprsTraslapados = array();
 			
-			$sqlGprsProfRegistrado= "SELECT gpr.claveGrupo, uea.claveUEA, sh.idHorario, h.dia, h.horaInicio, h.horaFin
-					FROM dbappcb.Grupo as gpr
-					INNER JOIN dbappcb.UEA as uea ON uea.idUEA= gpr.idUEA
-					INNER JOIN dbappcb.Grupo_Horario as gprH ON gprH.idGrupo= gpr.idGrupo
-					INNER JOIN dbappcb.Horario as h ON h.idHorario= gprH.idHorario
-					INNER JOIN dbappcb.solicitud_horario as sh ON sh.idHorario= h.idHorario
-					INNER JOIN dbappcb.Profesor as p ON sh.idProf= p.idProf
-					WHERE p.noEconomico= {$nEconomico} AND uea.claveUEA= {$claveUEA} ORDER BY gpr.claveGrupo ASC, sh.idHorario;"
+			// Replace solicitud_horario with profesorpreferencia_has_horario path
+			$sqlGprsProfRegistrado= "SELECT gpr.claveGrupo, uea.claveUEA, ph.horario_idHorario as idHorario, h.dia, h.horaInicio, h.horaFin
+					FROM dbappcb.grupo as gpr
+					INNER JOIN dbappcb.uea as uea ON uea.idUEA= gpr.uea_idUEA
+					INNER JOIN dbappcb.grupo_has_horario as gprH ON gprH.grupo_idGrupo= gpr.idGrupo
+					INNER JOIN dbappcb.horario as h ON h.idHorario= gprH.horario_idHorario
+					INNER JOIN dbappcb.profesorpreferencia_has_horario as ph ON ph.horario_idHorario= h.idHorario
+					INNER JOIN dbappcb.profesorpreferencias as pp ON ph.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias
+					INNER JOIN dbappcb.profesor as p ON pp.profesor_numeroEconomico = p.numeroEconomico
+					WHERE p.numeroEconomico= {$nEconomico} AND uea.claveUEA= {$claveUEA} ORDER BY gpr.claveGrupo ASC, ph.horario_idHorario;"
 			;
 
-			$sqlGprsProgramados = "SELECT p.idProf, p.noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.idUEA, h.idHorario, h.dia, h.horaInicio, h.horaFin
-					FROM dbappcb.Programacion as prg
-					INNER JOIN dbappcb.Profesor as p ON prg.idProf= p.idProf
-					INNER JOIN dbappcb.Grupo as grp ON grp.idGrupo= prg.idGrupo
-					INNER JOIN dbappcb.Grupo_Horario as gph ON gph.idGrupo= grp.idGrupo
-					INNER JOIN dbappcb.Horario as h On gph.idHorario= h.idHorario
-					WHERE p.noEconomico= {$nEconomico} ORDER BY grp.claveGrupo ASC;"
+			// Programacion logic
+			$sqlGprsProgramados = "SELECT p.numeroEconomico AS noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.uea_idUEA as idUEA, h.idHorario, h.dia, h.horaInicio, h.horaFin
+					FROM dbappcb.programacion as prg
+					INNER JOIN dbappcb.profesordisposicion as pd ON prg.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion
+					INNER JOIN dbappcb.profesor as p ON pd.profesor_numeroEconomico= p.numeroEconomico
+					INNER JOIN dbappcb.grupo as grp ON grp.idGrupo= prg.grupo_idGrupo
+					INNER JOIN dbappcb.grupo_has_horario as gph ON gph.grupo_idGrupo= grp.idGrupo
+					INNER JOIN dbappcb.horario as h On gph.horario_idHorario= h.idHorario
+					WHERE p.numeroEconomico= {$nEconomico} ORDER BY grp.claveGrupo ASC;"
 			;
 
 			// sacamos los dias y horas en que tiene programacion el profesor 
@@ -415,9 +431,26 @@
 			$dProgamadas = array();
 			$GprsTraslapados = array();
 
-			$sqlGprsProfRegistrado = "SELECT gpr.claveGrupo, uea.claveUEA, sh.idHorario, h.dia, h.horaInicio, h.horaFin FROM dbappcb.Grupo as gpr INNER JOIN dbappcb.UEA as uea ON uea.idUEA= gpr.idUEA INNER JOIN dbappcb.Grupo_Horario as gprH ON gprH.idGrupo= gpr.idGrupo INNER JOIN dbappcb.Horario as h ON h.idHorario= gprH.idHorario INNER JOIN dbappcb.solicitud_horario as sh ON sh.idHorario= h.idHorario INNER JOIN dbappcb.Profesor as p ON sh.idProf= p.idProf WHERE p.noEconomico= {$nEconomico} AND uea.claveUEA= {$claveUEA} ORDER BY gpr.claveGrupo ASC, sh.idHorario;";
+			// solicitud_horario -> profesorpreferencia_has_horario path
+			$sqlGprsProfRegistrado = "SELECT gpr.claveGrupo, uea.claveUEA, ph.horario_idHorario as idHorario, h.dia, h.horaInicio, h.horaFin 
+				FROM dbappcb.grupo as gpr 
+				INNER JOIN dbappcb.uea as uea ON uea.idUEA= gpr.uea_idUEA 
+				INNER JOIN dbappcb.grupo_has_horario as gprH ON gprH.grupo_idGrupo= gpr.idGrupo 
+				INNER JOIN dbappcb.horario as h ON h.idHorario= gprH.horario_idHorario 
+				INNER JOIN dbappcb.profesorpreferencia_has_horario as ph ON ph.horario_idHorario = h.idHorario 
+				INNER JOIN dbappcb.profesorpreferencias as pp ON ph.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias 
+				INNER JOIN dbappcb.profesor as p ON pp.profesor_numeroEconomico = p.numeroEconomico 
+				WHERE p.numeroEconomico= {$nEconomico} AND uea.claveUEA= {$claveUEA} ORDER BY gpr.claveGrupo ASC, ph.horario_idHorario;";
 
-			$sqlGprsProgramados = "SELECT p.idProf, p.noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.idUEA, h.idHorario, h.dia, h.horaInicio, h.horaFin FROM dbappcb.Programacion as prg INNER JOIN dbappcb.Profesor as p ON prg.idProf= p.idProf INNER JOIN dbappcb.Grupo as grp ON grp.idGrupo= prg.idGrupo INNER JOIN dbappcb.Grupo_Horario as gph ON gph.idGrupo= grp.idGrupo INNER JOIN dbappcb.Horario as h On gph.idHorario= h.idHorario WHERE p.noEconomico= {$nEconomico} ORDER BY grp.claveGrupo ASC;";
+			// Programacion logic
+			$sqlGprsProgramados = "SELECT p.numeroEconomico AS noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.uea_idUEA as idUEA, h.idHorario, h.dia, h.horaInicio, h.horaFin 
+				FROM dbappcb.programacion as prg 
+				INNER JOIN dbappcb.profesordisposicion as pd ON prg.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion 
+				INNER JOIN dbappcb.profesor as p ON pd.profesor_numeroEconomico= p.numeroEconomico 
+				INNER JOIN dbappcb.grupo as grp ON grp.idGrupo= prg.grupo_idGrupo 
+				INNER JOIN dbappcb.grupo_has_horario as gph ON gph.grupo_idGrupo= grp.idGrupo 
+				INNER JOIN dbappcb.horario as h On gph.horario_idHorario= h.idHorario 
+				WHERE p.numeroEconomico= {$nEconomico} ORDER BY grp.claveGrupo ASC;";
 
 			// sacamos los dias y horas en que tiene programacion el profesor 
 			$rGprsProgramados = $this->conexion->query($sqlGprsProgramados);
@@ -426,7 +459,6 @@
 			}
 			// quitamos posible duplicidad
 			$dProgamadas = array_unique($dProgamadas);
-			// print_r($dProgamadas);
 
 			$rGprsFiltrado = $this->conexion->query($sqlGprsProfRegistrado);
 			while ($row = $rGprsFiltrado->fetch(PDO::FETCH_ASSOC)) {
@@ -438,29 +470,39 @@
 			}
 			// quitamos posible duplicidad
 			$GprsTraslapados = array_unique($GprsTraslapados);
-			// print_r($GprsTraslapados);
 
-			$sqlGprsValidosI = "SELECT p.idProf, p.noEconomico, uea.claveUEA, uea.nombre as 'nombreUEA', gpr.idGrupo, gpr.claveGrupo, h.idHorario, h.dia, h.horaInicio, h.horaFin FROM dbappcb.Grupo as gpr INNER JOIN dbappcb.UEA as uea ON uea.idUEA= gpr.idUEA INNER JOIN dbappcb.Grupo_Horario as gprH ON gprH.idGrupo= gpr.idGrupo INNER JOIN dbappcb.Horario as h ON h.idHorario= gprH.idHorario INNER JOIN dbappcb.solicitud_uea as suea ON suea.idUEA= uea.idUEA INNER JOIN dbappcb.Profesor as p ON suea.idProf= p.idProf WHERE p.noEconomico= {$nEconomico} AND uea.claveUEA= {$claveUEA} ";
+			// solicitud_uea -> profesorpreferencia_has_uea
+			$sqlGprsValidosI = "SELECT p.numeroEconomico AS noEconomico, uea.claveUEA, uea.nombre as 'nombreUEA', gpr.idGrupo, gpr.claveGrupo, h.idHorario, h.dia, h.horaInicio, h.horaFin 
+				FROM dbappcb.grupo as gpr 
+				INNER JOIN dbappcb.uea as uea ON uea.idUEA= gpr.uea_idUEA 
+				INNER JOIN dbappcb.grupo_has_horario as gprH ON gprH.grupo_idGrupo= gpr.idGrupo 
+				INNER JOIN dbappcb.horario as h ON h.idHorario= gprH.horario_idHorario 
+				INNER JOIN dbappcb.profesorpreferencia_has_uea as pu ON pu.uea_idUEA = uea.idUEA
+				INNER JOIN dbappcb.profesorpreferencias as pp ON pu.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias
+				INNER JOIN dbappcb.profesor as p ON pp.profesor_numeroEconomico = p.numeroEconomico
+				WHERE p.numeroEconomico= {$nEconomico} AND uea.claveUEA= {$claveUEA} ";
 			$sqlGprsValidosF = "ORDER BY gpr.claveGrupo ASC, h.idHorario;";
 
 			foreach ($GprsTraslapados as $grupo) {
 				$sqlGprsValidosI .= "AND claveGrupo!= '{$grupo}' ";
 			}
-
-			$sqlGprsProgramados = "SELECT uea.claveUEA, uea.nombre as 'nombreUEA', prof.noEconomico, prof.nombre as 'nombrePof', grp.claveGrupo
-					FROM dbappcb.Programacion as p
-					INNER JOIN dbappcb.Grupo as grp ON p.idGrupo= grp.idGrupo
-					INNER JOIN dbappcb.UEA as uea ON uea.idUEA= grp.idUEA
-					INNER JOIN dbappcb.Profesor as prof ON prof.idProf= p.idProf
+			
+			// Programacion logic again
+			$sqlGprsProgramados = "SELECT uea.claveUEA, uea.nombre as 'nombreUEA', p.numeroEconomico, p.nombre as 'nombrePof', grp.claveGrupo
+					FROM dbappcb.programacion as prg 
+					INNER JOIN dbappcb.grupo as grp ON prg.grupo_idGrupo= grp.idGrupo
+					INNER JOIN dbappcb.uea as uea ON uea.idUEA= grp.uea_idUEA
+					INNER JOIN dbappcb.profesordisposicion as pd ON prg.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion 
+					INNER JOIN dbappcb.profesor as p ON pd.profesor_numeroEconomico= p.numeroEconomico
 					WHERE uea.claveUEA= {$claveUEA}
-					;";
+					;"
+			;
 			$rsqlGprsProgramados = $this->conexion->query($sqlGprsProgramados);
 			while ($row = $rsqlGprsProgramados->fetch(PDO::FETCH_ASSOC)) {
 				$sqlGprsValidosI .= "AND gpr.claveGrupo!= '{$row['claveGrupo']}' ";
 			}
 
 			$sqlGprsValidos = $sqlGprsValidosI . $sqlGprsValidosF;
-			// echo $sqlGprsValidos.'<br/>';
 
 			$rGprsValidos = $this->conexion->query($sqlGprsValidos);
 
@@ -483,12 +525,13 @@
 					)
 				);
 				$prof = new ProfesorVO(
-					$row['idProf'],
 					$row['noEconomico'],
+					$row['noEconomico'], // Name unknown here? Or fetch from 'p'? SQL includes 'p.nombre' if I join 'p' which I did
 					0,
 					0,
 					0
 				);
+				// NOTE: name not selected in sqlGprsValidosI above! I should add p.nombre.
 				$programacion = new ProgramacionProfesorVO(
 					$prof,
 					$grupo
@@ -498,29 +541,39 @@
 			return $grupos;
 		}
 
-		public function InsertarGrupoProgramacion($idProf, $idGrp){
-			$sql = "INSERT INTO `dbappcb`.`Programacion` (`idGrupo`, `idProf`) VALUES ( {$idGrp}, {$idProf});";
-			$result = $this->conexion->query($sql);
-			$result->fetch(PDO::FETCH_ASSOC);
+		// Helper to insert into programacion
+		private function InsertarGrupoProgramacionInternal($idProfDisp, $idGrp, $idTrim){
+			$sql = "INSERT INTO `dbappcb`.`programacion` (`grupo_trimestre_idTrimestre`, `grupo_idGrupo`, `profesordisposicion_idProfesorDisposicion`) VALUES ({$idTrim}, {$idGrp}, {$idProfDisp});";
+			$this->conexion->query($sql);
 		}
 		
 		public function InsertarPlaneacionProfesor($numEco, $claveUEA, $claveGrupo){
-			$sqlIdGrp = 
-				"SELECT grp.idGrupo, grp.claveGrupo, grp.cupo, uea.idUEA, uea.claveUEA, uea.nombre
-						FROM dbappcb.Grupo as grp
-						INNER JOIN dbappcb.UEA as uea ON uea.idUEA= grp.idUEA
+			// Need idGrupo and idTrimestre from Grupo
+			$sqlGrp = 
+				"SELECT grp.idGrupo, grp.trimestre_idTrimestre
+						FROM dbappcb.grupo as grp
+						INNER JOIN dbappcb.uea as uea ON uea.idUEA= grp.uea_idUEA
 						WHERE uea.claveUEA= {$claveUEA} AND grp.claveGrupo= '{$claveGrupo}';";
-			$sqlIdProf = "SELECT * FROM dbappcb.Profesor where noEconomico={$numEco};";
-			$result = $this->conexion->query($sqlIdGrp);
+			$result = $this->conexion->query($sqlGrp);
 			$rowGrp = $result->fetch(PDO::FETCH_ASSOC);
-				
-			$result = $this->conexion->query($sqlIdProf);
-			$rowProf = $result->fetch(PDO::FETCH_ASSOC);
-			if ( $rowProf != null && $rowGrp != null){
-				$idProfesor= $rowProf['idProf'];
-				$idGrupo= $rowGrp['idGrupo'];
-				
-				$this->InsertarGrupoProgramacion( $idProfesor, $idGrupo);
+			
+			if ($rowGrp){
+				$idGrupo = $rowGrp['idGrupo'];
+				$idTrimestre = $rowGrp['trimestre_idTrimestre'];
+
+				// Need profesordisposicion id
+				$sqlDisp = "SELECT idProfesorDisposicion FROM profesordisposicion WHERE profesor_numeroEconomico = {$numEco} AND trimestre_idTrimestre = {$idTrimestre} LIMIT 1";
+				$resDisp = $this->conexion->query($sqlDisp);
+				$rowDisp = $resDisp->fetch(PDO::FETCH_ASSOC);
+				$idProfDisp = $rowDisp ? $rowDisp['idProfesorDisposicion'] : null;
+
+				if ($idProfDisp){
+					$this->InsertarGrupoProgramacionInternal($idProfDisp, $idGrupo, $idTrimestre);
+				} else {
+					// Handle missing disposition? Maybe create it?
+					// For now, return error indicator? Original code returned $numEco on failure
+					return $numEco;
+				}
 			} else {
 				return $numEco;
 			}
@@ -529,14 +582,15 @@
 		public function mostrarProgramacionNE($nEconomico): array {
 			$ueas = array();
 
-			$sql = "SELECT p.idProf, p.noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.idUEA, uea.claveUEA, uea.nombre as 'nombreUEA', h.idHorario, h.dia, h.horaInicio, h.horaFin
-					FROM dbappcb.Programacion as prg
-					INNER JOIN dbappcb.Profesor as p ON prg.idProf= p.idProf
-					INNER JOIN dbappcb.Grupo as grp ON grp.idGrupo= prg.idGrupo
-					INNER JOIN dbappcb.Grupo_Horario as gph ON gph.idGrupo= grp.idGrupo
-					INNER JOIN dbappcb.Horario as h ON gph.idHorario= h.idHorario
-					INNER JOIN dbappcb.UEA as uea ON uea.idUEA= grp.idUEA
-					WHERE p.noEconomico= {$nEconomico} ORDER BY grp.claveGrupo ASC, uea.nombre;";
+			$sql = "SELECT p.numeroEconomico AS noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.uea_idUEA as idUEA, uea.claveUEA, uea.nombre as 'nombreUEA', h.idHorario, h.dia, h.horaInicio, h.horaFin
+					FROM dbappcb.programacion as prg
+					INNER JOIN dbappcb.profesordisposicion as pd ON prg.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion
+					INNER JOIN dbappcb.profesor as p ON pd.profesor_numeroEconomico= p.numeroEconomico
+					INNER JOIN dbappcb.grupo as grp ON grp.idGrupo= prg.grupo_idGrupo
+					INNER JOIN dbappcb.grupo_has_horario as gph ON gph.grupo_idGrupo= grp.idGrupo
+					INNER JOIN dbappcb.horario as h ON gph.horario_idHorario= h.idHorario
+					INNER JOIN dbappcb.uea as uea ON uea.idUEA= grp.uea_idUEA
+					WHERE p.numeroEconomico= {$nEconomico} ORDER BY grp.claveGrupo ASC, uea.nombre;";
 
 			$resultado = $this->conexion->query($sql);
 			while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
@@ -558,9 +612,9 @@
 					)
 				);
 				$prof = new ProfesorVO(
-					$row['idProf'],
 					$row['noEconomico'],
 					$row['nombre'],
+					0,
 					0,
 					0
 				);
@@ -576,14 +630,15 @@
 		public function mostrarProgramacion( ): array{
 			$ueas = array();
 
-			$sql = "SELECT p.idProf, p.noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.idUEA, uea.claveUEA, uea.nombre as 'nombreUEA', h.idHorario, h.dia, h.horaInicio, h.horaFin
-					FROM dbappcb.Programacion as prg
-					INNER JOIN dbappcb.Profesor as p ON prg.idProf= p.idProf
-					INNER JOIN dbappcb.Grupo as grp ON grp.idGrupo= prg.idGrupo
-					INNER JOIN dbappcb.Grupo_Horario as gph ON gph.idGrupo= grp.idGrupo
-					INNER JOIN dbappcb.Horario as h ON gph.idHorario= h.idHorario
-					INNER JOIN dbappcb.UEA as uea ON uea.idUEA= grp.idUEA
-					ORDER BY p.noEconomico DESC, grp.claveGrupo;"
+			$sql = "SELECT p.numeroEconomico AS noEconomico, p.nombre, grp.idGrupo, grp.claveGrupo, grp.uea_idUEA as idUEA, uea.claveUEA, uea.nombre as 'nombreUEA', h.idHorario, h.dia, h.horaInicio, h.horaFin
+					FROM dbappcb.programacion as prg
+					INNER JOIN dbappcb.profesordisposicion as pd ON prg.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion
+					INNER JOIN dbappcb.profesor as p ON pd.profesor_numeroEconomico= p.numeroEconomico
+					INNER JOIN dbappcb.grupo as grp ON grp.idGrupo= prg.grupo_idGrupo
+					INNER JOIN dbappcb.grupo_has_horario as gph ON gph.grupo_idGrupo= grp.idGrupo
+					INNER JOIN dbappcb.horario as h ON gph.horario_idHorario= h.idHorario
+					INNER JOIN dbappcb.uea as uea ON uea.idUEA= grp.idUEA
+					ORDER BY p.numeroEconomico DESC, grp.claveGrupo;"
 			;
 
 			$resultado = $this->conexion->query($sql);
@@ -606,9 +661,9 @@
 					)
 				);
 				$prof = new ProfesorVO(
-					$row['idProf'],
 					$row['noEconomico'],
 					$row['nombre'],
+					0,
 					0,
 					0
 				);

@@ -6,8 +6,7 @@
         function __construct($profesor, $grupo)
         {
             $this->profesor = new ProfesorVO(
-                $profesor->getIdProfesor(),
-                $profesor->getNoEconomico(),
+                $profesor->getNumeroEconomico(),
                 $profesor->getNombre(),
                 $profesor->getCorreoUAM(),
                 $profesor->getCorreoP()

@@ -66,12 +66,26 @@ $errors = [];
 
 // Detect BOM and handle different encodings: intentar UTF-8
 // No asumimos cabecera; si detectamos que la primera fila tiene texto no numérico en idArea, intentamos usar como cabecera y saltarla
+ini_set('auto_detect_line_endings', true);
+
+// Detectar delimitador
+$delimiter = ',';
+$sample = fgets($handle);
+if ($sample !== false) {
+    $cntComma = substr_count($sample, ',');
+    $cntSemi = substr_count($sample, ';');
+    if ($cntSemi > $cntComma) {
+        $delimiter = ';';
+    }
+    rewind($handle);
+}
+
 $maybeHeader = false;
 
-while (($data = fgetcsv($handle, 0, ',')) !== false) {
+while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
     $line++;
     // Normalizar: eliminar BOM en primer campo
-    if ($line === 1) {
+    if ($line === 1 && isset($data[0])) {
         $data[0] = preg_replace('/^\xEF\xBB\xBF/', '', $data[0]);
     }
     // Ignorar filas totalmente vacías
@@ -87,14 +101,14 @@ while (($data = fgetcsv($handle, 0, ',')) !== false) {
 
     $clave = trim($data[0]);
     $nombre = trim($data[1]);
-    $idArea = trim($data[2]);
+    $idAreaRaw = trim($data[2]);
 
     // Si la primera fila parece cabecera (ej. 'clave' o 'nombre' o 'idarea'), saltarla
     if ($line === 1) {
         $h0 = strtolower($clave);
         $h1 = strtolower($nombre);
-        $h2 = strtolower($idArea);
-        if (strpos($h0, 'clave') !== false || strpos($h1, 'nombre') !== false || strpos($h2, 'id') !== false) {
+        $h2 = strtolower($idAreaRaw);
+        if (strpos($h0, 'clave') !== false || strpos($h1, 'nombre') !== false || strpos($h2, 'id') !== false || strpos($h2, 'area') !== false) {
             $maybeHeader = true;
             continue; // saltar cabecera
         }
@@ -111,31 +125,56 @@ while (($data = fgetcsv($handle, 0, ',')) !== false) {
         $errors[] = ['line' => $line, 'error' => 'Nombre vacío'];
         continue;
     }
-    if ($idArea === '') {
+    if ($idAreaRaw === '') {
         $errors[] = ['line' => $line, 'error' => 'idArea vacío'];
         continue;
     }
-    // Forzar idArea como entero
-    $idAreaInt = intval(preg_replace('/\D/', '', $idArea));
+
+    $idAreaFinal = null;
+
+    // 1. Intentar como entero
+    if (ctype_digit($idAreaRaw)) {
+        $idTest = intval($idAreaRaw);
+        $selectArea->execute([$idTest]);
+        if ($selectArea->fetch()) {
+            $idAreaFinal = $idTest;
+        }
+    }
+
+    // 2. Si no es entero o no se encontró, buscar por nombre (LIKE)
+    if ($idAreaFinal === null) {
+        // Prepared statement para buscar area por nombre
+        $stmtFindArea = $pdo->prepare('SELECT idArea FROM area WHERE nombre LIKE :nom LIMIT 1');
+        $stmtFindArea->execute([':nom' => $idAreaRaw]);
+        $rowA = $stmtFindArea->fetch(PDO::FETCH_ASSOC);
+        if ($rowA) {
+            $idAreaFinal = (int)$rowA['idArea'];
+        } else {
+             // Intento flexible: '%texto%'
+             $stmtFindArea->execute([':nom' => '%' . $idAreaRaw . '%']);
+             $rowA2 = $stmtFindArea->fetch(PDO::FETCH_ASSOC);
+             if ($rowA2) {
+                 $idAreaFinal = (int)$rowA2['idArea'];
+             }
+        }
+    }
+
+    if ($idAreaFinal === null) {
+        $errors[] = ['line' => $line, 'error' => 'Area no encontrada: ' . $idAreaRaw];
+        continue;
+    }
 
     // Comprobar si existe
     try {
-        // Verificar que el area exista
-        $selectArea->execute([$idAreaInt]);
-        $areaRow = $selectArea->fetch(PDO::FETCH_ASSOC);
-        if (!$areaRow) {
-            $errors[] = ['line' => $line, 'error' => 'Area no encontrada: ' . $idAreaInt];
-            continue;
-        }
         $select->execute([':clave' => $clave]);
         $row = $select->fetch(PDO::FETCH_ASSOC);
         if ($row) {
             // actualizar
-            $update->execute([':nombre' => $nombre, ':idArea' => $idAreaInt, ':clave' => $clave]);
+            $update->execute([':nombre' => $nombre, ':idArea' => $idAreaFinal, ':clave' => $clave]);
             $updated++;
         } else {
             // insertar
-            $insert->execute([':clave' => $clave, ':nombre' => $nombre, ':idArea' => $idAreaInt]);
+            $insert->execute([':clave' => $clave, ':nombre' => $nombre, ':idArea' => $idAreaFinal]);
             $inserted++;
         }
     } catch (Exception $e) {
@@ -145,6 +184,11 @@ while (($data = fgetcsv($handle, 0, ',')) !== false) {
 }
 
 fclose($handle);
+
+// Borrar archivo temporal si se procesó correctamente (o si hubo errores parciales, igual ya no sirve el archivo tmp)
+if (file_exists($targetPath)) {
+    @unlink($targetPath);
+}
 
 // Commit de la transacción
 try {

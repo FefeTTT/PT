@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $uploaded = $_FILES['csv'];
         $name = basename($uploaded['name']);
-        // simple extension check
+// simple extension check
         $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
         if ($ext !== 'csv') {
             $messages[] = ['type' => 'error', 'text' => 'Only CSV files are allowed.'];
@@ -24,30 +24,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!move_uploaded_file($uploaded['tmp_name'], $dest)) {
                     $messages[] = ['type' => 'error', 'text' => 'Failed to move uploaded file.'];
                 } else {
-                    // call import script via HTTP POST with 'file' param
-                    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-                    $host = $_SERVER['HTTP_HOST'];
-                    $base = rtrim(dirname($_SERVER['REQUEST_URI']), '\\/');
-                    $url = $scheme . '://' . $host . $base . '/import_profesores.php';
+                    // call import script directly
+                    echo "<div class='message success' style='white-space: pre-wrap;'><strong>Iniciando importación...</strong><br>";
+                    echo "<div id='progress'></div>";
+                    flush();
+                    
+                    // Asegurar que el path sea correcto (mismo directorio)
+                    require_once __DIR__ . '/import_profesores.php';
+                    
+                     // Existing PDO connection from import_profesores.php logic (it handles its own pdo require if not present, 
+                     // but since we are including it, we should ensure pdo is available or let it handle it.
+                     // The refactored import_profesores.php requires pdo.php inside the function if passed, or globally if CLI.
+                     // Let's rely on the function signature: importarProfesores($csvPath, $pdo, $isCli)
+                     
+                     // We need to provide $pdo here.
+                     $pdoFile = __DIR__ . '/../modelo/pdo.php';
+                     if (file_exists($pdoFile)) {
+                         require_once $pdoFile;
+                         if (isset($pdo)) {
+                             importarProfesores($dest, $pdo, false);
+                         } else {
+                             echo "<br><strong style='color:red'>Error: No se pudo conectar a la base de datos (pdo).</strong>";
+                         }
+                     } else {
+                         echo "<br><strong style='color:red'>Error: Archivo de conexión no encontrado.</strong>";
+                     }
 
-                    $ch = curl_init();
-                    curl_setopt($ch, CURLOPT_URL, $url);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch, CURLOPT_POST, true);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, ['file' => $name]);
-                    // optional: set timeout
-                    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
-
-                    $response = curl_exec($ch);
-                    $err = curl_error($ch);
-                    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                    curl_close($ch);
-
-                    if ($err) {
-                        $messages[] = ['type' => 'error', 'text' => 'Curl error: ' . $err];
-                    } else {
-                        $messages[] = ['type' => 'success', 'text' => "Import completed (HTTP {$code}). Response:\n" . $response];
-                    }
+                    echo "</div>";
                 }
             }
         }
@@ -64,8 +67,8 @@ body{font-family:Arial,Helvetica,sans-serif;margin:24px}
 form{border:1px solid #ddd;padding:16px;border-radius:6px;background:#f9f9f9}
 .messages{margin:12px 0}
 .message{padding:8px;border-radius:4px;margin-bottom:8px}
-.message.success{background:#e6ffed;border:1px solid #b6f0c6}
-.message.error{background:#ffe6e6;border:1px solid #f0b6b6}
+.message.success{background:#e6ffed;border:1px solid #b6f0c6; white-space: pre-wrap;}
+.message.error{background:#ffe6e6;border:1px solid #f0b6b6; white-space: pre-wrap;}
 </style>
 </head>
 <body>

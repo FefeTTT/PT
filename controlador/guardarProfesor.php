@@ -60,14 +60,15 @@ try{
 
     // crear VO y delegar inserción al DAO dentro de una transacción para
     // insertar también la fila en profesorcontrato de forma atómica.
-    $celularVal = ($celular !== null && $celular !== '') ? (int)$celular : null;
-    $vo = new ProfesorVO(null, (int)$numeroEconomico, $nombre, $correo_uam, $correo_personal, $gradoEstudios, $celularVal);
+    $celularVal = ($celular !== null && $celular !== '') ? (string)$celular : null;
+    $vo = new ProfesorVO((int)$numeroEconomico, $nombre, $correo_uam, $correo_personal, $gradoEstudios, $celularVal);
 
     try {
         $pdo->beginTransaction();
         $inserted = $dao->insertarProfesor($vo);
-        if (!$inserted || !isset($inserted['idProfesor'])) throw new Exception('Error al insertar el profesor');
-        $idProfesor = (int)$inserted['idProfesor'];
+        if (!$inserted || !isset($inserted['numeroEconomico'])) throw new Exception('Error al insertar el profesor');
+        // numeroEconomico IS the key now.
+        $idProfesor = (int)$inserted['numeroEconomico'];
 
         // insertar contrato automáticamente
         $contrato = $dao->insertarProfesorContrato($idProfesor, (int)$idProfesorTipo, 'Generado automáticamente');

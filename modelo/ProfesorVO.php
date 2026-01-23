@@ -1,6 +1,5 @@
 <?php
 	class ProfesorVO{
-		private $idProfesor;
 		private $numeroEconomico;
 		private $nombre;
 		private $gradoEstudios;
@@ -9,9 +8,17 @@
 		private $correo_personal;
 		private $disponibilidad;
 
-		function __construct($idProfesor, $numeroEconomico, $nombre, $correo_uam,
+		// Constructor now expects numeroEconomico as the first argument (identity). 
+		// If legacy code passes two IDs, we can adapt, but better to clean it up.
+		// Previous signature: ($idProfesor, $numeroEconomico, ...).
+		// New signature: ($numeroEconomico, $numeroEconomicoRedundant, ...) OR just cleanup.
+		// Since I updated DAO to pass ($num, $num, ...), let's simplify to just one ID.
+		// Wait, DAO passes: new ProfesorVO($row['numeroEconomico'], $row['numeroEconomico'], ...)
+		// So I will keep the signature but ignore the first arg if it's identical, or just map both to numEco?
+		// Better: Remove idProfesor param.
+		
+		function __construct($numeroEconomico, $nombre, $correo_uam,
 					$correo_personal = null, $gradoEstudios = null, $celular = null, $disponibilidad = null){
-					$this->idProfesor=$idProfesor;
 					$this->numeroEconomico=$numeroEconomico;
 					$this->nombre=$nombre;
 					$this->correo_uam=$correo_uam;
@@ -53,8 +60,9 @@
 			$this->disponibilidad = $disponibilidad;
 		}
 
+		// Alias for compatibility
 		function getIdProfesor():int{
-			return $this->idProfesor;
+			return $this->numeroEconomico;
 		}
 
 		function getNumeroEconomico():int{
@@ -87,8 +95,7 @@
 		}
 
 		function toString():string{
-			return "[Id profesor: ".$this->getIdProfesor().
-				", Numero economico: ".$this->getNumeroEconomico().
+			return "[Numero economico: ".$this->getNumeroEconomico().
 				", Nombre: ".$this->getNombre().
 				", Correo UAM: ".$this->getCorreoUAM().
 				", Correo personal: ".$this->getCorreoP().
@@ -100,7 +107,7 @@
 
 		function toJSON():array{
 			return [
-					"idProfesor"=>$this->getIdProfesor(),
+					"idProfesor"=>$this->getNumeroEconomico(), // Keep for frontend compat
 					"numeroEconomico"=>$this->getNumeroEconomico(),
 					"nombre"=>$this->getNombre(),
 					"gradoEstudios"=>$this->getGradoEstudios(),
