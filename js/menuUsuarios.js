@@ -152,10 +152,10 @@
     // Auto-init on load
     document.addEventListener('DOMContentLoaded', function () {
         var bienvenido = document.getElementById('bienvenido');
-        var urlParams = new URLSearchParams(window.location.search);
-        var userName = urlParams.get('user');
-        if (userName && bienvenido) {
-            bienvenido.textContent = 'Bienvenido ' + userName;
+
+        // Fix: Use server-side validated session name instead of URL parameter
+        if (window.USER_NAME && bienvenido) {
+            bienvenido.textContent = 'Bienvenido ' + window.USER_NAME;
         }
         crearMenuAdministrador();
     });

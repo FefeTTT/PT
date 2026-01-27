@@ -10,6 +10,7 @@ if (!isset($_SESSION["success"])) {
 
 // Determinar rol/función del usuario desde la sesión
 $funcion_id = isset($_SESSION['funcion_id']) ? intval($_SESSION['funcion_id']) : null;
+$user_name = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : '';
 
 // Si se solicitó una sección específica, redirigir a la página correspondiente
 if (isset($_GET['section'])) {
@@ -48,6 +49,7 @@ if (isset($_GET['section'])) {
 	<script>
 		// Exponer función/rol al cliente para filtrado UI
 		window.FUNCION_ID = <?php echo json_encode($funcion_id); ?>;
+		window.USER_NAME = <?php echo json_encode($user_name); ?>;
 	</script>
 	<link rel="stylesheet" href="css/style_ndex.css">
 	<script src="js/services/apiService.js"></script>

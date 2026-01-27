@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         var destino = 'index.php';
-        window.location.href = destino + '?user=' + encodeURIComponent(result.user_name || '');
+        window.location.href = destino;
       })
       .catch(function (err) {
         console.error('Error en validación de login:', err);

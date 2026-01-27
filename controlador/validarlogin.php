@@ -98,4 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     echo json_encode($result, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
     exit;
+} else {
+    http_response_code(405);
+    header('Allow: POST');
+    echo json_encode(["success" => false, "msg" => "Método no permitido. Use POST."]);
+    exit;
 }
