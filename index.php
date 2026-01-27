@@ -50,12 +50,16 @@ if (isset($_GET['section'])) {
 		window.FUNCION_ID = <?php echo json_encode($funcion_id); ?>;
 	</script>
 	<link rel="stylesheet" href="css/style_ndex.css">
+	<script src="js/services/apiService.js"></script>
+	<script src="js/components/userTable.js"></script>
+	<script src="js/components/userModal.js"></script>
 	<script src="js/menuPrincipalAdmin.js"></script>
 	<script src="js/menuTrimestres.js"></script>
 	<script src="js/menuUsuarios.js"></script>
 	<script src="js/menuDirectorio.js"></script>
 </head>
 <body>
+
 <a class="volver btn" href="controlador/logout.php">Cerrar sesión</a><br>
 	<div id="main-menu" class="container">
 		<p id="bienvenido" class="text-center h2"></p><br>

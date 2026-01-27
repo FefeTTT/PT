@@ -1,9 +1,11 @@
 // js/menuPrincipalAdmin.js
 // Crea el panel principal de administración (mosaicos/botones)
-(function(){
-    function crearMenuPrincipalAdmin(adminMenu){
+(function () {
+    function crearMenuPrincipalAdmin(adminMenu) {
         if (!adminMenu) adminMenu = document.getElementById('admin-menu');
         if (!adminMenu) return;
+        adminMenu.innerHTML = '';
+
 
         // Container flex (igual estructura que la original)
         const container = document.createElement('div');
@@ -25,7 +27,7 @@
         const nuevoBtn = document.createElement('button');
         nuevoBtn.className = 'btn btn-primary btn-sm mb-2';
         nuevoBtn.textContent = 'Nuevo profesor';
-        nuevoBtn.addEventListener('click', function(){ if (typeof window.mostrarModalNuevoProfesor === 'function') window.mostrarModalNuevoProfesor(); });
+        nuevoBtn.addEventListener('click', function () { if (typeof window.mostrarModalNuevoProfesor === 'function') window.mostrarModalNuevoProfesor(); });
         nav.appendChild(nuevoBtn);
 
         const toggleFiltersBtn = document.createElement('button');
@@ -34,11 +36,11 @@
         toggleFiltersBtn.id = 'btnToggleFiltros';
         toggleFiltersBtn.setAttribute('aria-expanded', 'false');
         toggleFiltersBtn.textContent = 'Mostrar filtros';
-        toggleFiltersBtn.addEventListener('click', function(){
+        toggleFiltersBtn.addEventListener('click', function () {
             const controlsRef = document.getElementById('dir-controls');
             if (!controlsRef) return;
             const hidden = controlsRef.classList.toggle('d-none');
-            if (hidden){
+            if (hidden) {
                 toggleFiltersBtn.textContent = 'Mostrar filtros';
                 toggleFiltersBtn.setAttribute('aria-expanded', 'false');
             } else {
@@ -89,5 +91,5 @@
         // (the rest of the logic — fetchProfesores, handlers — stays in menuUsuarios.js)
     }
 
-    try { if (typeof window !== 'undefined') window.crearMenuPrincipalAdmin = crearMenuPrincipalAdmin; } catch(e){}
+    try { if (typeof window !== 'undefined') window.crearMenuPrincipalAdmin = crearMenuPrincipalAdmin; } catch (e) { }
 })();

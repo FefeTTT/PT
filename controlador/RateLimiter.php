@@ -38,15 +38,19 @@ class RateLimiter {
             ];
         } else {
             $data[$ip]['attempts']++;
-            if (time() - $data[$ip]['first_attempt'] > $this->timeWindow) {
+            if (time() - $data[$ip]['first_attempt'] > $this->timeWindowSeconds) {
                  $data[$ip] = [
                     'attempts' => 1,
                     'first_attempt' => time()
                 ];
             }
         }
+
         
-        $this->saveData($data);
+        if ($data !== $this->loadData()) {
+             $this->saveData($data);
+        }
+
     }
 
     private function loadData() {
@@ -60,14 +64,16 @@ class RateLimiter {
     }
 
     private function saveData($data) {
-        @file_put_contents($this->filePath, json_encode($data));
+        @file_put_contents($this->filePath, json_encode($data), LOCK_EX);
     }
+
 
     private function cleanup(&$data) {
         $changed = false;
         foreach ($data as $ip => $info) {
-             if (time() - $info['first_attempt'] > $this->timeWindow) {
+             if (time() - $info['first_attempt'] > $this->timeWindowSeconds) {
                 unset($data[$ip]);
+
                 $changed = true;
              }
         }
