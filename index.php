@@ -56,7 +56,7 @@ if (isset($_GET['section'])) {
 	<script src="js/components/userTable.js"></script>
 	<script src="js/components/userModal.js"></script>
 	<script src="js/menuPrincipalAdmin.js"></script>
-	<script src="js/menuTrimestres.js"></script>
+	<script type="module" src="js/modules/trimestres/index.js"></script>
 	<script src="js/menuUsuarios.js"></script>
 	<script src="js/menuDirectorio.js"></script>
 </head>
