@@ -4,7 +4,7 @@
  */
 
 // Global dependency wrapper for postForm
-function post(url, payload) {
+export function post(url, payload) {
     if (typeof window.postForm === 'function') {
         return window.postForm(url, payload);
     }

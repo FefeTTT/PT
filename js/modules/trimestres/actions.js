@@ -4,6 +4,7 @@
  */
 
 import * as API from './api.js';
+import { alertOpt as swalAlertOpt } from './ui.js';
 
 export function nuevoTrimestre() {
     // Remove existing modal if any

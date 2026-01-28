@@ -102,8 +102,7 @@
                         break;
                     case 'menu-trimestre':
                         e.preventDefault();
-                        if (global.crearMenuTrimestres) global.crearMenuTrimestres(document.getElementById('admin-menu'));
-                        else alert('Módulo de trimestres no cargado');
+                        window.location.href = 'index.php?section=trimestres';
                         break;
                     case 'menu-reserva':
                         e.preventDefault();

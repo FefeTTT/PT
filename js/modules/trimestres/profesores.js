@@ -4,6 +4,7 @@
  */
 
 import * as API from './api.js';
+import { alertOpt } from './ui.js';
 
 // Internal state for list view
 let allRows = [];

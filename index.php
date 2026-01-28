@@ -21,7 +21,7 @@ if (isset($_GET['section'])) {
 		exit;
 	}
 	if ($sec === 'trimestres' && in_array($funcion_id, [1,4], true)) {
-		header('Location: trimestreM.php');
+		require 'trimestreM.php';
 		exit;
 	}
 	if ($sec === 'reserva' && in_array($funcion_id, [1,3], true)) {
