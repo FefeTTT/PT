@@ -1,2 +1,3 @@
 modelo/pdo.php
 .env
+frontend-react/node_modules/*

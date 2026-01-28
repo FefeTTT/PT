@@ -1,0 +1,71 @@
+.menuContainer {
+    font-family: var(--bs-body-font-family, sans-serif);
+}
+
+.headerBar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.backBtn {
+    margin-right: 0.5rem;
+}
+
+.menuBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.actionsLeft {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.yearFilter {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.radioGroup {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-left: 0.5rem;
+}
+
+.radioItem {
+    background-color: #148aff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.radioItem:hover {
+    background-color: #e9ecef;
+}
+
+.sortBtn {
+    color: inherit;
+    text-decoration: none;
+    font-weight: bold;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.sortBtn:hover {
+    text-decoration: underline;
+}
