@@ -3,8 +3,7 @@
  */
 
 import * as API from './api.js';
-import { crearBtn, normalizeState } from './ui.js'; // Removed alerts
-
+import { crearBtn, normalizeState } from './ui.js';
 /**
  * Show Editor de Grupos.
  * @param {number|string} idTrimestre

@@ -4,8 +4,7 @@
  */
 
 import * as API from './api.js';
-import * as UI from './ui.js'; // UI helper imports
-// Note: alertOpt/swalAlertOpt are global or wrapped. We'll use window globals for alerts to avoid import errors if ui.js doesn't export them correctly.
+import * as UI from './ui.js';
 
 export function historialProgramacion() {
     // Replaces content with the Programacion View

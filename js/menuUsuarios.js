@@ -153,7 +153,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         var bienvenido = document.getElementById('bienvenido');
 
-        // Fix: Use server-side validated session name instead of URL parameter
         if (window.USER_NAME && bienvenido) {
             bienvenido.textContent = 'Bienvenido ' + window.USER_NAME;
         }

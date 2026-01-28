@@ -4,7 +4,6 @@
  */
 
 import * as API from './api.js';
-// Imports removed; using globals from window.
 
 // Internal state for list view
 let allRows = [];

@@ -1,8 +1,3 @@
-/**
- * UI Helper module for Trimestres.
- */
-
-// Imports removed; using globals from window.
 
 /**
  * Helper to create buttons.
