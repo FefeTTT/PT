@@ -4,6 +4,7 @@ import styles from './trimestre-menu.module.css';
 import TrimestreTableHeaders from './TrimestreTableHeaders';
 import LoadingLabel from '../components/common/LoadingLabel';
 import ActionButton from '../components/common/ActionButton';
+import NewTrimestreModal from './NewTrimestreModal';
 
 interface SortState {
     col: string | null;
@@ -16,6 +17,7 @@ const MenuTrimestres: React.FC = () => {
     const [sortState, setSortState] = useState<SortState>({ col: null, asc: true });
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [showNewModal, setShowNewModal] = useState<boolean>(false);
 
     useEffect(() => {
         loadTrimestres(selectedYear);
@@ -89,6 +91,10 @@ const MenuTrimestres: React.FC = () => {
     };
 
     const handleAction = (action: string, row?: API.Trimestre) => {
+        if (action === 'Nuevo Trimestre') {
+            setShowNewModal(true);
+            return;
+        }
         alert(`Acción '${action}' en construcción (React Port). \nID: ${row?.idTrimestre || 'N/A'}`);
 
     };
@@ -191,6 +197,15 @@ const MenuTrimestres: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            <NewTrimestreModal
+                show={showNewModal}
+                onClose={() => setShowNewModal(false)}
+                onSuccess={(anio) => {
+                    setSelectedYear(anio);
+                    loadTrimestres(anio);
+                }}
+            />
         </div>
     );
 };

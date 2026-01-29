@@ -47,6 +47,24 @@ export interface Trimestre {
     [key: string]: any;
 }
 
+export interface Periodo {
+    idPeriodo: string | number;
+    nombre: string;
+    sigla?: string;
+}
+
+export interface TrimestreEstado {
+    idTrimestreEstado: string | number;
+    estado: string;
+}
+
+export interface CreateTrimestrePayload {
+    anio: string | number;
+    idPeriodo: string | number;
+    fechaLimite: string;
+    estadoId: string | number;
+}
+
 export async function fetchTrimestres(anio: string): Promise<{ ok: boolean; trimestres: Trimestre[]; error?: string }> {
     if (anio === 'todos') {
         return post('controlador/recuperaTrimestresTodos.php', {});
@@ -61,5 +79,17 @@ export async function deleteTrimestre(idTrimestre: string | number): Promise<{ o
 
 export async function fetchUEAs(): Promise<any> {
     return fetch('controlador/recuperarUEAsTodos.php', { method: 'POST' }).then(r => r.json());
+}
+
+export async function fetchPeriodosTrimestre(anio: string): Promise<{ ok: boolean; periodos?: Periodo[]; used?: (string | number)[]; error?: string }> {
+    return post('controlador/recuperaPeriodosTrimestre.php', { anio });
+}
+
+export async function fetchTrimestreEstados(): Promise<{ ok: boolean; estados?: TrimestreEstado[]; error?: string }> {
+    return post('controlador/recuperaTrimestreEstados.php', {});
+}
+
+export async function createTrimestre(payload: CreateTrimestrePayload): Promise<{ ok: boolean; error?: string }> {
+    return post('controlador/insertarTrimestre.php', payload);
 }
 
