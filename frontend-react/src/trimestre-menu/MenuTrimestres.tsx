@@ -3,6 +3,7 @@ import * as API from './api';
 import styles from './trimestre-menu.module.css';
 import TrimestreTableHeaders from './TrimestreTableHeaders';
 import LoadingLabel from '../components/common/LoadingLabel';
+import ActionButton from '../components/common/ActionButton';
 
 interface SortState {
     col: string | null;
@@ -120,17 +121,11 @@ const MenuTrimestres: React.FC = () => {
             {/* Actions Bar */}
             <div className={styles.menuBar}>
                 <div className={styles.actionsLeft}>
-                    <button className="btn btn-primary btn-sm" onClick={() => handleAction('Nuevo Trimestre')}>
-                        Nuevo trimestre
-                    </button>
-                    <button className="btn btn-primary btn-sm" onClick={() => loadTrimestres(selectedYear)}>
-                        Refrescar
-                    </button>
+                    <ActionButton textLabel="Nuevo trimestre" onButtonClicked={() => handleAction('Nuevo Trimestre')} />
+                    <ActionButton textLabel="Refrescar" onButtonClicked={() => loadTrimestres(selectedYear)} />
                     {/* Legacy Placeholders */}
                     {['importar-uea', 'cargar-planeacion', 'hist-programacion'].map(act => (
-                        <button key={act} className="btn btn-primary btn-sm" onClick={() => handleAction(act)}>
-                            {act}
-                        </button>
+                        <ActionButton key={act} textLabel={act} onButtonClicked={() => handleAction(act)} />
                     ))}
                 </div>
 
