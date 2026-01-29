@@ -93,3 +93,32 @@ export async function createTrimestre(payload: CreateTrimestrePayload): Promise<
     return post('controlador/insertarTrimestre.php', payload);
 }
 
+export async function importarUEA(file: File): Promise<{
+    ok: boolean;
+    error?: string;
+    processed?: number;
+    inserted?: number;
+    updated?: number;
+    errors?: Array<{ line: number; error: string; }>
+}> {
+    try {
+        const formData = new FormData();
+        formData.append('csvfile', file);
+
+        // Use fetch directly for file upload to avoid JSON stringification of FormData in post wrapper if implementation varies
+        const req = await fetch('scripts/upload_uea_csv.php', {
+            method: 'POST',
+            body: formData
+        });
+        const text = await req.text();
+        try {
+            const json = JSON.parse(text);
+            return json;
+        } catch (e) {
+            return { ok: false, error: 'Respuesta inválida del servidor: ' + text };
+        }
+    } catch (e) {
+        return { ok: false, error: 'Error de red' };
+    }
+}
+

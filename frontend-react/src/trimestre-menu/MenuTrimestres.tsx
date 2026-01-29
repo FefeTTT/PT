@@ -5,6 +5,7 @@ import TrimestreTableHeaders from './TrimestreTableHeaders';
 import LoadingLabel from '../components/common/LoadingLabel';
 import ActionButton from '../components/common/ActionButton';
 import NewTrimestreModal from './NewTrimestreModal';
+import ImportUEAModal from './ImportUEAModal';
 
 interface SortState {
     col: string | null;
@@ -18,6 +19,7 @@ const MenuTrimestres: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [showNewModal, setShowNewModal] = useState<boolean>(false);
+    const [showImportModal, setShowImportModal] = useState<boolean>(false);
 
     useEffect(() => {
         loadTrimestres(selectedYear);
@@ -94,6 +96,9 @@ const MenuTrimestres: React.FC = () => {
         if (action === 'Nuevo Trimestre') {
             setShowNewModal(true);
             return;
+        } else if (action === 'importar-uea') {
+            setShowImportModal(true);
+            return;
         }
         alert(`Acción '${action}' en construcción (React Port). \nID: ${row?.idTrimestre || 'N/A'}`);
 
@@ -128,9 +133,10 @@ const MenuTrimestres: React.FC = () => {
             <div className={styles.menuBar}>
                 <div className={styles.actionsLeft}>
                     <ActionButton textLabel="Nuevo trimestre" onButtonClicked={() => handleAction('Nuevo Trimestre')} />
+                    <ActionButton textLabel="Importar UEA" onButtonClicked={() => handleAction('importar-uea')} />
                     <ActionButton textLabel="Refrescar" onButtonClicked={() => loadTrimestres(selectedYear)} />
                     {/* Legacy Placeholders */}
-                    {['importar-uea', 'cargar-planeacion', 'hist-programacion'].map(act => (
+                    {['cargar-planeacion', 'hist-programacion'].map(act => (
                         <ActionButton key={act} textLabel={act} onButtonClicked={() => handleAction(act)} />
                     ))}
                 </div>
@@ -205,6 +211,10 @@ const MenuTrimestres: React.FC = () => {
                     setSelectedYear(anio);
                     loadTrimestres(anio);
                 }}
+            />
+            <ImportUEAModal
+                show={showImportModal}
+                onClose={() => setShowImportModal(false)}
             />
         </div>
     );

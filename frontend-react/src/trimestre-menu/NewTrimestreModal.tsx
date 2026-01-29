@@ -11,55 +11,66 @@ interface NewTrimestreModalProps {
 }
 
 const NewTrimestreModal: React.FC<NewTrimestreModalProps> = ({ show, onClose, onSuccess }) => {
-    const [anios, setAnios] = useState<string[]>([]);
-    const [selectedAnio, setSelectedAnio] = useState<string>('');
-    const [customAnio, setCustomAnio] = useState<string>('');
-    const [isCustomAnio, setIsCustomAnio] = useState<boolean>(false);
+    const [formData, setFormData] = useState({
+        selectedAnio: '',
+        customAnio: '',
+        isCustomAnio: false,
+        selectedPeriodo: '',
+        selectedEstado: '',
+        fechaLimite: ''
+    });
 
-    const [periodos, setPeriodos] = useState<API.Periodo[]>([]);
-    const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
-    const [loadingPeriodos, setLoadingPeriodos] = useState<boolean>(false);
-    const [periodoError, setPeriodoError] = useState<string | null>(null);
+    const [options, setOptions] = useState({
+        anios: [] as string[],
+        periodos: [] as API.Periodo[],
+        estados: [] as API.TrimestreEstado[]
+    });
 
-    const [estados, setEstados] = useState<API.TrimestreEstado[]>([]);
-    const [selectedEstado, setSelectedEstado] = useState<string>('');
-
-    const [fechaLimite, setFechaLimite] = useState<string>('');
-    const [submitting, setSubmitting] = useState<boolean>(false);
-    const [globalError, setGlobalError] = useState<string | null>(null);
+    const [status, setStatus] = useState<{
+        loadingPeriodos: boolean;
+        submitting: boolean;
+        periodoError: string | null;
+        globalError: string | null;
+    }>({
+        loadingPeriodos: false,
+        submitting: false,
+        periodoError: null,
+        globalError: null
+    });
 
     // Initial load: years and states
     useEffect(() => {
         if (show) {
-            // Reset state
-            setGlobalError(null);
-            setSubmitting(false);
-            setCustomAnio('');
-            setIsCustomAnio(false);
-            setSelectedPeriodo('');
-            setPeriodos([]);
-
-            // Years
             const cy = new Date().getFullYear();
-            const arr = [];
-            for (let i = cy - 2; i <= cy + 2; i++) arr.push(String(i));
-            setAnios(arr);
-            setSelectedAnio(String(cy));
+            const aniosArr: string[] = [];
+            for (let i = cy - 2; i <= cy + 2; i++) aniosArr.push(String(i));
 
-            // Min date (tomorrow)
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            setFechaLimite(tomorrow.toISOString().split('T')[0]);
 
-            // States
+            setStatus(prev => ({ ...prev, globalError: null, submitting: false }));
+            setFormData(prev => ({
+                ...prev,
+                selectedAnio: String(cy),
+                customAnio: '',
+                isCustomAnio: false,
+                selectedPeriodo: '',
+                fechaLimite: tomorrow.toISOString().split('T')[0]
+            }));
+
+            // Only clear periodos, keep existing estados if possible or reload
+            setOptions(prev => ({ ...prev, anios: aniosArr, periodos: [] }));
+
             API.fetchTrimestreEstados().then(res => {
                 if (res && res.estados) {
-                    setEstados(res.estados);
-                    // Default to 'Recepcion de preferencias' or first
                     const def = res.estados.find(e =>
                         e.estado.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes("recepcion")
                     );
-                    setSelectedEstado(def ? String(def.idTrimestreEstado) : String(res.estados[0]?.idTrimestreEstado || ''));
+                    setOptions(prev => ({ ...prev, estados: res.estados || [] }));
+                    setFormData(prev => ({
+                        ...prev,
+                        selectedEstado: def ? String(def.idTrimestreEstado) : String(res.estados?.[0]?.idTrimestreEstado || '')
+                    }));
                 }
             });
         }
@@ -67,41 +78,45 @@ const NewTrimestreModal: React.FC<NewTrimestreModalProps> = ({ show, onClose, on
 
     // When Anio changes, load periods
     useEffect(() => {
+        const { isCustomAnio, customAnio, selectedAnio } = formData;
         const actualAnio = isCustomAnio ? customAnio : selectedAnio;
+
         if (!actualAnio || (isCustomAnio && Number(actualAnio) < 2000)) {
-            setPeriodos([]);
+            setOptions(prev => ({ ...prev, periodos: [] }));
             return;
         }
 
-        setLoadingPeriodos(true);
-        setPeriodoError(null);
-        setSelectedPeriodo('');
+        setStatus(prev => ({ ...prev, loadingPeriodos: true, periodoError: null }));
+        setFormData(prev => ({ ...prev, selectedPeriodo: '' }));
 
         API.fetchPeriodosTrimestre(actualAnio).then(res => {
             if (res && res.ok && res.periodos) {
-                // Filter used
                 const used = (res.used || []).map(Number);
                 const avail = res.periodos.filter(p => !used.includes(Number(p.idPeriodo)));
-                setPeriodos(avail);
-                if (avail.length === 0) setPeriodoError('Todos los periodos ocupados para este año');
-                else setSelectedPeriodo(String(avail[0].idPeriodo));
+                setOptions(prev => ({ ...prev, periodos: avail }));
+
+                if (avail.length === 0) setStatus(prev => ({ ...prev, periodoError: 'Todos los periodos ocupados para este año' }));
+                else setFormData(prev => ({ ...prev, selectedPeriodo: String(avail[0].idPeriodo) }));
             } else {
-                setPeriodoError(res.error || 'No hay periodos disponibles');
-                setPeriodos([]);
+                setStatus(prev => ({ ...prev, periodoError: res.error || 'No hay periodos disponibles' }));
+                setOptions(prev => ({ ...prev, periodos: [] }));
             }
         }).catch(() => {
-            setPeriodoError('Error cargando periodos');
-        }).finally(() => setLoadingPeriodos(false));
-    }, [selectedAnio, customAnio, isCustomAnio]);
+            setStatus(prev => ({ ...prev, periodoError: 'Error cargando periodos' }));
+        }).finally(() => {
+            setStatus(prev => ({ ...prev, loadingPeriodos: false }));
+        });
+    }, [formData.selectedAnio, formData.customAnio, formData.isCustomAnio]);
 
     const handleCreate = async () => {
+        const { isCustomAnio, customAnio, selectedAnio, selectedPeriodo, selectedEstado, fechaLimite } = formData;
         const actualAnio = isCustomAnio ? customAnio : selectedAnio;
-        if (!actualAnio) { setGlobalError('El año es requerido'); return; }
-        if (!selectedPeriodo) { setGlobalError('El periodo es requerido'); return; }
-        if (!fechaLimite) { setGlobalError('La fecha limite es requerida'); return; }
 
-        setSubmitting(true);
-        setGlobalError(null);
+        if (!actualAnio) { setStatus(prev => ({ ...prev, globalError: 'El año es requerido' })); return; }
+        if (!selectedPeriodo) { setStatus(prev => ({ ...prev, globalError: 'El periodo es requerido' })); return; }
+        if (!fechaLimite) { setStatus(prev => ({ ...prev, globalError: 'La fecha limite es requerida' })); return; }
+
+        setStatus(prev => ({ ...prev, submitting: true, globalError: null }));
 
         try {
             const res = await API.createTrimestre({
@@ -116,12 +131,12 @@ const NewTrimestreModal: React.FC<NewTrimestreModalProps> = ({ show, onClose, on
                 onSuccess(actualAnio);
                 onClose();
             } else {
-                setGlobalError(res.error || 'Error al crear trimestre');
+                setStatus(prev => ({ ...prev, globalError: res.error || 'Error al crear trimestre' }));
             }
         } catch (e) {
-            setGlobalError('Error de red');
+            setStatus(prev => ({ ...prev, globalError: 'Error de red' }));
         } finally {
-            setSubmitting(false);
+            setStatus(prev => ({ ...prev, submitting: false }));
         }
     };
 
@@ -133,68 +148,67 @@ const NewTrimestreModal: React.FC<NewTrimestreModalProps> = ({ show, onClose, on
             footer={
                 <>
                     <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-                    <button type="button" className="btn btn-primary" onClick={handleCreate} disabled={submitting}>
-                        {submitting ? 'Creando...' : 'Crear'}
+                    <button type="button" className="btn btn-primary" onClick={handleCreate} disabled={status.submitting}>
+                        {status.submitting ? 'Creando...' : 'Crear'}
                     </button>
                 </>
             }
         >
-            {globalError && <div className="alert alert-danger">{globalError}</div>}
+            {status.globalError && <div className="alert alert-danger">{status.globalError}</div>}
 
             <FormSelect
                 label="Año"
-                value={isCustomAnio ? 'insertar' : selectedAnio}
+                value={formData.isCustomAnio ? 'insertar' : formData.selectedAnio}
                 onChange={(e) => {
                     const val = e.target.value;
                     if (val === 'insertar') {
-                        setIsCustomAnio(true);
+                        setFormData(prev => ({ ...prev, isCustomAnio: true }));
                     } else {
-                        setIsCustomAnio(false);
-                        setSelectedAnio(val);
+                        setFormData(prev => ({ ...prev, isCustomAnio: false, selectedAnio: val }));
                     }
                 }}
                 options={[
-                    ...anios.map(y => ({ value: y, label: y })),
+                    ...options.anios.map(y => ({ value: y, label: y })),
                     { value: 'insertar', label: 'Insertar año...' }
                 ]}
             />
 
-            {isCustomAnio && (
+            {formData.isCustomAnio && (
                 <FormInput
                     label=""
                     type="number"
                     placeholder="Introduce año (>= 2000)"
                     min="2000"
-                    value={customAnio}
-                    onChange={e => setCustomAnio(e.target.value)}
+                    value={formData.customAnio}
+                    onChange={e => setFormData(prev => ({ ...prev, customAnio: e.target.value }))}
                     className="mt-2"
                 />
             )}
 
             <FormSelect
                 label="Periodo (trimestre)"
-                value={selectedPeriodo}
-                onChange={e => setSelectedPeriodo(e.target.value)}
-                disabled={periodos.length === 0 || loadingPeriodos}
-                error={periodoError || undefined}
-                options={periodos.map(p => ({ value: p.idPeriodo, label: p.nombre || String(p.sigla) }))}
+                value={formData.selectedPeriodo}
+                onChange={e => setFormData(prev => ({ ...prev, selectedPeriodo: e.target.value }))}
+                disabled={options.periodos.length === 0 || status.loadingPeriodos}
+                error={status.periodoError || undefined}
+                options={options.periodos.map(p => ({ value: p.idPeriodo, label: p.nombre || String(p.sigla) }))}
             >
-                {loadingPeriodos ? <option>Cargando...</option> :
-                    periodos.length === 0 ? <option value="">No disponible</option> : null}
+                {status.loadingPeriodos ? <option>Cargando...</option> :
+                    options.periodos.length === 0 ? <option value="">No disponible</option> : null}
             </FormSelect>
 
             <FormSelect
                 label="Estado"
-                value={selectedEstado}
-                onChange={e => setSelectedEstado(e.target.value)}
-                options={estados.map(st => ({ value: st.idTrimestreEstado, label: st.estado }))}
+                value={formData.selectedEstado}
+                onChange={e => setFormData(prev => ({ ...prev, selectedEstado: e.target.value }))}
+                options={options.estados.map(st => ({ value: st.idTrimestreEstado, label: st.estado }))}
             />
 
             <FormInput
                 label="Fecha límite"
                 type="date"
-                value={fechaLimite}
-                onChange={e => setFechaLimite(e.target.value)}
+                value={formData.fechaLimite}
+                onChange={e => setFormData(prev => ({ ...prev, fechaLimite: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
             />
         </Modal>
