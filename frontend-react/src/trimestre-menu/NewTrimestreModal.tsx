@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import * as API from './api';
 import Modal from '../components/common/Modal';
 import FormSelect from '../components/common/FormSelect';
@@ -10,7 +10,7 @@ interface NewTrimestreModalProps {
     onSuccess: (anio: string) => void;
 }
 
-const NewTrimestreModal: React.FC<NewTrimestreModalProps> = ({ show, onClose, onSuccess }) => {
+export default function NewTrimestreModal({ show, onClose, onSuccess }: NewTrimestreModalProps) {
     const [formData, setFormData] = useState({
         selectedAnio: '',
         customAnio: '',
@@ -215,4 +215,3 @@ const NewTrimestreModal: React.FC<NewTrimestreModalProps> = ({ show, onClose, on
     );
 };
 
-export default NewTrimestreModal;

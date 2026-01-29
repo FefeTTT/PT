@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../components/common/Modal';
 import * as API from './api';
+import { convertXlsxToCsv } from '../scripts/utils/xlsx-to-csv';
 import './ImportUEAModal.css';
 
 interface ImportUEAModalProps {
@@ -10,6 +11,8 @@ interface ImportUEAModalProps {
 
 export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
     const [file, setFile] = useState<File | null>(null);
+    const [sheetName, setSheetName] = useState('CB');
+    const [isEditingSheetName, setIsEditingSheetName] = useState(false);
     const [status, setStatus] = useState<{
         submitting: boolean;
         error: string | null;
@@ -37,7 +40,22 @@ export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
         setStatus({ submitting: true, error: null, success: null, details: null });
 
         try {
-            const res = await API.importarUEA(file);
+            let fileToUpload = file;
+
+            if (file.name.toLowerCase().endsWith('.xlsx')) {
+                try {
+                    fileToUpload = await convertXlsxToCsv(file, sheetName);
+                } catch (err) {
+                    setStatus(prev => ({
+                        ...prev,
+                        error: 'Error al convertir el archivo Excel a CSV: ' + err,
+                        submitting: false
+                    }));
+                    return;
+                }
+            }
+
+            const res = await API.importarUEA(fileToUpload);
             if (res.ok) {
                 setStatus(prev => ({
                     ...prev,
@@ -56,6 +74,8 @@ export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
 
     const reset = () => {
         setFile(null);
+        setSheetName('CB');
+        setIsEditingSheetName(false);
         setStatus({ submitting: false, error: null, success: null, details: null });
         onClose();
     };
@@ -63,7 +83,7 @@ export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
     return (
         <Modal
             show={show}
-            title="Importar catálogo de UEA (CSV)"
+            title="Importar catálogo de UEA (CSV ó Excel)"
             onClose={reset}
             footer={
                 <>
@@ -89,18 +109,45 @@ export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
                 <input
                     type="file"
                     className="form-control"
-                    accept=".csv"
+                    accept=".csv, .xlsx"
                     onChange={handleFileChange}
                     disabled={status.submitting || !!status.success}
                 />
+
+                {file && file.name.toLowerCase().endsWith('.xlsx') && (
+                    <div className="mt-3">
+                        <label className="form-label small mb-1">Nombre de la hoja (Excel):</label>
+                        <div className="input-group input-group-sm">
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={sheetName}
+                                onChange={(e) => setSheetName(e.target.value)}
+                                disabled={!isEditingSheetName || status.submitting || !!status.success}
+                                placeholder="Nombre de la hoja"
+                            />
+                            <button
+                                className="btn btn-outline-secondary"
+                                type="button"
+                                onClick={() => setIsEditingSheetName(true)}
+                                disabled={isEditingSheetName || status.submitting || !!status.success}
+                            >
+                                Editar
+                            </button>
+                        </div>
+                        <div className="form-text small">
+                            Por defecto: "CB". Asegúrate de que coincida con el nombre de la pestaña en Excel.
+                        </div>
+                    </div>
+                )}
             </div>
 
             {status.error && <div className="alert alert-danger">{status.error}</div>}
 
             {status.success && (
                 <div className={`alert ${(status.details?.errors?.length > 0 && status.details?.inserted === 0) ? 'alert-danger' :
-                        (status.details?.errors?.length > 0 && status.details?.inserted > 0) ? 'alert-warning' :
-                            'alert-success'
+                    (status.details?.errors?.length > 0 && status.details?.inserted > 0) ? 'alert-warning' :
+                        'alert-success'
                     }`}>
                     <h6 className="alert-heading">{status.success}</h6>
                     {status.details && (
