@@ -102,7 +102,29 @@
                         break;
                     case 'menu-trimestre':
                         e.preventDefault();
-                        window.location.href = 'index.php?section=trimestres';
+                        if (typeof window.mountMenuTrimestres === 'function') {
+                            const adminMenu = document.getElementById('admin-menu');
+                            if (adminMenu) {
+                                adminMenu.innerHTML = '<div id="react-root-trimestres"></div>';
+                                window.mountMenuTrimestres('react-root-trimestres');
+
+                                // Define exit handler
+                                window.onExitTrimestres = function () {
+                                    if (typeof window.unmountMenuTrimestres === 'function') {
+                                        window.unmountMenuTrimestres();
+                                    }
+                                    if (typeof global.crearMenuAdministrador === 'function') {
+                                        global.crearMenuAdministrador();
+                                    } else {
+                                        window.location.reload();
+                                    }
+                                    delete window.onExitTrimestres;
+                                };
+                            }
+                        } else {
+                            // Fallback if assets not loaded
+                            window.location.href = 'trimestreM.php';
+                        }
                         break;
                     case 'menu-reserva':
                         e.preventDefault();

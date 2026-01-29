@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import * as API from './api';
 import styles from './trimestre-menu.module.css';
+import TrimestreTableHeaders from './TrimestreTableHeaders';
+import LoadingLabel from '../components/common/LoadingLabel';
 
 interface SortState {
     col: string | null;
@@ -98,10 +100,18 @@ const MenuTrimestres: React.FC = () => {
     for (let i = currentYear - 2; i <= currentYear + 2; i++) years.push(String(i));
 
     return (
-        <div className={`container mt-3 ${styles.menuContainer}`}>
+
+        <div className={`container mt-3 ${styles.menuContainer}`} style={{ position: 'relative' }}>
+            {loading && <LoadingLabel />}
             {/* Header */}
             <div className={styles.headerBar}>
-                <button className={`btn btn-sm btn-outline-secondary ${styles.backBtn}`} onClick={() => window.location.href = 'index.php'}>
+                <button className={`btn btn-sm btn-outline-secondary ${styles.backBtn}`} onClick={() => {
+                    if (typeof (window as any).onExitTrimestres === 'function') {
+                        (window as any).onExitTrimestres();
+                    } else {
+                        window.location.href = 'index.php';
+                    }
+                }}>
                     &#8592; Volver
                 </button>
                 <h5 className="m-0 ms-2">Trimestres (React)</h5>
@@ -145,23 +155,23 @@ const MenuTrimestres: React.FC = () => {
             </div>
 
             {/* Content */}
-            <div className="card">
+            <div className="card" style={{ minHeight: '150px' }}>
                 <div className="card-body">
-                    {loading && <div className="text-muted small">Cargando...</div>}
                     {error && <div className="text-danger small">{error}</div>}
 
-                    {!loading && !error && (
+                    {!error && (
                         <div className="table-responsive">
                             <table className="table table-striped table-sm">
                                 <thead>
-                                    <tr>
-                                        <th><button className={styles.sortBtn} onClick={() => handleSort('periodoNombre')}>Periodo</button></th>
-                                        <th><button className={styles.sortBtn} onClick={() => handleSort('año')}>Año</button></th>
-                                        <th><button className={styles.sortBtn} onClick={() => handleSort('fechaLimite')}>Fecha límite</button></th>
-                                        <th><button className={styles.sortBtn} onClick={() => handleSort('estado')}>Estado</button></th>
-                                        <th>Acciones</th>
-                                    </tr>
+                                    <TrimestreTableHeaders>
+                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('periodoNombre')}>Periodo</button></th>
+                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('año')}>Año</button></th>
+                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('fechaLimite')}>Fecha límite</button></th>
+                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('estado')}>Estado</button></th>
+                                        <th className="text-start">Acciones</th>
+                                    </TrimestreTableHeaders>
                                 </thead>
+
                                 <tbody>
                                     {sortedTrimestres.length === 0 ? (
                                         <tr><td colSpan={5} className="text-center">No hay trimestres.</td></tr>

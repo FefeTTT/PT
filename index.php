@@ -20,14 +20,11 @@ if (isset($_GET['section'])) {
 		header('Location: index_administrador.php');
 		exit;
 	}
-	if ($sec === 'trimestres' && in_array($funcion_id, [1,4], true)) {
-		require 'trimestreM.php';
-		exit;
-	}
-	if ($sec === 'reserva' && in_array($funcion_id, [1,3], true)) {
-		header('Location: mensajeriaM.php');
-		exit;
-	}
+    // Trimestres logic removed from here as it is now SPA
+    if ($sec === 'reserva' && in_array($funcion_id, [1,3], true)) {
+        header('Location: reserva.php');
+        exit;
+    }
 	if ($sec === 'usuarios' && $funcion_id === 1) {
 		header('Location: index_administrador.php?section=usuarios');
 		exit;
@@ -59,6 +56,13 @@ if (isset($_GET['section'])) {
 	<script type="module" src="js/modules/trimestres/index.js"></script>
 	<script src="js/menuUsuarios.js"></script>
 	<script src="js/menuDirectorio.js"></script>
+
+    <!-- React Assets (Preloaded for SPA) -->
+    <?php
+    require_once "ReactLoader.php";
+    $loader = new ReactLoader(__DIR__ . '/js/react_build/manifest.json', 'js/react_build');
+    echo $loader->getAssets('src/main.tsx');
+    ?>
 </head>
 <body>
 
