@@ -55,6 +55,7 @@ if (isset($_GET['section'])) {
 	<script src="js/menuPrincipalAdmin.js"></script>
 	<script type="module" src="js/modules/trimestres/index.js"></script>
 	<script src="js/menuUsuarios.js"></script>
+    <script src="js/fuse.js"></script>
 	<script src="js/menuDirectorio.js"></script>
 
     <!-- React Assets (Preloaded for SPA) -->

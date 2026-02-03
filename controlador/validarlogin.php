@@ -1,4 +1,5 @@
 <?php
+define('JSON_RESPONSE', true);
 require_once "../modelo/pdo.php";
 require_once "../modelo/UsuarioDAO.php";
 require_once "RateLimiter.php";
