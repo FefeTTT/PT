@@ -3,24 +3,35 @@ import ReactDOM from 'react-dom/client'
 import MenuTrimestres from './trimestre-menu/MenuTrimestres'
 import FuzzySearchInput from './components/FuzzySearchInput'
 import { DirectoryPage } from './directory/DirectoryPage';
+import { AdminApp } from './usuarios-menu/AdminApp';
 import './main.module.css'
 
 // Global interface extension
-declare global {
-    interface Window {
-        mountMenuTrimestres: (containerId: string) => void;
-        unmountMenuTrimestres: () => void;
-        mountDirectoryMenu: (containerId: string) => void;
-        unmountDirectoryMenu: () => void;
-        mountFuzzySearchInput: (containerId: string, onSearch: (term: string) => void, initialValue?: string) => void;
-        unmountFuzzySearchInput: () => void;
-    }
-}
+
 
 
 let root: ReactDOM.Root | null = null;
 let fuzzyRoot: ReactDOM.Root | null = null;
 let directoryRoot: ReactDOM.Root | null = null;
+
+// Helper to cleanup all roots
+const cleanupRoots = () => {
+    if (root) {
+        try { root.unmount(); } catch (e) { console.error(e); }
+        root = null;
+    }
+    if (directoryRoot) {
+        try { directoryRoot.unmount(); } catch (e) { console.error(e); }
+        directoryRoot = null;
+    }
+    if (adminRoot) {
+        try { adminRoot.unmount(); } catch (e) { console.error(e); }
+        adminRoot = null;
+    }
+    // fuzzyRoot is usually independent (search bar), so we might leave it or manage separately. 
+    // But if it's in the main container, we should unmount it. 
+    // Assuming fuzzy is separate.
+};
 
 window.mountMenuTrimestres = (containerId: string) => {
     const container = document.getElementById(containerId);
@@ -28,10 +39,8 @@ window.mountMenuTrimestres = (containerId: string) => {
         console.error(`Container ${containerId} not found`);
         return;
     }
-    if (root) {
-        console.warn('MenuTrimestres already mounted, unmounting first.');
-        root.unmount();
-    }
+    cleanupRoots();
+
     root = ReactDOM.createRoot(container);
     root.render(
         <React.StrictMode>
@@ -53,9 +62,8 @@ window.mountDirectoryMenu = (containerId: string) => {
         console.error(`Container ${containerId} not found`);
         return;
     }
-    if (directoryRoot) {
-        directoryRoot.unmount();
-    }
+    cleanupRoots();
+
     directoryRoot = ReactDOM.createRoot(container);
     directoryRoot.render(
         <React.StrictMode>
@@ -92,6 +100,30 @@ window.unmountFuzzySearchInput = () => {
     if (fuzzyRoot) {
         fuzzyRoot.unmount();
         fuzzyRoot = null;
+    }
+};
+
+let adminRoot: ReactDOM.Root | null = null;
+window.mountAdminApp = (containerId: string) => {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        console.error(`Container ${containerId} not found`);
+        return;
+    }
+    cleanupRoots();
+
+    adminRoot = ReactDOM.createRoot(container);
+    adminRoot.render(
+        <React.StrictMode>
+            <AdminApp />
+        </React.StrictMode>
+    );
+};
+
+window.unmountAdminApp = () => {
+    if (adminRoot) {
+        adminRoot.unmount();
+        adminRoot = null;
     }
 };
 

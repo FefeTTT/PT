@@ -11,11 +11,7 @@ import { EditProfessorModal } from './components/modals/EditProfessorModal';
 import { EditAdminModal } from './components/modals/EditAdminModal';
 
 // Define window interface for global var
-declare global {
-    interface Window {
-        FUNCION_ID?: number;
-    }
-}
+
 
 export const DirectoryPage: React.FC = () => {
     // 1. Global State
@@ -87,6 +83,14 @@ export const DirectoryPage: React.FC = () => {
         setShowCreateAdmin(true);
     };
 
+    const handleBack = () => {
+        if (typeof window.mountAdminApp === 'function') {
+            window.mountAdminApp('admin-menu');
+        } else {
+            window.location.href = 'index.php';
+        }
+    };
+
     return (
         <div className="container-fluid mt-3">
             {/* Modals */}
@@ -126,7 +130,7 @@ export const DirectoryPage: React.FC = () => {
 
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="d-flex align-items-center">
-                    <button className="btn btn-secondary btn-sm me-2" onClick={() => window.location.href = 'index.php'}>
+                    <button className="btn btn-secondary btn-sm me-2" onClick={handleBack}>
                         <i className="bi bi-arrow-left"></i> Volver
                     </button>
                     <h4 className="mb-0">Directorio de Personal</h4>

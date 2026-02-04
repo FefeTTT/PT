@@ -8,141 +8,14 @@
     function crearMenuAdministrador() {
         var adminMenu = document.getElementById('admin-menu');
         if (!adminMenu) return;
-        adminMenu.innerHTML = '';
 
-        // Datos de los botones
-        var botones = [
-            {
-                id: 'menu-usuario',
-                href: null,
-                img: 'https://cdn-icons-png.flaticon.com/512/747/747376.png',
-                alt: 'Usuarios',
-                span: 'Usuarios',
-                tile: 'datos-tile'
-            },
-            {
-                id: 'menu-trimestre',
-                href: null,
-                img: 'https://cdn-icons-png.flaticon.com/512/2917/2917996.png',
-                alt: 'Trimestres',
-                span: 'Trimestres',
-                tile: 'datos-tile'
-            },
-            {
-                id: 'menu-reserva',
-                href: null,
-                img: 'https://cdn-icons-png.flaticon.com/512/561/561127.png',
-                alt: 'Sistema de reserva',
-                span: 'Sistema de reserva',
-                tile: 'prog-tile'
-            },
-            {
-                id: 'menu-directorio',
-                href: null,
-                img: 'https://cdn-icons-png.flaticon.com/512/1077/1077114.png',
-                alt: 'Directorio',
-                span: 'Directorio',
-                tile: 'prog-tile'
-            }
-        ];
-
-        // Filtrado según rol
-        try {
-            if (typeof window.FUNCION_ID !== 'undefined') {
-                var fid = parseInt(window.FUNCION_ID, 10);
-                if (fid === 2) botones = botones.filter(b => b.id === 'menu-directorio');
-                else if (fid === 3) botones = botones.filter(b => b.id === 'menu-reserva' || b.id === 'menu-directorio');
-                else if (fid === 4) botones = botones.filter(b => b.id === 'menu-trimestre' || b.id === 'menu-directorio');
-            }
-        } catch (e) {
-            console.warn('Filtro FUNCION_ID falló:', e);
+        // Mount React Admin App
+        if (typeof window.mountAdminApp === 'function') {
+            window.mountAdminApp('admin-menu');
+        } else {
+            console.error('React mountAdminApp function not found, legacy fallback prevented in this migration phase.');
+            adminMenu.innerHTML = '<div class="alert alert-danger">Error loading React Admin App</div>';
         }
-
-        // Render Tiles
-        botones.forEach(function (btn) {
-            var colDiv = document.createElement('div');
-            colDiv.className = 'col-md-6 col-sm-6 col-xs-12';
-
-            var a = document.createElement('a');
-            a.id = btn.id;
-            if (btn.href) a.href = btn.href;
-
-            var tileDiv = document.createElement('div');
-            tileDiv.id = btn.tile;
-            tileDiv.className = 'admin-btn-tile';
-
-            var img = document.createElement('img');
-            img.src = btn.img;
-            img.alt = btn.alt;
-            img.className = 'admin-btn-img';
-
-            var span = document.createElement('span');
-            span.textContent = btn.span;
-
-            tileDiv.appendChild(img);
-            tileDiv.appendChild(span);
-            a.appendChild(tileDiv);
-            colDiv.appendChild(a);
-            adminMenu.appendChild(colDiv);
-
-            // Handler
-            a.addEventListener('click', function (e) {
-                switch (btn.id) {
-                    case 'menu-usuario':
-                        e.preventDefault();
-                        if (global.menuUsuarios) {
-                            // Initial Load via ApiService
-                            ApiService.getUsers()
-                                .then(users => global.menuUsuarios(users))
-                                .catch(err => {
-                                    console.error(err);
-                                    alert('Error al obtener usuarios');
-                                });
-                        }
-                        break;
-                    case 'menu-trimestre':
-                        e.preventDefault();
-                        if (typeof window.mountMenuTrimestres === 'function') {
-                            const adminMenu = document.getElementById('admin-menu');
-                            if (adminMenu) {
-                                adminMenu.innerHTML = '<div id="react-root-trimestres"></div>';
-                                window.mountMenuTrimestres('react-root-trimestres');
-
-                                // Define exit handler
-                                window.onExitTrimestres = function () {
-                                    if (typeof window.unmountMenuTrimestres === 'function') {
-                                        window.unmountMenuTrimestres();
-                                    }
-                                    if (typeof global.crearMenuAdministrador === 'function') {
-                                        global.crearMenuAdministrador();
-                                    } else {
-                                        window.location.reload();
-                                    }
-                                    delete window.onExitTrimestres;
-                                };
-                            }
-                        } else {
-                            // Fallback if assets not loaded
-                            window.location.href = 'trimestreM.php';
-                        }
-                        break;
-                    case 'menu-reserva':
-                        e.preventDefault();
-                        if (global.Swal && typeof Swal.fire === 'function') {
-                            Swal.fire('Sistema de reserva', 'Módulo no implementado actualmente.', 'info');
-                        } else {
-                            alert('Módulo no implementado actualmente.');
-                        }
-                        break;
-
-                    case 'menu-directorio':
-                        e.preventDefault();
-                        if (global.crearMenuDirectorio) global.crearMenuDirectorio();
-                        else alert('Directorio no disponible');
-                        break;
-                }
-            });
-        });
     }
 
     // Main entry point for User Management View
