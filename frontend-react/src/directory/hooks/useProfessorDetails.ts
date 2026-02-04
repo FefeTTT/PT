@@ -23,12 +23,16 @@ export function useProfessorDetails(id: string | number | null) {
             return;
         }
 
+        let cancelled = false;
+
         const fetchDetails = async () => {
             setLoading(true);
             setError(null);
             try {
                 const response = await fetch(`controlador/recuperarProfesorPorId.php?id=${id}`);
                 const json = await response.json();
+
+                if (cancelled) return;
 
                 if (!json.ok) {
                     throw new Error(json.error || 'Error al cargar detalles');
@@ -43,14 +47,21 @@ export function useProfessorDetails(id: string | number | null) {
                     lugares: json.lugares || []
                 });
             } catch (err: any) {
+                if (cancelled) return;
                 console.error('Error fetching professor details:', err);
                 setError(err.message || 'Error de conexión');
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchDetails();
+
+        return () => {
+            cancelled = true;
+        };
     }, [id, refreshTrigger]);
 
     return { details, loading, error, refresh: () => setRefreshTrigger(n => n + 1) };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trimester, UEA, TimeSlot, PreferenceData } from '../../types';
+import { BaseModal } from './BaseModal';
 
 interface PreferencesModalProps {
     isOpen: boolean;
@@ -227,146 +228,144 @@ export const PreferencesModal: React.FC<PreferencesModalProps> = ({ isOpen, onCl
     if (!isOpen) return null;
 
     return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-                <div className="modal-dialog modal-xl"> {/* XL for Schedule Matrix */}
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Preferencias de Docencia</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
-                        </div>
-                        <div className="modal-body">
-                            {loadingCatalogs && <div className="text-center"><div className="spinner-border text-primary"></div></div>}
-                            {!loadingCatalogs && (
-                                <div className="row g-3">
-                                    <div className="col-12">
-                                        <label className="form-label fw-bold">Trimestre</label>
-                                        <select
-                                            className="form-select"
-                                            value={selectedTrimestre}
-                                            onChange={e => setSelectedTrimestre(e.target.value)}
-                                        >
-                                            {trimesters.map(t => (
-                                                <option key={t.idTrimestre} value={t.idTrimestre}>
-                                                    {t.anio} - {t.trimestre}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {loadingPrefs ? (
-                                        <div className="col-12 text-center py-4"><div className="spinner-border text-secondary"></div></div>
-                                    ) : (
-                                        <>
-                                            {message && <div className="col-12"><div className="alert alert-success">{message}</div></div>}
-                                            {error && <div className="col-12"><div className="alert alert-danger">{error}</div></div>}
-
-                                            {/* General Info */}
-                                            <div className="col-md-4">
-                                                <label className="form-label">No. Grupos Deseados</label>
-                                                <input
-                                                    type="number"
-                                                    className="form-control"
-                                                    value={formData.noGrupos || ''}
-                                                    onChange={e => setFormData({ ...formData, noGrupos: e.target.value })}
-                                                    min={0} max={10}
-                                                />
-                                            </div>
-                                            <div className="col-md-8">
-                                                <label className="form-label">Observaciones</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={formData.observaciones || ''}
-                                                    onChange={e => setFormData({ ...formData, observaciones: e.target.value })}
-                                                    placeholder="Comentarios adicionales..."
-                                                />
-                                            </div>
-
-                                            <div className="col-12"><hr /></div>
-
-                                            {/* UEAs Selection */}
-                                            <div className="col-12 col-lg-6">
-                                                <h6 className="fw-bold">UEAs Preferidas</h6>
-                                                <div className="input-group mb-2">
-                                                    <select className="form-select" id="uea-select">
-                                                        <option value="">Seleccionar UEA...</option>
-                                                        {allUEAs.map(u => (
-                                                            <option key={u.idUEA} value={u.idUEA}>{u.claveUEA} - {u.nombreUEA}</option>
-                                                        ))}
-                                                    </select>
-                                                    <button
-                                                        className="btn btn-outline-secondary"
-                                                        type="button"
-                                                        onClick={() => {
-                                                            const sel = document.getElementById('uea-select') as HTMLSelectElement;
-                                                            addUEA(sel.value);
-                                                            sel.value = '';
-                                                        }}
-                                                    >
-                                                        Agregar
-                                                    </button>
-                                                </div>
-                                                <ul className="list-group">
-                                                    {(formData.ueas || []).map((item, idx) => (
-                                                        <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-                                                            <span>
-                                                                <span className="badge bg-secondary me-2">{item.prioridad}</span>
-                                                                {item.claveUEA || item.idUEA} - {item.nombreUEA}
-                                                            </span>
-                                                            <button className="btn btn-sm btn-danger py-0" onClick={() => removeUEA(idx)}>&times;</button>
-                                                        </li>
-                                                    ))}
-                                                    {(formData.ueas || []).length === 0 && <li className="list-group-item text-muted fst-italic">Ninguna asignada</li>}
-                                                </ul>
-                                            </div>
-
-                                            {/* Time Slots */}
-                                            <div className="col-12 col-lg-6">
-                                                <h6 className="fw-bold">Disponibilidad / Preferencia Horaria</h6>
-                                                <div className="border rounded p-2" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                                                    {sortedDays.map(day => (
-                                                        <div key={day} className="mb-2">
-                                                            <strong>{day}</strong>
-                                                            <div className="d-flex flex-wrap gap-2 mt-1">
-                                                                {slotsByDay[day].map(ts => {
-                                                                    const isSel = selectedTimeSlotIds.has(Number(ts.idHorario));
-                                                                    return (
-                                                                        <div key={ts.idHorario} className="form-check">
-                                                                            <input
-                                                                                className="form-check-input"
-                                                                                type="checkbox"
-                                                                                checked={isSel}
-                                                                                onChange={() => toggleTimeSlot(Number(ts.idHorario))}
-                                                                                id={`ts-${ts.idHorario}`}
-                                                                            />
-                                                                            <label className="form-check-label small" htmlFor={`ts-${ts.idHorario}`}>
-                                                                                {ts.horaInicio}-{ts.horaFin}
-                                                                            </label>
-                                                                        </div>
-                                                                    );
-                                                                })}
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}>Cerrar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleSave} disabled={saving || loadingPrefs}>
-                                {saving ? <span className="spinner-border spinner-border-sm me-1"></span> : null}
-                                Guardar Preferencias
-                            </button>
-                        </div>
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Preferencias de Docencia"
+            size="xl"
+            loading={loadingPrefs || saving}
+            error={error}
+            cancelText="Cerrar"
+            confirmText="Guardar Preferencias"
+            onConfirm={handleSave}
+            footer={
+                <>
+                    <button type="button" className="btn btn-secondary" onClick={onClose} disabled={saving}>Cerrar</button>
+                    <button type="button" className="btn btn-primary" onClick={handleSave} disabled={saving || loadingPrefs}>
+                        {saving ? <span className="spinner-border spinner-border-sm me-1"></span> : null}
+                        Guardar Preferencias
+                    </button>
+                </>
+            }
+        >
+            {loadingCatalogs && <div className="text-center"><div className="spinner-border text-primary"></div></div>}
+            {!loadingCatalogs && (
+                <div className="row g-3">
+                    <div className="col-12">
+                        <label className="form-label fw-bold">Trimestre</label>
+                        <select
+                            className="form-select"
+                            value={selectedTrimestre}
+                            onChange={e => setSelectedTrimestre(e.target.value)}
+                        >
+                            {trimesters.map(t => (
+                                <option key={t.idTrimestre} value={t.idTrimestre}>
+                                    {t.anio} - {t.trimestre}
+                                </option>
+                            ))}
+                        </select>
                     </div>
+
+                    {loadingPrefs ? (
+                        <div className="col-12 text-center py-4"><div className="spinner-border text-secondary"></div></div>
+                    ) : (
+                        <>
+                            {message && <div className="col-12"><div className="alert alert-success">{message}</div></div>}
+
+                            {/* General Info */}
+                            <div className="col-md-4">
+                                <label className="form-label">No. Grupos Deseados</label>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={formData.noGrupos || ''}
+                                    onChange={e => setFormData({ ...formData, noGrupos: e.target.value })}
+                                    min={0} max={10}
+                                />
+                            </div>
+                            <div className="col-md-8">
+                                <label className="form-label">Observaciones</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={formData.observaciones || ''}
+                                    onChange={e => setFormData({ ...formData, observaciones: e.target.value })}
+                                    placeholder="Comentarios adicionales..."
+                                />
+                            </div>
+
+                            <div className="col-12"><hr /></div>
+
+                            {/* UEAs Selection */}
+                            <div className="col-12 col-lg-6">
+                                <h6 className="fw-bold">UEAs Preferidas</h6>
+                                <div className="input-group mb-2">
+                                    <select className="form-select" id="uea-select">
+                                        <option value="">Seleccionar UEA...</option>
+                                        {allUEAs.map(u => (
+                                            <option key={u.idUEA} value={u.idUEA}>{u.claveUEA} - {u.nombreUEA}</option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        className="btn btn-outline-secondary"
+                                        type="button"
+                                        onClick={() => {
+                                            const sel = document.getElementById('uea-select') as HTMLSelectElement;
+                                            addUEA(sel.value);
+                                            sel.value = '';
+                                        }}
+                                    >
+                                        Agregar
+                                    </button>
+                                </div>
+                                <ul className="list-group">
+                                    {(formData.ueas || []).map((item, idx) => (
+                                        <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>
+                                                <span className="badge bg-secondary me-2">{item.prioridad}</span>
+                                                {item.claveUEA || item.idUEA} - {item.nombreUEA}
+                                            </span>
+                                            <button className="btn btn-sm btn-danger py-0" onClick={() => removeUEA(idx)}>&times;</button>
+                                        </li>
+                                    ))}
+                                    {(formData.ueas || []).length === 0 && <li className="list-group-item text-muted fst-italic">Ninguna asignada</li>}
+                                </ul>
+                            </div>
+
+                            {/* Time Slots */}
+                            <div className="col-12 col-lg-6">
+                                <h6 className="fw-bold">Disponibilidad / Preferencia Horaria</h6>
+                                <div className="border rounded p-2" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                                    {sortedDays.map(day => (
+                                        <div key={day} className="mb-2">
+                                            <strong>{day}</strong>
+                                            <div className="d-flex flex-wrap gap-2 mt-1">
+                                                {slotsByDay[day].map(ts => {
+                                                    const isSel = selectedTimeSlotIds.has(Number(ts.idHorario));
+                                                    return (
+                                                        <div key={ts.idHorario} className="form-check">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                checked={isSel}
+                                                                onChange={() => toggleTimeSlot(Number(ts.idHorario))}
+                                                                id={`ts-${ts.idHorario}`}
+                                                            />
+                                                            <label className="form-check-label small" htmlFor={`ts-${ts.idHorario}`}>
+                                                                {ts.horaInicio}-{ts.horaFin}
+                                                            </label>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
-            </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+            )}
+        </BaseModal>
     );
 };

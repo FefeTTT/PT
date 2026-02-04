@@ -16,7 +16,7 @@ interface ProfessorDetailsProps {
 }
 
 export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit, onEdit, onDelete }) => {
-    const { details, loading, error, refresh } = useProfessorDetails(id);
+    const { details, error, refresh } = useProfessorDetails(id);
 
     // Location Management State
     const [showLocationModal, setShowLocationModal] = useState(false);
@@ -183,7 +183,6 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
         }
     };
 
-    if (loading) return <div className="p-3 text-center"><div className="spinner-border text-primary" role="status"></div></div>;
     if (error) return <div className="alert alert-danger">{error}</div>;
     if (!details) return null;
 
@@ -191,49 +190,61 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
 
     return (
         <div className="card shadow-sm">
-            <ManageLocationModal
-                isOpen={showLocationModal}
-                onClose={() => setShowLocationModal(false)}
-                onSuccess={() => { refresh(); }}
-                professorId={id}
-                location={editingLocation}
-            />
+            {showLocationModal && (
+                <ManageLocationModal
+                    isOpen={showLocationModal}
+                    onClose={() => setShowLocationModal(false)}
+                    onSuccess={() => { refresh(); }}
+                    professorId={id}
+                    location={editingLocation}
+                />
+            )}
 
-            <ManageContractModal
-                isOpen={showContractModal}
-                onClose={() => setShowContractModal(false)}
-                onSuccess={() => { refresh(); }}
-                professorId={id}
-                contract={editingContract}
-            />
+            {showContractModal && (
+                <ManageContractModal
+                    isOpen={showContractModal}
+                    onClose={() => setShowContractModal(false)}
+                    onSuccess={() => { refresh(); }}
+                    professorId={id}
+                    contract={editingContract}
+                />
+            )}
 
-            <ManageContactModal
-                isOpen={showContactModal}
-                onClose={() => setShowContactModal(false)}
-                onSuccess={() => { refresh(); }}
-                professorId={id}
-                contact={editingContact}
-            />
+            {showContactModal && (
+                <ManageContactModal
+                    isOpen={showContactModal}
+                    onClose={() => setShowContactModal(false)}
+                    onSuccess={() => { refresh(); }}
+                    professorId={id}
+                    contact={editingContact}
+                />
+            )}
 
-            <ManageAssignmentModal
-                isOpen={showAssignmentModal}
-                onClose={() => setShowAssignmentModal(false)}
-                onSuccess={() => { refresh(); }}
-                professorId={id}
-                type={assignmentType}
-            />
+            {showAssignmentModal && (
+                <ManageAssignmentModal
+                    isOpen={showAssignmentModal}
+                    onClose={() => setShowAssignmentModal(false)}
+                    onSuccess={() => { refresh(); }}
+                    professorId={id}
+                    type={assignmentType}
+                />
+            )}
 
-            <ScheduleModal
-                isOpen={showScheduleModal}
-                onClose={() => setShowScheduleModal(false)}
-                professorId={id}
-            />
+            {showScheduleModal && (
+                <ScheduleModal
+                    isOpen={showScheduleModal}
+                    onClose={() => setShowScheduleModal(false)}
+                    professorId={id}
+                />
+            )}
 
-            <PreferencesModal
-                isOpen={showPreferencesModal}
-                onClose={() => setShowPreferencesModal(false)}
-                professorId={id}
-            />
+            {showPreferencesModal && (
+                <PreferencesModal
+                    isOpen={showPreferencesModal}
+                    onClose={() => setShowPreferencesModal(false)}
+                    professorId={id}
+                />
+            )}
 
             {/* Header ... */}
             <div className="card-header d-flex justify-content-between align-items-center bg-white">

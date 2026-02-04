@@ -55,9 +55,9 @@ export const DirectoryPage: React.FC = () => {
     const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
 
     // 6. Handlers
-    const handleSelect = (item: DirectoryItem) => {
+    const handleSelect = React.useCallback((item: DirectoryItem) => {
         setSelectedItem(item);
-    };
+    }, []);
 
     const handleEditProfessor = (p: Professor) => {
         setEditingProfessor(p);
@@ -90,39 +90,52 @@ export const DirectoryPage: React.FC = () => {
     return (
         <div className="container-fluid mt-3">
             {/* Modals */}
-            <CreateProfessorModal
-                isOpen={showCreateProf}
-                onClose={() => setShowCreateProf(false)}
-                onSuccess={() => { refresh(); alert('Profesor creado correctamente'); }}
-            />
+            {showCreateProf && (
+                <CreateProfessorModal
+                    isOpen={showCreateProf}
+                    onClose={() => setShowCreateProf(false)}
+                    onSuccess={() => { refresh(); alert('Profesor creado correctamente'); }}
+                />
+            )}
 
-            <CreateAdminModal
-                isOpen={showCreateAdmin}
-                onClose={() => setShowCreateAdmin(false)}
-                onSuccess={() => { refresh(); alert('Administrativo creado correctamente'); }}
-            />
+            {showCreateAdmin && (
+                <CreateAdminModal
+                    isOpen={showCreateAdmin}
+                    onClose={() => setShowCreateAdmin(false)}
+                    onSuccess={() => { refresh(); alert('Administrativo creado correctamente'); }}
+                />
+            )}
 
-            <EditProfessorModal
-                isOpen={!!editingProfessor}
-                professor={editingProfessor}
-                onClose={() => setEditingProfessor(null)}
-                onSuccess={() => { refresh(); alert('Profesor actualizado correctamente'); }}
-            />
+            {editingProfessor && (
+                <EditProfessorModal
+                    isOpen={!!editingProfessor}
+                    professor={editingProfessor}
+                    onClose={() => setEditingProfessor(null)}
+                    onSuccess={() => { refresh(); alert('Profesor actualizado correctamente'); }}
+                />
+            )}
 
-            <EditAdminModal
-                isOpen={!!editingAdmin}
-                admin={editingAdmin}
-                onClose={() => setEditingAdmin(null)}
-                onSuccess={() => { refresh(); alert('Administrativo actualizado correctamente'); }}
-            />
+            {editingAdmin && (
+                <EditAdminModal
+                    isOpen={!!editingAdmin}
+                    admin={editingAdmin}
+                    onClose={() => setEditingAdmin(null)}
+                    onSuccess={() => { refresh(); alert('Administrativo actualizado correctamente'); }}
+                />
+            )}
 
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="mb-0">Directorio de Personal</h4>
+                <div className="d-flex align-items-center">
+                    <button className="btn btn-secondary btn-sm me-2" onClick={() => window.location.href = 'index.php'}>
+                        <i className="bi bi-arrow-left"></i> Volver
+                    </button>
+                    <h4 className="mb-0">Directorio de Personal</h4>
+                </div>
                 <div>
                     {canEdit && (
                         <div className="btn-group me-2">
                             <button className="btn btn-success btn-sm" onClick={handleNewProfessor}>+ Profesor</button>
-                            <button className="btn btn-outline-success btn-sm" onClick={handleNewAdmin}>+ Administrativo</button>
+                            <button className="btn btn-success btn-sm" onClick={handleNewAdmin}>+ Administrativo</button>
                         </div>
                     )}
                     <button className="btn btn-outline-secondary btn-sm" onClick={() => setShowFilters(!showFilters)}>
@@ -135,7 +148,7 @@ export const DirectoryPage: React.FC = () => {
 
             <div className="row">
                 {/* Left Panel: List */}
-                <div className="col-md-4 col-lg-3 border-end">
+                <div className="col-md-5 col-lg-4 border-end">
                     <div className="mb-2">
                         <input
                             type="text"
@@ -160,7 +173,7 @@ export const DirectoryPage: React.FC = () => {
                 </div>
 
                 {/* Right Panel: Details */}
-                <div className="col-md-8 col-lg-9">
+                <div className="col-md-7 col-lg-8">
                     {selectedItem ? (
                         selectedItem.tipo === 'profesor' ? (
                             <ProfessorDetails

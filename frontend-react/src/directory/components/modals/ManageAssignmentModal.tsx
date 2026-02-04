@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BaseModal } from './BaseModal';
 
 
 interface ManageAssignmentModalProps {
@@ -143,72 +144,58 @@ export const ManageAssignmentModal: React.FC<ManageAssignmentModalProps> = ({ is
 
     const label = type === 'area' ? 'Área Académica' : 'Grupo Temático';
 
-    return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Asignar {label}</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
-                        </div>
-                        <div className="modal-body">
-                            {error && <div className="alert alert-danger">{error}</div>}
+    const conflictFooter = (
+        <div className="w-100 d-flex justify-content-end gap-2">
+            <button className="btn btn-secondary btn-sm" onClick={() => setConflictInfo(null)}>Cancelar</button>
+            <button className="btn btn-warning btn-sm" onClick={handleConfirmReplace}>Sí, reemplazar</button>
+        </div>
+    );
 
-                            {conflictInfo ? (
-                                <div className="alert alert-warning">
-                                    <p><strong>¡Conflicto de Jefe!</strong></p>
-                                    <p>El profesor <strong>{conflictInfo.nombre || 'Desconocido'}</strong> ya es Jefe de este {label}.</p>
-                                    <p>¿Deseas reemplazarlo? El profesor actual pasará a ser "Integrante".</p>
-                                    <div className="d-flex justify-content-end gap-2">
-                                        <button className="btn btn-secondary btn-sm" onClick={() => setConflictInfo(null)}>Cancelar</button>
-                                        <button className="btn btn-warning btn-sm" onClick={handleConfirmReplace}>Sí, reemplazar</button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <form onSubmit={handleSubmit}>
-                                    <div className="mb-3">
-                                        <label className="form-label">{label}</label>
-                                        <select
-                                            className="form-select"
-                                            value={form.name}
-                                            onChange={e => setForm({ ...form, name: e.target.value })}
-                                            required
-                                        >
-                                            <option value="">Seleccione...</option>
-                                            {items.map((val: string) => (
-                                                <option key={val} value={val}>{val}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="form-label">Puesto / Rol</label>
-                                        <select
-                                            className="form-select"
-                                            value={form.role}
-                                            onChange={e => setForm({ ...form, role: e.target.value })}
-                                        >
-                                            <option value="integrante">Integrante</option>
-                                            <option value="jefe">Jefe</option>
-                                        </select>
-                                    </div>
-                                </form>
-                            )}
-                        </div>
-                        <div className="modal-footer">
-                            {!conflictInfo && (
-                                <>
-                                    <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>Cancelar</button>
-                                    <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
-                                        {loading ? 'Guardando...' : 'Guardar'}
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    </div>
+    return (
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title={`Asignar ${label}`}
+            loading={loading}
+            error={error}
+            formId={!conflictInfo ? "formManageAssignment" : undefined}
+            footer={conflictInfo ? conflictFooter : undefined}
+        >
+            {conflictInfo ? (
+                <div className="alert alert-warning">
+                    <p><strong>¡Conflicto de Jefe!</strong></p>
+                    <p>El profesor <strong>{conflictInfo.nombre || 'Desconocido'}</strong> ya es Jefe de este {label}.</p>
+                    <p>¿Deseas reemplazarlo? El profesor actual pasará a ser "Integrante".</p>
                 </div>
-            </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+            ) : (
+                <form id="formManageAssignment" onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <label className="form-label">{label}</label>
+                        <select
+                            className="form-select"
+                            value={form.name}
+                            onChange={e => setForm({ ...form, name: e.target.value })}
+                            required
+                        >
+                            <option value="">Seleccione...</option>
+                            {items.map((val: string) => (
+                                <option key={val} value={val}>{val}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Puesto / Rol</label>
+                        <select
+                            className="form-select"
+                            value={form.role}
+                            onChange={e => setForm({ ...form, role: e.target.value })}
+                        >
+                            <option value="integrante">Integrante</option>
+                            <option value="jefe">Jefe</option>
+                        </select>
+                    </div>
+                </form>
+            )}
+        </BaseModal>
     );
 };

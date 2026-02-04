@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFilters } from '../../hooks/useFilters';
 import { Contract } from '../../types';
+import { BaseModal } from './BaseModal';
 
 interface ManageContractModalProps {
     isOpen: boolean;
@@ -89,55 +90,42 @@ export const ManageContractModal: React.FC<ManageContractModalProps> = ({ isOpen
     const isEdit = !!contract;
 
     return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">{isEdit ? 'Editar Contrato' : 'Nuevo Contrato'}</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
-                        </div>
-                        <div className="modal-body">
-                            {error && <div className="alert alert-danger">{error}</div>}
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label className="form-label">Tipo de Contrato</label>
-                                    <select
-                                        name="idProfesorTipo"
-                                        className="form-select"
-                                        value={formData.idProfesorTipo}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">Seleccione tipo...</option>
-                                        {filters.profesorTipos.map(t => (
-                                            <option key={t.idProfesorTipo} value={t.idProfesorTipo}>{t.nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Descripción / Notas</label>
-                                    <textarea
-                                        name="descripcion"
-                                        className="form-control"
-                                        value={formData.descripcion}
-                                        onChange={handleChange}
-                                        rows={3}
-                                        placeholder="Detalles adicionales del contrato..."
-                                    />
-                                </div>
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
-                                {loading ? 'Guardando...' : 'Guardar'}
-                            </button>
-                        </div>
-                    </div>
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title={isEdit ? 'Editar Contrato' : 'Nuevo Contrato'}
+            loading={loading}
+            error={error}
+            formId="formManageContract"
+        >
+            <form id="formManageContract" onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label className="form-label">Tipo de Contrato</label>
+                    <select
+                        name="idProfesorTipo"
+                        className="form-select"
+                        value={formData.idProfesorTipo}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Seleccione tipo...</option>
+                        {filters.profesorTipos.map(t => (
+                            <option key={t.idProfesorTipo} value={t.idProfesorTipo}>{t.nombre}</option>
+                        ))}
+                    </select>
                 </div>
-            </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+                <div className="mb-3">
+                    <label className="form-label">Descripción / Notas</label>
+                    <textarea
+                        name="descripcion"
+                        className="form-control"
+                        value={formData.descripcion}
+                        onChange={handleChange}
+                        rows={3}
+                        placeholder="Detalles adicionales del contrato..."
+                    />
+                </div>
+            </form>
+        </BaseModal>
     );
 };

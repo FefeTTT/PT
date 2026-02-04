@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Location } from '../../types';
+import { BaseModal } from './BaseModal';
 
 interface ManageLocationModalProps {
     isOpen: boolean;
@@ -156,80 +157,67 @@ export const ManageLocationModal: React.FC<ManageLocationModalProps> = ({ isOpen
     const isEdit = !!location;
 
     return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">{isEdit ? 'Editar Ubicación' : 'Nueva Ubicación'}</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title={isEdit ? 'Editar Ubicación' : 'Nueva Ubicación'}
+            loading={loading}
+            error={error}
+            formId="formManageLocation"
+        >
+            <form id="formManageLocation" onSubmit={handleSubmit}>
+                <div className="row">
+                    <div className="col-md-6 mb-2">
+                        <label className="form-label">Edificio</label>
+                        <div className="input-group">
+                            <select
+                                name="edificio"
+                                className="form-select"
+                                value={formData.edificio}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Seleccionar...</option>
+                                {edificios.map(e => (
+                                    <option key={e.idEdificio} value={e.nombreEdificio}>{e.nombreEdificio}</option>
+                                ))}
+                            </select>
                         </div>
-                        <div className="modal-body">
-                            {error && <div className="alert alert-danger">{error}</div>}
-                            <form onSubmit={handleSubmit}>
-                                <div className="row">
-                                    <div className="col-md-6 mb-2">
-                                        <label className="form-label">Edificio</label>
-                                        <div className="input-group">
-                                            <select
-                                                name="edificio"
-                                                className="form-select"
-                                                value={formData.edificio}
-                                                onChange={handleChange}
-                                                required
-                                            >
-                                                <option value="">Seleccionar...</option>
-                                                {edificios.map(e => (
-                                                    <option key={e.idEdificio} value={e.nombreEdificio}>{e.nombreEdificio}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6 mb-2">
-                                        <label className="form-label">Piso</label>
-                                        <div className="input-group">
-                                            <input
-                                                list="pisos-list"
-                                                name="piso"
-                                                className="form-control"
-                                                value={formData.piso}
-                                                onChange={handleChange}
-                                                placeholder="Seleccionar o escribir"
-                                                required
-                                                disabled={!formData.edificio}
-                                            />
-                                            <datalist id="pisos-list">
-                                                {pisos.map(p => (
-                                                    <option key={p.idPiso} value={p.nombrePiso} />
-                                                ))}
-                                            </datalist>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Cubículo</label>
-                                    <input
-                                        name="nombre"
-                                        className="form-control"
-                                        value={formData.nombre}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Ej. 128-A"
-                                    />
-                                    <div className="form-text">Número de cubículo.</div>
-                                </div>
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
-                                {loading ? 'Guardando...' : 'Guardar'}
-                            </button>
+                    </div>
+                    <div className="col-md-6 mb-2">
+                        <label className="form-label">Piso</label>
+                        <div className="input-group">
+                            <input
+                                list="pisos-list"
+                                name="piso"
+                                className="form-control"
+                                value={formData.piso}
+                                onChange={handleChange}
+                                placeholder="Seleccionar o escribir"
+                                required
+                                disabled={!formData.edificio}
+                            />
+                            <datalist id="pisos-list">
+                                {pisos.map(p => (
+                                    <option key={p.idPiso} value={p.nombrePiso} />
+                                ))}
+                            </datalist>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+                <div className="mb-2">
+                    <label className="form-label">Cubículo</label>
+                    <input
+                        name="nombre"
+                        className="form-control"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        required
+                        placeholder="Ej. 128-A"
+                    />
+                    <div className="form-text">Número de cubículo.</div>
+                </div>
+            </form>
+        </BaseModal>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { EmergencyContact } from '../../types';
+import { BaseModal } from './BaseModal';
 
 interface ManageContactModalProps {
     isOpen: boolean;
@@ -94,66 +95,53 @@ export const ManageContactModal: React.FC<ManageContactModalProps> = ({ isOpen, 
     const isEdit = !!contact;
 
     return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">{isEdit ? 'Editar Contacto de Emergencia' : 'Nuevo Contacto de Emergencia'}</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
-                        </div>
-                        <div className="modal-body">
-                            {error && <div className="alert alert-danger">{error}</div>}
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label className="form-label">Nombre</label>
-                                    <input
-                                        name="nombre"
-                                        className="form-control"
-                                        value={formData.nombre}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Nombre completo"
-                                    />
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label">Parentesco</label>
-                                        <input
-                                            name="parentesco"
-                                            className="form-control"
-                                            value={formData.parentesco}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Ej. Padre, Esposo(a)"
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label">Celular (10 dígitos)</label>
-                                        <input
-                                            name="celular"
-                                            type="tel"
-                                            className="form-control"
-                                            value={formData.celular}
-                                            onChange={handleChange}
-                                            required
-                                            maxLength={10}
-                                            placeholder="Ej. 5512345678"
-                                        />
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
-                                {loading ? 'Guardando...' : 'Guardar'}
-                            </button>
-                        </div>
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title={isEdit ? 'Editar Contacto de Emergencia' : 'Nuevo Contacto de Emergencia'}
+            loading={loading}
+            error={error}
+            formId="formManageContact"
+        >
+            <form id="formManageContact" onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label className="form-label">Nombre</label>
+                    <input
+                        name="nombre"
+                        className="form-control"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        required
+                        placeholder="Nombre completo"
+                    />
+                </div>
+                <div className="row">
+                    <div className="col-md-6 mb-3">
+                        <label className="form-label">Parentesco</label>
+                        <input
+                            name="parentesco"
+                            className="form-control"
+                            value={formData.parentesco}
+                            onChange={handleChange}
+                            required
+                            placeholder="Ej. Padre, Esposo(a)"
+                        />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                        <label className="form-label">Celular (10 dígitos)</label>
+                        <input
+                            name="celular"
+                            type="tel"
+                            className="form-control"
+                            value={formData.celular}
+                            onChange={handleChange}
+                            required
+                            maxLength={10}
+                            placeholder="Ej. 5512345678"
+                        />
                     </div>
                 </div>
-            </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+            </form>
+        </BaseModal>
     );
 };

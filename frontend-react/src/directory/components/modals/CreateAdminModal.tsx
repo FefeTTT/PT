@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFilters } from '../../hooks/useFilters';
+import { BaseModal } from './BaseModal';
 
 interface CreateAdminModalProps {
     isOpen: boolean;
@@ -104,133 +105,120 @@ export const CreateAdminModal: React.FC<CreateAdminModalProps> = ({ isOpen, onCl
     if (!isOpen) return null;
 
     return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Nuevo Administrativo</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
-                        </div>
-                        <div className="modal-body">
-                            {error && <div className="alert alert-danger">{error}</div>}
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-2">
-                                    <label className="form-label">Número Económico</label>
-                                    <input
-                                        name="numeroEconomico"
-                                        className="form-control"
-                                        value={formData.numeroEconomico}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Nombre</label>
-                                    <input
-                                        name="nombre"
-                                        className="form-control"
-                                        value={formData.nombre}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Correo UAM</label>
-                                    <div className="input-group">
-                                        <input
-                                            name="correo_uam_prefix"
-                                            className="form-control"
-                                            value={formData.correo_uam_prefix}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                        <span className="input-group-text">@azc.uam.mx</span>
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Correo personal</label>
-                                    <input
-                                        name="correo_personal"
-                                        className="form-control"
-                                        value={formData.correo_personal}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Grado de estudios</label>
-                                    <select
-                                        name="gradoEstudios"
-                                        className="form-select"
-                                        value={formData.gradoEstudios}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="">(ninguno)</option>
-                                        <option value="Licenciatura">Licenciatura</option>
-                                        <option value="Maestría">Maestría</option>
-                                        <option value="Doctorado">Doctorado</option>
-                                        {/* Admins might have other levels like Secundaria, Bachillerato? */}
-                                        <option value="Bachillerato">Bachillerato</option>
-                                        <option value="Técnico">Técnico</option>
-                                    </select>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Tipo de personal</label>
-                                    <select
-                                        name="idAdministrativoTipo"
-                                        className="form-select"
-                                        value={formData.idAdministrativoTipo}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">Seleccione tipo</option>
-                                        {filters.administrativoTipos.map(t => (
-                                            <option key={t.idAdministrativoTipo} value={t.idAdministrativoTipo}>{t.nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6 mb-2">
-                                        <label className="form-label">Celular</label>
-                                        <input
-                                            name="celular"
-                                            className="form-control"
-                                            value={formData.celular}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-2">
-                                        <label className="form-label">Extensión</label>
-                                        <input
-                                            name="extension"
-                                            className="form-control"
-                                            value={formData.extension}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Lugar/Ubicación</label>
-                                    <input
-                                        name="lugar"
-                                        className="form-control"
-                                        value={formData.lugar}
-                                        onChange={handleChange}
-                                        placeholder="Ej. Edificio T, Planta Baja"
-                                    />
-                                </div>
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
-                                {loading ? 'Guardando...' : 'Guardar'}
-                            </button>
-                        </div>
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Nuevo Administrativo"
+            loading={loading}
+            error={error}
+            formId="formNuevoAdmin"
+        >
+            <form id="formNuevoAdmin" onSubmit={handleSubmit}>
+                <div className="mb-2">
+                    <label className="form-label">Número Económico</label>
+                    <input
+                        name="numeroEconomico"
+                        className="form-control"
+                        value={formData.numeroEconomico}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-2">
+                    <label className="form-label">Nombre</label>
+                    <input
+                        name="nombre"
+                        className="form-control"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-2">
+                    <label className="form-label">Correo UAM</label>
+                    <div className="input-group">
+                        <input
+                            name="correo_uam_prefix"
+                            className="form-control"
+                            value={formData.correo_uam_prefix}
+                            onChange={handleChange}
+                            required
+                        />
+                        <span className="input-group-text">@azc.uam.mx</span>
                     </div>
                 </div>
-            </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+                <div className="mb-2">
+                    <label className="form-label">Correo personal</label>
+                    <input
+                        name="correo_personal"
+                        className="form-control"
+                        value={formData.correo_personal}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="mb-2">
+                    <label className="form-label">Grado de estudios</label>
+                    <select
+                        name="gradoEstudios"
+                        className="form-select"
+                        value={formData.gradoEstudios}
+                        onChange={handleChange}
+                    >
+                        <option value="">(ninguno)</option>
+                        <option value="Licenciatura">Licenciatura</option>
+                        <option value="Maestría">Maestría</option>
+                        <option value="Doctorado">Doctorado</option>
+                        {/* Admins might have other levels like Secundaria, Bachillerato? */}
+                        <option value="Bachillerato">Bachillerato</option>
+                        <option value="Técnico">Técnico</option>
+                    </select>
+                </div>
+                <div className="mb-2">
+                    <label className="form-label">Tipo de personal</label>
+                    <select
+                        name="idAdministrativoTipo"
+                        className="form-select"
+                        value={formData.idAdministrativoTipo}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Seleccione tipo</option>
+                        {filters.administrativoTipos.map(t => (
+                            <option key={t.idAdministrativoTipo} value={t.idAdministrativoTipo}>{t.nombre}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="row">
+                    <div className="col-md-6 mb-2">
+                        <label className="form-label">Celular</label>
+                        <input
+                            name="celular"
+                            className="form-control"
+                            value={formData.celular}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="col-md-6 mb-2">
+                        <label className="form-label">Extensión</label>
+                        <input
+                            name="extension"
+                            className="form-control"
+                            value={formData.extension}
+                            onChange={handleChange}
+                        />
+                    </div>
+                </div>
+                <div className="mb-2">
+                    <label className="form-label">Lugar/Ubicación</label>
+                    <input
+                        name="lugar"
+                        className="form-control"
+                        value={formData.lugar}
+                        onChange={handleChange}
+                        placeholder="Ej. Edificio T, Planta Baja"
+                    />
+                </div>
+            </form>
+        </BaseModal>
     );
 };

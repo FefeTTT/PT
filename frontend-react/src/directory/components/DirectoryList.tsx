@@ -98,7 +98,7 @@ interface DirectoryListRowProps {
     onClick: () => void;
 }
 
-const DirectoryListRow: React.FC<DirectoryListRowProps> = ({ item, isSelected, rowClass, onClick }) => {
+const DirectoryListRow: React.FC<DirectoryListRowProps> = React.memo(({ item, isSelected, rowClass, onClick }) => {
     return (
         <tr
             className={`${rowClass} ${isSelected ? 'table-primary' : ''}`}
@@ -114,7 +114,12 @@ const DirectoryListRow: React.FC<DirectoryListRowProps> = ({ item, isSelected, r
             <td>{item.numeroEconomico}</td>
         </tr>
     );
-}
+}, (prev, next) => {
+    return prev.item.id === next.item.id &&
+        prev.item.tipo === next.item.tipo &&
+        prev.isSelected === next.isSelected &&
+        prev.rowClass === next.rowClass;
+});
 
 // Re-export correctly
 export default DirectoryList;

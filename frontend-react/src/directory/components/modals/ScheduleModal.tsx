@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trimester } from '../../types';
+import { BaseModal } from './BaseModal';
 
 interface ScheduleModalProps {
     isOpen: boolean;
@@ -99,80 +100,70 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, p
     if (!isOpen) return null;
 
     return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} role="dialog">
-                <div className="modal-dialog modal-lg">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Horario Asignado</h5>
-                            <button type="button" className="btn-close" onClick={onClose}></button>
-                        </div>
-                        <div className="modal-body">
-                            {loadingTrims ? (
-                                <div className="text-center"><div className="spinner-border text-primary" role="status"></div></div>
-                            ) : (
-                                <div className="mb-3">
-                                    <label className="form-label">Trimestre</label>
-                                    <select
-                                        className="form-select"
-                                        value={selectedTrimestre}
-                                        onChange={e => setSelectedTrimestre(e.target.value)}
-                                    >
-                                        {trimesters.map(t => (
-                                            <option key={t.idTrimestre} value={t.idTrimestre}>
-                                                {t.anio} - {t.trimestre}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
-
-                            {loading ? (
-                                <div className="text-center py-5"><div className="spinner-border text-primary" role="status"></div></div>
-                            ) : (
-                                <>
-                                    {schedule.length > 0 ? (
-                                        <div className="table-responsive">
-                                            <table className="table table-bordered table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Clave UEA</th>
-                                                        <th>Grupo</th>
-                                                        {/* Since we don't get UEA Name easily, we omit or show strict data */}
-                                                        <th>Info</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {schedule.map((s, idx) => (
-                                                        <tr key={idx}>
-                                                            <td>{s.claveUEA}</td>
-                                                            <td>{s.claveGrupo}</td>
-                                                            <td>
-                                                                <small className="text-muted">ID Grupo: {s.idGrupo}</small>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                            <p className="text-muted small">
-                                                Nota: Solo se muestran los grupos donde el profesor es el titular asignado.
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <div className="alert alert-info">
-                                            No se encontraron grupos asignados para este trimestre.
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>
-                        </div>
-                    </div>
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Horario Asignado"
+            size="lg"
+            cancelText="Cerrar"
+        >
+            {loadingTrims ? (
+                <div className="text-center"><div className="spinner-border text-primary" role="status"></div></div>
+            ) : (
+                <div className="mb-3">
+                    <label className="form-label">Trimestre</label>
+                    <select
+                        className="form-select"
+                        value={selectedTrimestre}
+                        onChange={e => setSelectedTrimestre(e.target.value)}
+                    >
+                        {trimesters.map(t => (
+                            <option key={t.idTrimestre} value={t.idTrimestre}>
+                                {t.anio} - {t.trimestre}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-            </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+            )}
+
+            {loading ? (
+                <div className="text-center py-5"><div className="spinner-border text-primary" role="status"></div></div>
+            ) : (
+                <>
+                    {schedule.length > 0 ? (
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Clave UEA</th>
+                                        <th>Grupo</th>
+                                        {/* Since we don't get UEA Name easily, we omit or show strict data */}
+                                        <th>Info</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {schedule.map((s, idx) => (
+                                        <tr key={idx}>
+                                            <td>{s.claveUEA}</td>
+                                            <td>{s.claveGrupo}</td>
+                                            <td>
+                                                <small className="text-muted">ID Grupo: {s.idGrupo}</small>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <p className="text-muted small">
+                                Nota: Solo se muestran los grupos donde el profesor es el titular asignado.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="alert alert-info">
+                            No se encontraron grupos asignados para este trimestre.
+                        </div>
+                    )}
+                </>
+            )}
+        </BaseModal>
     );
 };
