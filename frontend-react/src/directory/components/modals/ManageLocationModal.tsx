@@ -9,48 +9,103 @@ interface ManageLocationModalProps {
     location?: Location | null; // If present, edit mode
 }
 
+interface Edificio {
+    idEdificio: number;
+    nombreEdificio: string;
+}
+
+interface Piso {
+    idPiso: number;
+    nombrePiso: string;
+    idEdificio: number;
+}
+
 export const ManageLocationModal: React.FC<ManageLocationModalProps> = ({ isOpen, onClose, onSuccess, professorId, location }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const [edificios, setEdificios] = useState<Edificio[]>([]);
+    const [pisos, setPisos] = useState<Piso[]>([]);
+
     const [formData, setFormData] = useState({
         edificio: '',
         piso: '',
-        cubiculo: '',
-        nombre: '',
-        notas: ''
+        nombre: ''
     });
+
+    // Helper to find ID from name (since backend expects name but we need ID for filtering)
+    const getEdificioId = (name: string) => edificios.find(e => e.nombreEdificio === name)?.idEdificio;
 
     useEffect(() => {
         if (isOpen) {
+            fetchEdificios();
             if (location) {
                 setFormData({
                     edificio: location.edificio || '',
                     piso: location.piso?.toString() || '',
-                    cubiculo: location.cubiculo || '',
-                    nombre: location.nombre || '',
-                    notas: location.notas || ''
+                    nombre: location.nombre || ''
                 });
             } else {
                 setFormData({
                     edificio: '',
                     piso: '',
-                    cubiculo: '',
-                    nombre: '',
-                    notas: ''
+                    nombre: ''
                 });
             }
             setError(null);
         }
     }, [isOpen, location]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // When edificio changes (or is set initially), fetch pisos
+    useEffect(() => {
+        if (formData.edificio && edificios.length > 0) {
+            const id = getEdificioId(formData.edificio);
+            if (id) {
+                fetchPisos(id);
+            } else {
+                // New building or not in list
+                setPisos([]);
+            }
+        } else {
+            setPisos([]);
+        }
+    }, [formData.edificio, edificios]);
+
+
+    const fetchEdificios = async () => {
+        try {
+            const res = await fetch('controlador/recuperaEdificios.php');
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setEdificios(data);
+            }
+        } catch (e) {
+            console.error("Error fetching edificios", e);
+        }
+    };
+
+    const fetchPisos = async (idEdificio: number) => {
+        try {
+            const res = await fetch(`controlador/recuperaPisos.php?idEdificio=${idEdificio}`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setPisos(data);
+            } else {
+                setPisos([]);
+            }
+        } catch (e) {
+            console.error("Error fetching pisos", e);
+        }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const validate = () => {
         if (!formData.edificio) return 'Edificio es obligatorio';
-        if (!formData.nombre) return 'Nombre es obligatorio';
+        if (!formData.piso) return 'Piso es obligatorio';
+        if (!formData.nombre) return 'Cubículo/Nombre es obligatorio';
         return null;
     };
 
@@ -71,8 +126,6 @@ export const ManageLocationModal: React.FC<ManageLocationModalProps> = ({ isOpen
             if (location) {
                 // Edit
                 data.append('idLugar', location.idLugar?.toString() || '0');
-                // Edit script expects edificio, piso, cubiculo, nombre, notas
-                // It does NOT require professorId usually, but let's check script (checked earlier).
             } else {
                 // Add
                 data.append('idProfesor', professorId.toString());
@@ -80,15 +133,14 @@ export const ManageLocationModal: React.FC<ManageLocationModalProps> = ({ isOpen
 
             data.append('edificio', formData.edificio);
             data.append('piso', formData.piso);
-            data.append('cubiculo', formData.cubiculo);
             data.append('nombre', formData.nombre);
-            data.append('notas', formData.notas);
 
             const url = location ? 'controlador/editarLugarProfesor.php' : 'controlador/agregarLugarProfesor.php';
             const res = await fetch(url, { method: 'POST', body: data });
             const json = await res.json();
 
             if (!json.ok) throw new Error(json.msg || json.error || 'Error al guardar lugar');
+            if (json.error) throw new Error(json.error);
 
             onSuccess();
             onClose();
@@ -115,60 +167,56 @@ export const ManageLocationModal: React.FC<ManageLocationModalProps> = ({ isOpen
                         <div className="modal-body">
                             {error && <div className="alert alert-danger">{error}</div>}
                             <form onSubmit={handleSubmit}>
+                                <div className="row">
+                                    <div className="col-md-6 mb-2">
+                                        <label className="form-label">Edificio</label>
+                                        <div className="input-group">
+                                            <select
+                                                name="edificio"
+                                                className="form-select"
+                                                value={formData.edificio}
+                                                onChange={handleChange}
+                                                required
+                                            >
+                                                <option value="">Seleccionar...</option>
+                                                {edificios.map(e => (
+                                                    <option key={e.idEdificio} value={e.nombreEdificio}>{e.nombreEdificio}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 mb-2">
+                                        <label className="form-label">Piso</label>
+                                        <div className="input-group">
+                                            <input
+                                                list="pisos-list"
+                                                name="piso"
+                                                className="form-control"
+                                                value={formData.piso}
+                                                onChange={handleChange}
+                                                placeholder="Seleccionar o escribir"
+                                                required
+                                                disabled={!formData.edificio}
+                                            />
+                                            <datalist id="pisos-list">
+                                                {pisos.map(p => (
+                                                    <option key={p.idPiso} value={p.nombrePiso} />
+                                                ))}
+                                            </datalist>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="mb-2">
-                                    <label className="form-label">Nombre <small className="text-muted">(Desc. corta, ej. Oficina)</small></label>
+                                    <label className="form-label">Cubículo</label>
                                     <input
                                         name="nombre"
                                         className="form-control"
                                         value={formData.nombre}
                                         onChange={handleChange}
                                         required
-                                        placeholder="Ej. Oficina principal"
+                                        placeholder="Ej. 128-A"
                                     />
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-6 mb-2">
-                                        <label className="form-label">Edificio</label>
-                                        <input
-                                            name="edificio"
-                                            className="form-control"
-                                            value={formData.edificio}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Ej. T"
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-2">
-                                        <label className="form-label">Piso</label>
-                                        <input
-                                            name="piso"
-                                            type="number"
-                                            className="form-control"
-                                            value={formData.piso}
-                                            onChange={handleChange}
-                                            placeholder="Ej. 1"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Cubiculo</label>
-                                    <input
-                                        name="cubiculo"
-                                        className="form-control"
-                                        value={formData.cubiculo}
-                                        onChange={handleChange}
-                                        placeholder="Ej. 123"
-                                    />
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label">Notas</label>
-                                    <textarea
-                                        name="notas"
-                                        className="form-control"
-                                        value={formData.notas}
-                                        onChange={handleChange}
-                                        rows={2}
-                                    />
+                                    <div className="form-text">Número de cubículo.</div>
                                 </div>
                             </form>
                         </div>

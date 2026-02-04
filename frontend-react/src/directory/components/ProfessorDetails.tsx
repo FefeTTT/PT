@@ -307,10 +307,10 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
                             {canEdit && (
                                 <div>
                                     <button className="btn btn-xs btn-outline-success py-0 me-1" style={{ fontSize: '0.7rem' }} onClick={handleAddArea}>
-                                        + Área
+                                        + Área académica
                                     </button>
                                     <button className="btn btn-xs btn-outline-success py-0" style={{ fontSize: '0.7rem' }} onClick={handleAddGroup}>
-                                        + Grupo
+                                        + Grupo temático
                                     </button>
                                 </div>
                             )}
