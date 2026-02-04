@@ -61,6 +61,7 @@ try{
     }
 
 } catch (Exception $e){
+    error_log("agregarProfesorAreaAcademica error: " . $e->getMessage());
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
 }

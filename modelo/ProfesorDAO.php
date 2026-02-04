@@ -138,7 +138,7 @@
 		 */
 		public function obtenerAreaAcademicaPorProfesorNombre(string $nombreProfesor): array {
 			// Use schema names: areaacademica.idAreaAcademica and areaacademica_has_profesor.areaAcademica_idAreaAcademica
-			$sql = "SELECT a.idAreaAcademica AS idAreaAcademica, a.nombre, a.puesto
+			$sql = "SELECT a.idAreaAcademica AS idAreaAcademica, a.nombre
 				FROM areaacademica a
 				JOIN areaacademica_has_profesor ap ON a.idAreaAcademica = ap.areaAcademica_idAreaAcademica
 				JOIN profesor p ON ap.profesor_numeroEconomico = p.numeroEconomico
@@ -155,7 +155,7 @@
 		 */
 		public function obtenerAreaAcademicaPorProfesorId(int $idProfesor): array {
 			// Use schema names: areaacademica.idAreaAcademica and areaacademica_has_profesor.areaAcademica_idAreaAcademica
-			$sql = "SELECT a.idAreaAcademica AS idAreaAcademica, a.nombre, a.puesto
+			$sql = "SELECT a.idAreaAcademica AS idAreaAcademica, a.nombre
 				FROM areaacademica a
 				JOIN areaacademica_has_profesor ap ON a.idAreaAcademica = ap.areaAcademica_idAreaAcademica
 				WHERE ap.profesor_numeroEconomico = ?";
@@ -479,11 +479,12 @@
 			$jefeAreaIds = [];
 			$jefeGrupoIds = [];
 			if (isset($filters['areaAcademicaName']) && $filters['areaAcademicaName'] !== ''){
-				$sqlJ = "SELECT ap.profesor_numeroEconomico FROM areaacademica aax JOIN areaacademica_has_profesor ap ON aax.idAreaAcademica = ap.areaAcademica_idAreaAcademica WHERE aax.nombre = ? AND aax.puesto LIKE '%jef%'";
-				$stj = $this->conexion->prepare($sqlJ);
-				$stj->execute([$filters['areaAcademicaName']]);
-				$jrows = $stj->fetchAll(PDO::FETCH_COLUMN, 0);
-				$jefeAreaIds = array_map('intval', $jrows ?: []);
+				// Puesto column removed from areaacademica. Cannot determine jefe from this table anymore.
+				// $sqlJ = "SELECT ap.profesor_numeroEconomico FROM areaacademica aax JOIN areaacademica_has_profesor ap ON aax.idAreaAcademica = ap.areaAcademica_idAreaAcademica WHERE aax.nombre = ? AND aax.puesto LIKE '%jef%'";
+				// $stj = $this->conexion->prepare($sqlJ);
+				// $stj->execute([$filters['areaAcademicaName']]);
+				// $jrows = $stj->fetchAll(PDO::FETCH_COLUMN, 0);
+				$jefeAreaIds = []; // array_map('intval', $jrows ?: []);
 			}
 			if (isset($filters['grupoTematicoName']) && $filters['grupoTematicoName'] !== ''){
 				$sqlG = "SELECT gp.profesor_numeroEconomico FROM grupotematico gx JOIN grupotematico_has_profesor gp ON gx.idGrupoTematico = gp.grupoTematico_idGrupoTematico WHERE gx.nombreGrupo = ? AND gx.puesto LIKE '%jef%'";
@@ -514,7 +515,7 @@
 
 		/* Listado para filtros */
 		public function listarAreaAcademicas(): array {
-			$sql = "SELECT idAreaAcademica, nombre, puesto FROM areaacademica ORDER BY nombre";
+			$sql = "SELECT idAreaAcademica, nombre FROM areaacademica ORDER BY nombre";
 			$stmt = $this->conexion->query($sql);
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			return $rows ?: [];
@@ -797,11 +798,7 @@
 		/* ------------------ Area academica / grupotematico helpers ------------------ */
 
 		public function obtenerAreaAcademicaIdPorNombreYPuesto(string $nombre, bool $esJefe): ?int {
-			if ($esJefe) {
-				$sql = "SELECT idAreaAcademica FROM areaacademica WHERE nombre = ? AND puesto LIKE '%jef%' LIMIT 1";
-			} else {
-				$sql = "SELECT idAreaAcademica FROM areaacademica WHERE nombre = ? AND puesto NOT LIKE '%jef%' LIMIT 1";
-			}
+			$sql = "SELECT idAreaAcademica FROM areaacademica WHERE nombre = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombre]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -812,7 +809,7 @@
 		 * Obtener una fila de areaacademica por su id.
 		 */
 		public function obtenerAreaAcademicaPorId(int $idAreaAcademica): ?array {
-			$sql = "SELECT idAreaAcademica, nombre, puesto FROM areaacademica WHERE idAreaAcademica = ? LIMIT 1";
+			$sql = "SELECT idAreaAcademica, nombre FROM areaacademica WHERE idAreaAcademica = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$idAreaAcademica]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);

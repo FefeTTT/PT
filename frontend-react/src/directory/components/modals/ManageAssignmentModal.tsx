@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useFilters } from '../../hooks/useFilters';
+
 
 interface ManageAssignmentModalProps {
     isOpen: boolean;
@@ -10,7 +10,7 @@ interface ManageAssignmentModalProps {
 }
 
 export const ManageAssignmentModal: React.FC<ManageAssignmentModalProps> = ({ isOpen, onClose, onSuccess, professorId, type }) => {
-    const { filters } = useFilters();
+    const [items, setItems] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [conflictInfo, setConflictInfo] = useState<any | null>(null);
@@ -26,8 +26,41 @@ export const ManageAssignmentModal: React.FC<ManageAssignmentModalProps> = ({ is
             setForm({ name: '', role: 'integrante', confirmReplace: false });
             setError(null);
             setConflictInfo(null);
+            fetchItems();
         }
     }, [isOpen, type]);
+
+    const fetchItems = async () => {
+        setLoading(true);
+        try {
+            const url = type === 'area'
+                ? 'controlador/recuperaAreasAcademicas.php'
+                : 'controlador/recuperaGruposTematicos.php';
+
+            const res = await fetch(url);
+            const json = await res.json();
+
+            if (json.ok) {
+                // Deduplicate names
+                // Backend returns objects { id, nombre, puesto }
+                // We only need unique names
+                const list = type === 'area' ? json.areas : json.grupos;
+                const names = new Set<string>();
+                list.forEach((item: any) => {
+                    const n = type === 'area' ? item.nombre : item.nombreGrupo;
+                    if (n) names.add(n);
+                });
+                setItems(Array.from(names).sort());
+            } else {
+                setError('Error al cargar catálogo');
+            }
+        } catch (e) {
+            console.error(e);
+            setError('Error de conexión');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
@@ -73,14 +106,6 @@ export const ManageAssignmentModal: React.FC<ManageAssignmentModalProps> = ({ is
 
     const handleConfirmReplace = () => {
         setForm(prev => ({ ...prev, confirmReplace: true }));
-        // setTimeout to allow state update? No, state update is async. 
-        // We can call submit effectively but need updated state.
-        // Better:
-        // We can pass the confirmReplace flag directly to a helper or rely on state update + effect, 
-        // but explicit call is better.
-        // Let's usetState and trigger submit in next render? No.
-        // I will modify handleSubmit to accept overrides or rework state.
-        // Actally, I can just reconstruct data in a simplified submit function.
         submitWithConfirm();
     };
 
@@ -116,7 +141,6 @@ export const ManageAssignmentModal: React.FC<ManageAssignmentModalProps> = ({ is
 
     if (!isOpen) return null;
 
-    const items = type === 'area' ? filters.areaAcademicas : filters.gruposTematicos;
     const label = type === 'area' ? 'Área Académica' : 'Grupo Temático';
 
     return (
@@ -152,10 +176,9 @@ export const ManageAssignmentModal: React.FC<ManageAssignmentModalProps> = ({ is
                                             required
                                         >
                                             <option value="">Seleccione...</option>
-                                            {items.map((item: any) => {
-                                                const val = type === 'area' ? item.nombre : item.nombreGrupo;
-                                                return <option key={val} value={val}>{val}</option>;
-                                            })}
+                                            {items.map((val: string) => (
+                                                <option key={val} value={val}>{val}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="mb-3">
