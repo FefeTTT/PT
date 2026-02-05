@@ -122,3 +122,11 @@ export async function importarUEA(file: File): Promise<{
     }
 }
 
+
+export async function fetchProfesoresTrimestre(idTrimestre: string | number): Promise<{ ok: boolean; profesores?: any[]; msg?: string }> {
+    return post('controlador/recuperarProfesoresTrimestre.php', { idTrimestre });
+}
+
+export async function toggleProfesorTrimestre(idTrimestre: string | number, idProfesor: string | number, action: 'include' | 'exclude'): Promise<{ ok: boolean; error?: string }> {
+    return post('controlador/toggleProfesorEnTrimestre.php', { idTrimestre, idProfesor, action });
+}

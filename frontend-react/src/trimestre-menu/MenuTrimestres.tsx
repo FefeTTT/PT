@@ -6,6 +6,7 @@ import LoadingLabel from '../components/common/LoadingLabel';
 import ActionButton from '../components/common/ActionButton';
 import NewTrimestreModal from './NewTrimestreModal';
 import ImportUEAModal from './ImportUEAModal';
+import ProfesoresTrimestre from './ProfesoresTrimestre';
 
 interface SortState {
     col: string | null;
@@ -20,6 +21,7 @@ const MenuTrimestres: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [showNewModal, setShowNewModal] = useState<boolean>(false);
     const [showImportModal, setShowImportModal] = useState<boolean>(false);
+    const [selectedTrimestreForProfessors, setSelectedTrimestreForProfessors] = useState<API.Trimestre | null>(null);
 
     useEffect(() => {
         loadTrimestres(selectedYear);
@@ -99,6 +101,9 @@ const MenuTrimestres: React.FC = () => {
         } else if (action === 'importar-uea') {
             setShowImportModal(true);
             return;
+        } else if (action === 'Profesores' && row) {
+            setSelectedTrimestreForProfessors(row);
+            return;
         }
         alert(`Acción '${action}' en construcción (React Port). \nID: ${row?.idTrimestre || 'N/A'}`);
 
@@ -164,42 +169,51 @@ const MenuTrimestres: React.FC = () => {
             {/* Content */}
             <div className="card" style={{ minHeight: '150px' }}>
                 <div className="card-body">
-                    {error && <div className="text-danger small">{error}</div>}
+                    {selectedTrimestreForProfessors ? (
+                        <ProfesoresTrimestre
+                            trimestre={selectedTrimestreForProfessors}
+                            onBack={() => setSelectedTrimestreForProfessors(null)}
+                        />
+                    ) : (
+                        <>
+                            {error && <div className="text-danger small">{error}</div>}
 
-                    {!error && (
-                        <div className="table-responsive">
-                            <table className="table table-striped table-sm">
-                                <thead>
-                                    <TrimestreTableHeaders>
-                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('periodoNombre')}>Periodo</button></th>
-                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('año')}>Año</button></th>
-                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('fechaLimite')}>Fecha límite</button></th>
-                                        <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('estado')}>Estado</button></th>
-                                        <th className="text-start">Acciones</th>
-                                    </TrimestreTableHeaders>
-                                </thead>
+                            {!error && (
+                                <div className="table-responsive">
+                                    <table className="table table-striped table-sm">
+                                        <thead>
+                                            <TrimestreTableHeaders>
+                                                <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('periodoNombre')}>Periodo</button></th>
+                                                <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('año')}>Año</button></th>
+                                                <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('fechaLimite')}>Fecha límite</button></th>
+                                                <th className="text-start"><button className={styles.sortBtn} onClick={() => handleSort('estado')}>Estado</button></th>
+                                                <th className="text-start">Acciones</th>
+                                            </TrimestreTableHeaders>
+                                        </thead>
 
-                                <tbody>
-                                    {sortedTrimestres.length === 0 ? (
-                                        <tr><td colSpan={5} className="text-center">No hay trimestres.</td></tr>
-                                    ) : (
-                                        sortedTrimestres.map((row, idx) => (
-                                            <tr key={row.idTrimestre || idx}>
-                                                <td>{row.periodoNombre || row.sigla}</td>
-                                                <td>{row.año || row.anio}</td>
-                                                <td>{row.fechaLimite || '-'}</td>
-                                                <td><span className="badge bg-secondary">{row.estado || row.trimestreEstado}</span></td>
-                                                <td>
-                                                    <button className="btn btn-sm btn-danger me-1" onClick={() => handleDelete(row)}>Eliminar</button>
-                                                    <button className="btn btn-sm btn-info me-1" onClick={() => handleAction('Profesores', row)}>Profesores</button>
-                                                    <button className="btn btn-sm btn-warning" onClick={() => handleAction('Grupos', row)}>Grupos</button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                                        <tbody>
+                                            {sortedTrimestres.length === 0 ? (
+                                                <tr><td colSpan={5} className="text-center">No hay trimestres.</td></tr>
+                                            ) : (
+                                                sortedTrimestres.map((row, idx) => (
+                                                    <tr key={row.idTrimestre || idx}>
+                                                        <td>{row.periodoNombre || row.sigla}</td>
+                                                        <td>{row.año || row.anio}</td>
+                                                        <td>{row.fechaLimite || '-'}</td>
+                                                        <td><span className="badge bg-secondary">{row.estado || row.trimestreEstado}</span></td>
+                                                        <td>
+                                                            <button className="btn btn-sm btn-danger me-1" onClick={() => handleDelete(row)}>Eliminar</button>
+                                                            <button className="btn btn-sm btn-info me-1" onClick={() => handleAction('Profesores', row)}>Profesores</button>
+                                                            <button className="btn btn-sm btn-warning" onClick={() => handleAction('Grupos', row)}>Grupos</button>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
