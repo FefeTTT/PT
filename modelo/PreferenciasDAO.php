@@ -687,8 +687,8 @@
 			// 1) Preferencia base
 			$st = $this->conexion->prepare("SELECT pp.idProfesorPreferencias, pp.noGrupos, pp.observaciones, p.idProfesor, p.numeroEconomico, p.nombre
 							FROM profesorpreferencias pp
-							INNER JOIN profesor p ON p.idProfesor = pp.profesor_idProfesor
-							WHERE pp.trimestre_idTrimestre = :idTr AND pp.profesor_idProfesor = :idP LIMIT 1");
+							INNER JOIN profesor p ON p.numeroEconomico = pp.profesor_numeroEconomico
+							WHERE pp.trimestre_idTrimestre = :idTr AND pp.profesor_numeroEconomico = :idP LIMIT 1");
 			$st->execute([':idTr' => $idTrimestre, ':idP' => $idProfesor]);
 			$base = $st->fetch(PDO::FETCH_ASSOC);
 			if (!$base) return ['ok' => true, 'data' => null];
@@ -735,7 +735,7 @@
 			try {
 				$st = $this->conexion->prepare("SELECT pp.idProfesorPreferencias, pp.noGrupos, pp.observaciones, p.idProfesor, p.numeroEconomico, p.nombre
 					FROM profesorpreferencias pp
-					INNER JOIN profesor p ON p.idProfesor = pp.profesor_idProfesor
+					INNER JOIN profesor p ON p.numeroEconomico = pp.profesor_numeroEconomico
 					WHERE pp.trimestre_idTrimestre = :idTr
 					ORDER BY p.numeroEconomico ASC");
 				$st->execute([':idTr' => $idTrimestre]);
@@ -787,7 +787,7 @@
 			try{
 				$sql = "SELECT pu.prioridad, p.idProfesor, p.numeroEconomico, p.nombre
 					FROM profesorpreferencias pp
-					INNER JOIN profesor p ON p.idProfesor = pp.profesor_idProfesor
+					INNER JOIN profesor p ON p.numeroEconomico = pp.profesor_numeroEconomico
 					INNER JOIN profesorpreferencia_has_uea pu ON pu.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias
 					WHERE pp.trimestre_idTrimestre = :idTr AND pu.uea_idUEA = :idU
 					ORDER BY pu.prioridad ASC, p.numeroEconomico ASC";
@@ -816,13 +816,13 @@
 		 */
 		public function obtenerHorariosPreferenciasPorTrimestre(int $idTrimestre): array {
 			try{
-				$sql = "SELECT p.idProfesor, LOWER(h.dia) AS dia, DATE_FORMAT(h.horaInicio,'%H:%i') AS horaInicio, DATE_FORMAT(h.horaFin,'%H:%i') AS horaFin
+				$sql = "SELECT p.numeroEconomico AS idProfesor, LOWER(h.dia) AS dia, DATE_FORMAT(h.horaInicio,'%H:%i') AS horaInicio, DATE_FORMAT(h.horaFin,'%H:%i') AS horaFin
 					FROM profesorpreferencias pp
-					INNER JOIN profesor p ON p.idProfesor = pp.profesor_idProfesor
+					INNER JOIN profesor p ON p.numeroEconomico = pp.profesor_numeroEconomico
 					INNER JOIN profesorpreferencia_has_horario ph ON ph.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias
 					INNER JOIN horario h ON h.idHorario = ph.horario_idHorario
 					WHERE pp.trimestre_idTrimestre = :idTr
-					ORDER BY p.idProfesor, h.dia, h.horaInicio";
+					ORDER BY p.numeroEconomico, h.dia, h.horaInicio";
 				$st = $this->conexion->prepare($sql);
 				$st->execute([':idTr' => $idTrimestre]);
 				$rows = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -892,19 +892,19 @@
 				GROUP_CONCAT(DISTINCT CASE WHEN LOWER(h.dia)='viernes' THEN CONCAT(DATE_FORMAT(h.horaInicio,'%H:%i'),'-',DATE_FORMAT(h.horaFin,'%H:%i')) END ORDER BY h.horaInicio SEPARATOR ', ') AS viernes_raw,
 				MAX(pp.observaciones) AS observaciones
 			FROM profesorpreferencias pp
-			JOIN profesor p ON p.idProfesor = pp.profesor_idProfesor
+			JOIN profesor p ON p.numeroEconomico = pp.profesor_numeroEconomico
 			JOIN trimestre t ON t.idTrimestre = pp.trimestre_idTrimestre
 			JOIN trimestreperiodo tp ON tp.idTrimestrePeriodo = t.trimestreperiodo_idTrimestrePeriodo
-			LEFT JOIN profesorcontrato pc ON pc.profesor_idProfesor = p.idProfesor
+			LEFT JOIN profesorcontrato pc ON pc.profesor_numeroEconomico = p.numeroEconomico
 			LEFT JOIN profesortipo pt ON pt.idProfesorTipo = pc.profesortipo_idProfesorTipo
-			LEFT JOIN areaacademica_has_profesor ahp ON ahp.profesor_idProfesor = p.idProfesor
+			LEFT JOIN areaacademica_has_profesor ahp ON ahp.profesor_numeroEconomico = p.numeroEconomico
 			LEFT JOIN areaacademica aa ON aa.idAreaAcademica = ahp.areaAcademica_idAreaAcademica
 			LEFT JOIN profesorpreferencia_has_uea pu ON pu.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias
 			LEFT JOIN uea u ON u.idUEA = pu.uea_idUEA
 			LEFT JOIN profesorpreferencia_has_horario ph ON ph.profesorPreferencia_idProfesorPreferencias = pp.idProfesorPreferencias
 			LEFT JOIN horario h ON h.idHorario = ph.horario_idHorario
 			$whereSql $existsUea
-			GROUP BY p.idProfesor, t.idTrimestre
+			GROUP BY p.numeroEconomico, t.idTrimestre
 			ORDER BY t.año DESC, tp.sigla, p.numeroEconomico";
 
 			try {
@@ -976,7 +976,7 @@
 					"SELECT pp.idProfesorPreferencias FROM profesorpreferencias pp
 					 JOIN trimestre t ON pp.trimestre_idTrimestre = t.idTrimestre
 					 JOIN trimestreperiodo tp ON t.trimestreperiodo_idTrimestrePeriodo = tp.idTrimestrePeriodo
-					 JOIN profesor p ON pp.profesor_idProfesor = p.idProfesor
+					 JOIN profesor p ON pp.profesor_numeroEconomico = p.numeroEconomico
 					 WHERE tp.sigla = :sigla AND t.año = :anio AND p.numeroEconomico = :noEco LIMIT 1"
 				);
 				$st->execute([':sigla'=>$trimPeriodo, ':anio'=>$trimAno, ':noEco'=>$noEco]);
@@ -1051,7 +1051,7 @@
 		public function borrarPreferenciasPorIdProfesorYTrimestre(int $idProfesor, int $idTrimestre): array {
 			try {
 				$this->conexion->beginTransaction();
-				$st = $this->conexion->prepare("SELECT idProfesorPreferencias FROM profesorpreferencias WHERE profesor_idProfesor = :idP AND trimestre_idTrimestre = :idTr");
+				$st = $this->conexion->prepare("SELECT idProfesorPreferencias FROM profesorpreferencias WHERE profesor_numeroEconomico = :idP AND trimestre_idTrimestre = :idTr");
 				$st->execute([':idP' => $idProfesor, ':idTr' => $idTrimestre]);
 				$ids = $st->fetchAll(PDO::FETCH_COLUMN, 0);
 				if (!$ids || count($ids) === 0) {
@@ -1101,14 +1101,14 @@
 		public function ensurePreferenciaBase(int $idTrimestre, int $idProfesor): ?int {
 			try{
 				$this->conexion->beginTransaction();
-				$st = $this->conexion->prepare("SELECT idProfesorPreferencias FROM profesorpreferencias WHERE trimestre_idTrimestre = :idTr AND profesor_idProfesor = :idP LIMIT 1");
+				$st = $this->conexion->prepare("SELECT idProfesorPreferencias FROM profesorpreferencias WHERE trimestre_idTrimestre = :idTr AND profesor_numeroEconomico = :idP LIMIT 1");
 				$st->execute([':idTr'=>$idTrimestre, ':idP'=>$idProfesor]);
 				$r = $st->fetch(PDO::FETCH_ASSOC);
 				if ($r && isset($r['idProfesorPreferencias'])){
 					$this->conexion->commit();
 					return (int)$r['idProfesorPreferencias'];
 				}
-				$ins = $this->conexion->prepare("INSERT INTO profesorpreferencias (trimestre_idTrimestre, profesor_idProfesor, noGrupos, observaciones) VALUES (:idTr, :idP, NULL, 'Creada automáticamente')");
+				$ins = $this->conexion->prepare("INSERT INTO profesorpreferencias (trimestre_idTrimestre, profesor_numeroEconomico, noGrupos, observaciones) VALUES (:idTr, :idP, NULL, 'Creada automáticamente')");
 				$ok = $ins->execute([':idTr'=>$idTrimestre, ':idP'=>$idProfesor]);
 				if (!$ok){ $this->conexion->rollBack(); return null; }
 				$id = (int)$this->conexion->lastInsertId();
@@ -1124,7 +1124,7 @@
 		 */
 		public function existePreferencia(int $idTrimestre, int $idProfesor): bool {
 			try{
-				$st = $this->conexion->prepare("SELECT 1 FROM profesorpreferencias WHERE trimestre_idTrimestre = :idTr AND profesor_idProfesor = :idP LIMIT 1");
+				$st = $this->conexion->prepare("SELECT 1 FROM profesorpreferencias WHERE trimestre_idTrimestre = :idTr AND profesor_numeroEconomico = :idP LIMIT 1");
 				$st->execute([':idTr'=>$idTrimestre, ':idP'=>$idProfesor]);
 				$r = $st->fetch(PDO::FETCH_COLUMN);
 				return (bool)$r;

@@ -11,7 +11,7 @@ class ProfesorTrimestreDAO {
      * Excluir a un profesor de un trimestre de forma atómica:
      * - Borrar preferencias (ueas + horarios + preferencia)
      * - Borrar programación del profesor en ese trimestre
-     * - Actualizar/insertar disposición (estado=0)
+     * - Eliminar registro de disposición
      * Retorna arreglo con contadores y ok=true/false.
      */
     public function excluirProfesorDelTrimestreAtomic(int $idTrimestre, int $idProfesor): array {
@@ -20,7 +20,7 @@ class ProfesorTrimestreDAO {
             $this->conexion->beginTransaction();
 
             // 1) Borrar preferencias del profesor para el trimestre
-            $st = $this->conexion->prepare("SELECT idProfesorPreferencias FROM profesorpreferencias WHERE profesor_idProfesor = :idP AND trimestre_idTrimestre = :idTr");
+            $st = $this->conexion->prepare("SELECT idProfesorPreferencias FROM profesorpreferencias WHERE profesor_numeroEconomico = :idP AND trimestre_idTrimestre = :idTr");
             $st->execute([':idP' => $idProfesor, ':idTr' => $idTrimestre]);
             $ids = $st->fetchAll(PDO::FETCH_COLUMN, 0);
             if ($ids && count($ids) > 0){
@@ -42,23 +42,15 @@ class ProfesorTrimestreDAO {
             // 2) Borrar programación del profesor en el trimestre
             $sqlProg = "DELETE pr FROM programacion pr
                 INNER JOIN profesordisposicion pd ON pr.profesordisposicion_idProfesorDisposicion = pd.idProfesorDisposicion
-                WHERE pd.profesor_idProfesor = ?
+                WHERE pd.profesor_numeroEconomico = ?
                   AND pr.grupo_trimestre_idTrimestre = ?";
             $stProg = $this->conexion->prepare($sqlProg);
             $stProg->execute([$idProfesor, $idTrimestre]);
             $deleted_prog = (int)$stProg->rowCount();
 
-            // 3) Actualizar disposición a estado=0 (si no existe, insertar)
-            $selDis = $this->conexion->prepare("SELECT idProfesorDisposicion FROM profesordisposicion WHERE profesor_idProfesor = ? AND trimestre_idTrimestre = ? LIMIT 1");
-            $selDis->execute([$idProfesor, $idTrimestre]);
-            $row = $selDis->fetch(PDO::FETCH_ASSOC);
-            if ($row && isset($row['idProfesorDisposicion'])){
-                $upd = $this->conexion->prepare("UPDATE profesordisposicion SET estado = 0 WHERE idProfesorDisposicion = ?");
-                $updated_dis = (bool)$upd->execute([(int)$row['idProfesorDisposicion']]);
-            } else {
-                $ins = $this->conexion->prepare("INSERT INTO profesordisposicion (trimestre_idTrimestre, profesor_idProfesor, estado, notas) VALUES (?, ?, 0, ?)");
-                $updated_dis = (bool)$ins->execute([$idTrimestre, $idProfesor, 'excluido automáticamente']);
-            }
+            // 3) Eliminar disposición
+            $delDis = $this->conexion->prepare("DELETE FROM profesordisposicion WHERE profesor_numeroEconomico = ? AND trimestre_idTrimestre = ?");
+            $updated_dis = (bool)$delDis->execute([$idProfesor, $idTrimestre]);
 
             $this->conexion->commit();
             return [
