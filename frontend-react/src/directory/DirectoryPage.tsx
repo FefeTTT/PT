@@ -10,8 +10,6 @@ import { CreateAdminModal } from './components/modals/CreateAdminModal';
 import { EditProfessorModal } from './components/modals/EditProfessorModal';
 import { EditAdminModal } from './components/modals/EditAdminModal';
 
-// Define window interface for global var
-
 
 export const DirectoryPage: React.FC = () => {
     // 1. Global State

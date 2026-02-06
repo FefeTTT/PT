@@ -6,9 +6,6 @@ import { DirectoryPage } from './directory/DirectoryPage';
 import { AdminApp } from './usuarios-menu/AdminApp';
 import './main.module.css'
 
-// Global interface extension
-
-
 
 let root: ReactDOM.Root | null = null;
 let fuzzyRoot: ReactDOM.Root | null = null;
