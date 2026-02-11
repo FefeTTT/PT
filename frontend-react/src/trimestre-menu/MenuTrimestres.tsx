@@ -7,6 +7,9 @@ import ActionButton from '../components/common/ActionButton';
 import NewTrimestreModal from './NewTrimestreModal';
 import ImportUEAModal from './ImportUEAModal';
 import ProfesoresTrimestre from './ProfesoresTrimestre';
+import listaDeUEA from './data/listaDeUEA.json';
+import { UEA_AREA_MAPPING } from '../scripts/utils/constants';
+import { DatosUEA } from '../scripts/utils/types';
 
 interface SortState {
     col: string | null;
@@ -109,6 +112,52 @@ const MenuTrimestres: React.FC = () => {
 
     };
 
+    const handleLoadAllUEAs = async () => {
+        if (!confirm("¿Cargar todas las UEAs desde el JSON?")) return
+
+        let successCount = 0;
+        let errorCount = 0;
+        const ueas = Object.entries(listaDeUEA as Record<string, DatosUEA>);
+        console.log("UEA totales: ", ueas.length);
+
+        for (const [clave, data] of ueas) {
+            const nombre = data.nombre;
+            const areaNombre = data.area;
+
+            console.log(`UEA a insertar: ${clave} - ${nombre} (${areaNombre})`);
+
+            if (!UEA_AREA_MAPPING[areaNombre]) {
+                console.error(`Area desconocida: ${areaNombre}`);
+                errorCount++;
+                continue;
+            }
+
+            const areaId = UEA_AREA_MAPPING[areaNombre];
+
+            try {
+                const res = await API.insertarUEA({
+                    clave: parseInt(clave),
+                    nombre: nombre,
+                    areaId: areaId
+                });
+
+                if (res.isItOk) {
+                    console.log(`UEA insertada: ${clave}`);
+                    successCount++;
+                } else {
+                    console.error(`Error al insertar UEA ${clave}: ${res.error}`);
+                    errorCount++;
+                }
+            } catch (e: any) {
+                console.error(`Error al insertar UEA ${clave}:`, e);
+                errorCount++;
+            }
+        }
+
+        console.log(`Finalizado. Exitos: ${successCount}, Errores: ${errorCount}`);
+        alert(`Resultados de la carga:\nExitos -> ${successCount}\nErrores -> ${errorCount}`);
+    };
+
     const sortedTrimestres = getSortedTrimestres();
 
     // Year options: Current year +- 2
@@ -139,6 +188,7 @@ const MenuTrimestres: React.FC = () => {
                 <div className={styles.actionsLeft}>
                     <ActionButton textLabel="Nuevo trimestre" onButtonClicked={() => handleAction('Nuevo Trimestre')} />
                     <ActionButton textLabel="Importar UEA" onButtonClicked={() => handleAction('importar-uea')} />
+                    <ActionButton textLabel="Cargar todas las UEA" onButtonClicked={handleLoadAllUEAs} />
                     <ActionButton textLabel="Refrescar" onButtonClicked={() => loadTrimestres(selectedYear)} />
                     {/* Legacy Placeholders */}
                     {['cargar-planeacion', 'hist-programacion'].map(act => (

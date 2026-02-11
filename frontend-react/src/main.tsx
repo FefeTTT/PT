@@ -129,3 +129,5 @@ const devRoot = document.getElementById('root');
 if (devRoot) {
     window.mountMenuTrimestres('root');
 }
+
+window.dispatchEvent(new Event('ReactLoaded'));

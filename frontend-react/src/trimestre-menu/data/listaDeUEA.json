@@ -1,0 +1,370 @@
+{
+    "1100038": {
+        "area": "TIM",
+        "nombre": "Introducción al Desarrollo Sustentable"
+    },
+    "1100041": {
+        "area": "TIM",
+        "nombre": "Retos del Desarrollo Nacional"
+    },
+    "1100096": {
+        "area": "TIM",
+        "nombre": "Taller de Expresión Oral y Escrita"
+    },
+    "1111013": {
+        "area": "Física",
+        "nombre": "Dinámica Aplicada"
+    },
+    "1111019": {
+        "area": "Física",
+        "nombre": "Mecánica Estadística"
+    },
+    "1111032": {
+        "area": "Física",
+        "nombre": "Física del Estado Sólido"
+    },
+    "1111034": {
+        "area": "Física",
+        "nombre": "Propiedades Eléctricas y Magnéticas de los Materiales"
+    },
+    "1111043": {
+        "area": "Física",
+        "nombre": "Electromagnetismo"
+    },
+    "1111044": {
+        "area": "Física",
+        "nombre": "Aplicaciones del Electromagnetismo"
+    },
+    "1111045": {
+        "area": "Física",
+        "nombre": "Estática del Cuerpo Deformable"
+    },
+    "1111048": {
+        "area": "Física",
+        "nombre": "Física Moderna"
+    },
+    "1111052": {
+        "area": "Física",
+        "nombre": "Temas Selectos de Ingeniería Física I"
+    },
+    "1111053": {
+        "area": "Física",
+        "nombre": "Acústica"
+    },
+    "1111054": {
+        "area": "Física",
+        "nombre": "Sensores, Transductores y Detectores"
+    },
+    "1111055": {
+        "area": "Física",
+        "nombre": "Óptica"
+    },
+    "1111057": {
+        "area": "Física",
+        "nombre": "Imágenes"
+    },
+    "1111058": {
+        "area": "Física",
+        "nombre": "Instrumentación y Equipo II"
+    },
+    "1111059": {
+        "area": "Física",
+        "nombre": "Ingeniería Óptica"
+    },
+    "1111060": {
+        "area": "Física",
+        "nombre": "Principios de Diseño y Construcción de Equipos e Instrumentos"
+    },
+    "1111066": {
+        "area": "Física",
+        "nombre": "Temas Selectos de Ingeniería Física II"
+    },
+    "1111067": {
+        "area": "Física",
+        "nombre": "Temas Selectos de Ingeniería Física III"
+    },
+    "1111069": {
+        "area": "Física",
+        "nombre": "Laboratorio de Óptica"
+    },
+    "1111070": {
+        "area": "Física",
+        "nombre": "Laboratorio Interdisciplinario"
+    },
+    "1111077": {
+        "area": "Física",
+        "nombre": "Física Contemporánea"
+    },
+    "1111078": {
+        "area": "Física",
+        "nombre": "Introducción a la Física"
+    },
+    "1111079": {
+        "area": "Física",
+        "nombre": "Cinemática y Dinámica de Partículas"
+    },
+    "1111081": {
+        "area": "Física",
+        "nombre": "Dinámica del Cuerpo Rígido"
+    },
+    "1111083": {
+        "area": "Física",
+        "nombre": "Introducción a la Electrostática y Magnetostática"
+    },
+    "1111085": {
+        "area": "Física",
+        "nombre": "Análisis Vectorial"
+    },
+    "1111087": {
+        "area": "Física",
+        "nombre": "Laboratorio de Física Moderna"
+    },
+    "1111088": {
+        "area": "Física",
+        "nombre": "Laboratorio de Física Atómica y Molecular"
+    },
+    "1111090": {
+        "area": "Física",
+        "nombre": "Inducción y Ondas Electromagnéticas"
+    },
+    "1111091": {
+        "area": "Física",
+        "nombre": "Funciones Especiales"
+    },
+    "1111092": {
+        "area": "Física",
+        "nombre": "Laboratorio de Movimiento de una Partícula"
+    },
+    "1111093": {
+        "area": "Física",
+        "nombre": "Laboratorio del Cuerpo Rígido y Oscilaciones"
+    },
+    "1111094": {
+        "area": "Física",
+        "nombre": "Laboratorio de Electricidad y Magnetismo"
+    },
+    "1111095": {
+        "area": "Física",
+        "nombre": "Optoelectrónica"
+    },
+    "1112005": {
+        "area": "Matemáticas",
+        "nombre": "Cálculo de Varias Variables"
+    },
+    "1112013": {
+        "area": "Matemáticas",
+        "nombre": "Complementos de Matemáticas"
+    },
+    "1112015": {
+        "area": "Matemáticas",
+        "nombre": "Matemáticas Aplicadas para Ingeniería"
+    },
+    "1112016": {
+        "area": "Matemáticas",
+        "nombre": "Variable Compleja"
+    },
+    "1112017": {
+        "area": "Matemáticas",
+        "nombre": "Introducción al Álgebra Lineal"
+    },
+    "1112022": {
+        "area": "Matemáticas",
+        "nombre": "Lógica"
+    },
+    "1112029": {
+        "area": "Matemáticas",
+        "nombre": "Cálculo Integral"
+    },
+    "1112030": {
+        "area": "Matemáticas",
+        "nombre": "Ecuaciones Diferenciales Ordinarias"
+    },
+    "1112031": {
+        "area": "Matemáticas",
+        "nombre": "Series, Transformadas y Ecuaciones Diferenciales"
+    },
+    "1112032": {
+        "area": "Matemáticas",
+        "nombre": "Introducción a las Ecuaciones Diferenciales Parciales"
+    },
+    "1112033": {
+        "area": "Matemáticas",
+        "nombre": "Matemáticas Discretas"
+    },
+    "1112034": {
+        "area": "Matemáticas",
+        "nombre": "Lenguajes y Autómatas"
+    },
+    "1112035": {
+        "area": "Matemáticas",
+        "nombre": "Combinatoria"
+    },
+    "1112036": {
+        "area": "Matemáticas",
+        "nombre": "Criptografía"
+    },
+    "1112037": {
+        "area": "Matemáticas",
+        "nombre": "Teoría de la Computación"
+    },
+    "1112038": {
+        "area": "Matemáticas",
+        "nombre": "Temas Selectos de Matemáticas Discretas"
+    },
+    "1112040": {
+        "area": "Matemáticas",
+        "nombre": "Transformada de Laplace y Análisis de Fourier"
+    },
+    "1112041": {
+        "area": "Matemáticas",
+        "nombre": "Cálculo Vectorial y sus Aplicaciones"
+    },
+    "1112042": {
+        "area": "Matemáticas",
+        "nombre": "Introducción al Cálculo"
+    },
+    "1112043": {
+        "area": "Matemáticas",
+        "nombre": "Cálculo Diferencial"
+    },
+    "1113018": {
+        "area": "Química",
+        "nombre": "Química Orgánica I"
+    },
+    "1113019": {
+        "area": "Química",
+        "nombre": "Laboratorio de Química Orgánica I"
+    },
+    "1113021": {
+        "area": "Química",
+        "nombre": "Laboratorio de Química Orgánica II"
+    },
+    "1113023": {
+        "area": "Química",
+        "nombre": "Química Orgánica III"
+    },
+    "1113024": {
+        "area": "Química",
+        "nombre": "Química Orgánica II"
+    },
+    "1113046": {
+        "area": "Química",
+        "nombre": "Termodinámica"
+    },
+    "1113047": {
+        "area": "Química",
+        "nombre": "Química Inorgánica I"
+    },
+    "1113048": {
+        "area": "Química",
+        "nombre": "Laboratorio de Química Inorgánica I"
+    },
+    "1113049": {
+        "area": "Química",
+        "nombre": "Química Inorgánica II"
+    },
+    "1113050": {
+        "area": "Química",
+        "nombre": "Laboratorio de Química Inorgánica II"
+    },
+    "1113053": {
+        "area": "Química",
+        "nombre": "Técnicas de Medición de Composición"
+    },
+    "1113057": {
+        "area": "Química",
+        "nombre": "Contaminación Ambiental"
+    },
+    "1113069": {
+        "area": "Química",
+        "nombre": "Fisicoquímica de los Materiales"
+    },
+    "1113070": {
+        "area": "Química",
+        "nombre": "Laboratorio de Fisicoquímica de los Materiales"
+    },
+    "1113071": {
+        "area": "Química",
+        "nombre": "Química Física Aplicada"
+    },
+    "1113073": {
+        "area": "Química",
+        "nombre": "Laboratorio de Química Analítica"
+    },
+    "1113077": {
+        "area": "Química",
+        "nombre": "Laboratorio de Microbiología Aplicada"
+    },
+    "1113078": {
+        "area": "Química",
+        "nombre": "Cinética y Catálisis"
+    },
+    "1113079": {
+        "area": "Química",
+        "nombre": "Laboratorio de Cinética y Catálisis"
+    },
+    "1113080": {
+        "area": "Química",
+        "nombre": "Temas Selectos de Química"
+    },
+    "1113082": {
+        "area": "Química",
+        "nombre": "Microbiología Aplicada"
+    },
+    "1113084": {
+        "area": "Química",
+        "nombre": "Estructura Atómica y Enlace Químico"
+    },
+    "1113085": {
+        "area": "Química",
+        "nombre": "Laboratorio de Reacciones Químicas"
+    },
+    "1113086": {
+        "area": "Química",
+        "nombre": "Estructura y Propiedades de los Materiales en Ingeniería"
+    },
+    "1113087": {
+        "area": "Química",
+        "nombre": "Laboratorio de Estructura y Propiedades de los Materiales"
+    },
+    "1113088": {
+        "area": "Química",
+        "nombre": "Aplicaciones Industriales de Catalizadores Heterogéneos"
+    },
+    "1113089": {
+        "area": "Química",
+        "nombre": "Síntesis, Caracterización y Evaluación de Materiales Catalíticos"
+    },
+    "1113090": {
+        "area": "Química",
+        "nombre": "Introducción a la Bioquímica"
+    },
+    "1113091": {
+        "area": "Química",
+        "nombre": "Fenómenos de Superficie"
+    },
+    "1113092": {
+        "area": "Química",
+        "nombre": "Efecto Invernadero y Cambio Climático"
+    },
+    "1113093": {
+        "area": "Química",
+        "nombre": "Inventarios de Emisiones Atmosféricas"
+    },
+    "1113095": {
+        "area": "Química",
+        "nombre": "Química Ambiental"
+    },
+    "1113096": {
+        "area": "Química",
+        "nombre": "Fundamentos de Química Orgánica y Bioquímica"
+    },
+    "1113097": {
+        "area": "Química",
+        "nombre": "Electroquímica"
+    },
+    "1113099": {
+        "area": "Química",
+        "nombre": "Equilibrio Químico"
+    }
+}

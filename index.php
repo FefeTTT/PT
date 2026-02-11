@@ -61,7 +61,7 @@ if (isset($_GET['section'])) {
     <!-- React Assets (Preloaded for SPA) -->
     <?php
     require_once "ReactLoader.php";
-    $loader = new ReactLoader(__DIR__ . '/js/react_build/manifest.json', 'js/react_build');
+    $loader = new ReactLoader(__DIR__ . '/js/react_build/.vite/manifest.json', 'js/react_build');
     echo $loader->getAssets('src/main.tsx');
     ?>
 </head>

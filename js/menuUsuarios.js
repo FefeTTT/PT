@@ -9,12 +9,28 @@
         var adminMenu = document.getElementById('admin-menu');
         if (!adminMenu) return;
 
+        const mount = () => {
+            if (typeof window.mountAdminApp === 'function') {
+                window.mountAdminApp('admin-menu');
+            } else {
+                console.error('React mountAdminApp function not found even after wait.');
+                adminMenu.innerHTML = '<div class="alert alert-danger">Error loading React Admin App</div>';
+            }
+        };
+
         // Mount React Admin App
         if (typeof window.mountAdminApp === 'function') {
-            window.mountAdminApp('admin-menu');
+            mount();
         } else {
-            console.error('React mountAdminApp function not found, legacy fallback prevented in this migration phase.');
-            adminMenu.innerHTML = '<div class="alert alert-danger">Error loading React Admin App</div>';
+            console.log('React function missing, waiting for bundle...');
+            window.addEventListener('ReactLoaded', mount, { once: true });
+            // Fallback timeout in case event was missed or bundle fails
+            setTimeout(() => {
+                if (typeof window.mountAdminApp !== 'function') {
+                    console.warn('React load timeout');
+                    // Don't error yet, might be very slow.
+                }
+            }, 5000);
         }
     }
 

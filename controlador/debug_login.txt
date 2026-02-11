@@ -1,0 +1,20 @@
+{
+    "20260210211854_0296496001770754734": {
+        "timestamp": "2026-02-10T21:18:54+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_CB...",
+        "reason": "Contraseña inválida."
+    },
+    "20260211230551_0369463001770847551": {
+        "timestamp": "2026-02-11T23:05:51+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_CB...",
+        "reason": "Contraseña inválida."
+    },
+    "20260211230623_0550077001770847583": {
+        "timestamp": "2026-02-11T23:06:23+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_CB...",
+        "reason": "Contraseña inválida."
+    }
+}

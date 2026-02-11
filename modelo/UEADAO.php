@@ -1,4 +1,6 @@
 <?php
+    include_once "Respuesta.php";
+
 
 	class UEADAO{
 		public $conexion;
@@ -197,6 +199,21 @@
 					}
 				}
 			};
+		}
+
+
+		public function insertar(int $clave, string $nombre, int $areaId) {
+			try {
+				$sql = "INSERT INTO uea (clave, nombre, areaId) VALUES (:clave, :nombre, :areaId)";
+				$stmt = $this->conexion->prepare($sql);
+				if ($stmt->execute([':clave' => $clave, ':nombre' => $nombre, ':areaId' => $areaId])) {
+					return Respuesta::make(true);
+				} else {
+					return Respuesta::make(false, 'Error al ejecutar inserción');
+				}
+			} catch (PDOException $e) {
+				return Respuesta::make(false, $e->getMessage());
+			}
 		}
 
     }
