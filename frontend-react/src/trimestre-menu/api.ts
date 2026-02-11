@@ -1,3 +1,6 @@
+import axios from 'axios';
+import { StatusResponse } from '../scripts/utils/types';
+
 /**
  * API module for Trimestres feature.
  * Encapsulates all backend interaction.
@@ -127,6 +130,18 @@ export async function fetchProfesoresTrimestre(idTrimestre: string | number): Pr
     return post('controlador/recuperarProfesoresTrimestre.php', { idTrimestre });
 }
 
+
 export async function toggleProfesorTrimestre(idTrimestre: string | number, idProfesor: string | number, action: 'include' | 'exclude'): Promise<{ ok: boolean; error?: string }> {
     return post('controlador/toggleProfesorEnTrimestre.php', { idTrimestre, idProfesor, action });
 }
+
+
+export async function insertarUEA(payload: { clave: number; nombre: string; areaId: number }): Promise<StatusResponse> {
+    try {
+        const res = await axios.post<StatusResponse>('controlador/insertarUEA.php', payload);
+        return res.data;
+    } catch (e: any) {
+        return { isItOk: false, error: e.message || 'Error de red' };
+    }
+}
+

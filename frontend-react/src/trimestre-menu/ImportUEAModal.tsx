@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Modal from '../components/common/Modal';
 import * as API from './api';
-import { convertXlsxToCsv } from '../scripts/utils/xlsx-to-csv';
 import './ImportUEAModal.css';
 
 interface ImportUEAModalProps {
@@ -9,81 +8,123 @@ interface ImportUEAModalProps {
     onClose: () => void;
 }
 
+const diccionarioPrefijos: { [key: string]: string } = {
+    "1100": "TIM",
+    "1111": "Física",
+    "1112": "Matemáticas",
+    "1113": "Química",
+};
+
 export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
     const [file, setFile] = useState<File | null>(null);
-    const [sheetName, setSheetName] = useState('CB');
-    const [isEditingSheetName, setIsEditingSheetName] = useState(false);
     const [status, setStatus] = useState<{
         submitting: boolean;
         error: string | null;
         success: string | null;
         details: any | null;
+        progress?: number;
+        total?: number;
     }>({
         submitting: false,
         error: null,
         success: null,
-        details: null
+        details: null,
+        progress: 0,
+        total: 0
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selected = e.target.files && e.target.files[0];
         setFile(selected || null);
-        setStatus(prev => ({ ...prev, error: null, success: null, details: null }));
+        setStatus(prev => ({ ...prev, error: null, success: null, details: null, progress: 0, total: 0 }));
+    };
+
+    const getAreaIdByName = (areaName: string): number | null => {
+        const entry = Object.entries(diccionarioPrefijos).find(([, val]) => val === areaName);
+        return entry ? parseInt(entry[0], 10) : null;
     };
 
     const handleImport = async () => {
         if (!file) {
-            setStatus(prev => ({ ...prev, error: 'Selecciona un archivo CSV' }));
+            setStatus(prev => ({ ...prev, error: 'Selecciona un archivo JSON' }));
             return;
         }
 
-        setStatus({ submitting: true, error: null, success: null, details: null });
+        setStatus({ submitting: true, error: null, success: null, details: null, progress: 0, total: 0 });
 
-        try {
-            let fileToUpload = file;
+        const reader = new FileReader();
 
-            if (file.name.toLowerCase().endsWith('.xlsx')) {
-                try {
-                    fileToUpload = await convertXlsxToCsv(file, sheetName);
-                } catch (err) {
-                    setStatus(prev => ({
-                        ...prev,
-                        error: 'Error al convertir el archivo Excel a CSV: ' + err,
-                        submitting: false
-                    }));
-                    return;
+        reader.onload = async (e) => {
+            try {
+                const content = e.target?.result as string;
+                const jsonUEA = JSON.parse(content);
+                const keys = Object.keys(jsonUEA);
+                const total = keys.length;
+
+                setStatus(prev => ({ ...prev, total, progress: 0 }));
+
+                let inserted = 0;
+                let errors: any[] = [];
+
+                for (let i = 0; i < total; i++) {
+                    const clave = keys[i];
+                    const item = jsonUEA[clave];
+                    const areaName = item.area;
+                    const nombre = item.nombre;
+                    const areaId = getAreaIdByName(areaName);
+
+                    if (areaId) {
+                        try {
+                            const res = await API.insertarUEA({
+                                clave: parseInt(clave, 10),
+                                nombre: nombre,
+                                areaId: areaId
+                            });
+
+                            if (res.isItOk) {
+                                inserted++;
+                            } else {
+                                errors.push({ clave, error: res.error });
+                            }
+                        } catch (err: any) {
+                            errors.push({ clave, error: err.message || 'Error de red' });
+                        }
+                    } else {
+                        errors.push({ clave, error: `Area '${areaName}' no encontrada en diccionario` });
+                    }
+
+                    setStatus(prev => ({ ...prev, progress: i + 1 }));
                 }
-            }
 
-            const res = await API.importarUEA(fileToUpload);
-            if (res.ok) {
                 setStatus(prev => ({
                     ...prev,
-                    success: 'Importación completada',
-                    details: res
+                    submitting: false,
+                    success: 'Proceso completado',
+                    details: {
+                        processed: total,
+                        inserted,
+                        errors
+                    }
                 }));
-            } else {
-                setStatus(prev => ({ ...prev, error: res.error || 'Error al importar' }));
+
+            } catch (err) {
+                setStatus(prev => ({ ...prev, submitting: false, error: 'Error al procesar JSON' }));
             }
-        } catch (e) {
-            setStatus(prev => ({ ...prev, error: 'Error de red' }));
-        } finally {
-            setStatus(prev => ({ ...prev, submitting: false }));
-        }
+        };
+
+        reader.readAsText(file);
     };
 
     const reset = () => {
         setFile(null);
-        setSheetName('CB');
-        setIsEditingSheetName(false);
-        setStatus({ submitting: false, error: null, success: null, details: null });
+        setStatus({ submitting: false, error: null, success: null, details: null, progress: 0, total: 0 });
         onClose();
     };
 
     return (
         <Modal
             show={show}
-            title="Importar catálogo de UEA (CSV ó Excel)"
+            title="Importar catálogo de UEA (JSON)"
             onClose={reset}
             footer={
                 <>
@@ -95,7 +136,7 @@ export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
                             onClick={handleImport}
                             disabled={!file || status.submitting}
                         >
-                            {status.submitting ? 'Importando...' : 'Ejecutar importación'}
+                            {status.submitting ? `Procesando... ${status.progress}/${status.total}` : 'Ejecutar importación'}
                         </button>
                     )}
                 </>
@@ -103,64 +144,33 @@ export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
         >
             <div className="mb-3">
                 <p className="small text-muted">
-                    El CSV debe tener las columnas en este orden (sin cabecera obligatoria): <strong>claveUEA, nombreUEA, idArea</strong>.
+                    El archivo debe ser un JSON donde las claves son las claves de UEA y el valor contiene "area" y "nombre".
                 </p>
 
                 <input
                     type="file"
                     className="form-control"
-                    accept=".csv, .xlsx"
+                    accept=".json"
                     onChange={handleFileChange}
                     disabled={status.submitting || !!status.success}
                 />
-
-                {file && file.name.toLowerCase().endsWith('.xlsx') && (
-                    <div className="mt-3">
-                        <label className="form-label small mb-1">Nombre de la hoja (Excel):</label>
-                        <div className="input-group input-group-sm">
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={sheetName}
-                                onChange={(e) => setSheetName(e.target.value)}
-                                disabled={!isEditingSheetName || status.submitting || !!status.success}
-                                placeholder="Nombre de la hoja"
-                            />
-                            <button
-                                className="btn btn-outline-secondary"
-                                type="button"
-                                onClick={() => setIsEditingSheetName(true)}
-                                disabled={isEditingSheetName || status.submitting || !!status.success}
-                            >
-                                Editar
-                            </button>
-                        </div>
-                        <div className="form-text small">
-                            Por defecto: "CB". Asegúrate de que coincida con el nombre de la pestaña en Excel.
-                        </div>
-                    </div>
-                )}
             </div>
 
             {status.error && <div className="alert alert-danger">{status.error}</div>}
 
             {status.success && (
-                <div className={`alert ${(status.details?.errors?.length > 0 && status.details?.inserted === 0) ? 'alert-danger' :
-                    (status.details?.errors?.length > 0 && status.details?.inserted > 0) ? 'alert-warning' :
-                        'alert-success'
-                    }`}>
+                <div className="alert alert-success">
                     <h6 className="alert-heading">{status.success}</h6>
                     {status.details && (
                         <div className="small mt-2">
-                            <div>Procesados: {status.details.processed}</div>
-                            <div>Insertados: {status.details.inserted}</div>
-                            <div>Actualizados: {status.details.updated}</div>
+                            <div>Total procesados: {status.details.processed}</div>
+                            <div>Insertados correctamente: {status.details.inserted}</div>
                             {status.details.errors && status.details.errors.length > 0 && (
                                 <div className="mt-2 text-danger">
                                     <strong>Errores ({status.details.errors.length}):</strong>
-                                    <ul className="mb-0 ps-3" style={{ maxHeight: '100px', overflowY: 'auto' }}>
+                                    <ul className="mb-0 ps-3" style={{ maxHeight: '150px', overflowY: 'auto' }}>
                                         {status.details.errors.map((e: any, i: number) => (
-                                            <li key={i}>Línea {e.line}: {e.error}</li>
+                                            <li key={i}>Clave {e.clave}: {e.error}</li>
                                         ))}
                                     </ul>
                                 </div>
@@ -172,3 +182,4 @@ export default function ImportUEAModal({ show, onClose }: ImportUEAModalProps) {
         </Modal>
     );
 };
+
