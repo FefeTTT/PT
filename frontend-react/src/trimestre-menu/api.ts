@@ -145,3 +145,11 @@ export async function insertarUEA(payload: { clave: number; nombre: string; area
     }
 }
 
+export async function fetchUEA(clave: number): Promise<{ exists: boolean; error?: string }> {
+    try {
+        const res = await axios.post<{ exists: boolean; error?: string }>('controlador/getFromClave.php', { clave });
+        return res.data;
+    } catch (e: any) {
+        return { exists: false, error: e.message || 'Error de red' };
+    }
+}

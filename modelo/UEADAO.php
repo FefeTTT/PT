@@ -216,5 +216,18 @@
 			}
 		}
 
+
+		public function getFromClave(int $clave): ?array {
+			try {
+				$sql = "SELECT clave FROM uea WHERE clave = :clave LIMIT 1";
+				$stmt = $this->conexion->prepare($sql);
+				$stmt->execute([':clave' => $clave]);
+				$result = $stmt->fetch(PDO::FETCH_ASSOC);
+				return $result ?: null; // Returns array with clave or null
+			} catch (PDOException $e) {
+				return null;
+			}
+		}
+
     }
 ?>

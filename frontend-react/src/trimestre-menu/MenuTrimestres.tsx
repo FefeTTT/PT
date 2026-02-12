@@ -9,6 +9,7 @@ import ImportUEAModal from './ImportUEAModal';
 import ProfesoresTrimestre from './ProfesoresTrimestre';
 import listaDeUEA from './data/listaDeUEA.json';
 import { UEA_AREA_MAPPING } from '../scripts/utils/constants';
+import { UEA_AREA_MAPPING_REV } from '../scripts/utils/constants';
 import { DatosUEA } from '../scripts/utils/types';
 
 interface SortState {
@@ -121,6 +122,26 @@ const MenuTrimestres: React.FC = () => {
         console.log("UEA totales: ", ueas.length);
 
         for (const [clave, data] of ueas) {
+            try {
+                const clavePrefix = clave.substring(0, 4);
+                if (!UEA_AREA_MAPPING_REV[parseInt(clavePrefix)]) {
+                    console.log(`UEA ${clave} no tiene área asignada en CB.`);
+                    errorCount++;
+                    continue;
+                }
+
+                const uea = await API.fetchUEA(parseInt(clave));
+                if (uea.exists) {
+                    console.log(`UEA ${clave} ya está en la DB; para actualizar se debe usar la función updateUEA`);
+                    errorCount++;
+                    continue;
+                }
+            } catch (e) {
+                console.error(`Error al verificar UEA ${clave}:`, e);
+                errorCount++;
+                continue;
+            }
+
             const nombre = data.nombre;
             const areaNombre = data.area;
 
@@ -135,6 +156,13 @@ const MenuTrimestres: React.FC = () => {
             const areaId = UEA_AREA_MAPPING[areaNombre];
 
             try {
+                const check = await API.fetchUEA(parseInt(clave));
+
+                if (check.exists) {
+                    console.log(`Skipping ${clave}, already exists.`);
+                    continue;
+                }
+
                 const res = await API.insertarUEA({
                     clave: parseInt(clave),
                     nombre: nombre,
