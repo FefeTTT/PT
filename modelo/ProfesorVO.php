@@ -1,38 +1,39 @@
 <?php
 	class ProfesorVO{
+
 		private $numeroEconomico;
 		private $nombre;
 		private $gradoEstudios;
 		private $celular;
 		private $correo_uam;
 		private $correo_personal;
-		private $disponibilidad;
+		private $idArea;
+		private $idGrado;
 
-		// Constructor now expects numeroEconomico as the first argument (identity). 
-		// If legacy code passes two IDs, we can adapt, but better to clean it up.
-		// Previous signature: ($idProfesor, $numeroEconomico, ...).
-		// New signature: ($numeroEconomico, $numeroEconomicoRedundant, ...) OR just cleanup.
-		// Since I updated DAO to pass ($num, $num, ...), let's simplify to just one ID.
-		// Wait, DAO passes: new ProfesorVO($row['numeroEconomico'], $row['numeroEconomico'], ...)
-		// So I will keep the signature but ignore the first arg if it's identical, or just map both to numEco?
-		// Better: Remove idProfesor param.
-		
-		function __construct($numeroEconomico, $nombre, $correo_uam,
-					$correo_personal = null, $gradoEstudios = null, $celular = null, $disponibilidad = null){
-					$this->numeroEconomico=$numeroEconomico;
-					$this->nombre=$nombre;
-					$this->correo_uam=$correo_uam;
-					$this->correo_personal=$correo_personal;
-					$this->gradoEstudios = $gradoEstudios;
-					// Keep celular as string (may contain leading zeros or exceed 32-bit int)
-					$this->celular = $celular;
-						$this->disponibilidad = $disponibilidad;
+		function __construct(
+			$numeroEconomico, 
+			$nombre, 
+			$correo_uam,
+			$correo_personal = null, 
+			$gradoEstudios = null, 
+			$celular = null,
+			$idArea = null, 
+			$idGrado = null)
+		{
+			$this->numeroEconomico=$numeroEconomico;
+			$this->nombre=$nombre;
+			$this->correo_uam=$correo_uam;
+			$this->correo_personal=$correo_personal;
+			$this->gradoEstudios = $gradoEstudios;
+			$this->celular = $celular;
+			$this->idArea = $idArea;
+			$this->idGrado = $idGrado;
 		}
 
 		function __destruct(){}
 
 		function setNumeroEconomico($numeroEconomico){
-				$this->numeroEconomico=$numeroEconomico;
+			$this->numeroEconomico=$numeroEconomico;
 		}
 
 		function setNombre($nombre){
@@ -52,15 +53,17 @@
 		}
 
 		function setCelular($celular){
-			// store as string to avoid integer overflow on 32-bit PHP builds
 			$this->celular = $celular;
 		}
 
-		function setDisponibilidad($disponibilidad){
-			$this->disponibilidad = $disponibilidad;
+		function setIdArea($idArea){
+			$this->idArea = $idArea;
 		}
 
-		// Alias for compatibility
+		function setIdGrado($idGrado){
+			$this->idGrado = $idGrado;
+		}
+
 		function getIdProfesor():int{
 			return $this->numeroEconomico;
 		}
@@ -85,13 +88,16 @@
 			return $this->gradoEstudios;
 		}
 
-		// Return celular as string (nullable). Phone numbers shouldn't be treated as integers.
 		function getCelular(): ?string{
 			return $this->celular;
 		}
 
-		function getDisponibilidad(){
-			return $this->disponibilidad;
+		function getIdArea(): ?int {
+			return $this->idArea;
+		}
+
+		function getIdGrado(): ?int {
+			return $this->idGrado;
 		}
 
 		function toString():string{
@@ -101,20 +107,22 @@
 				", Correo personal: ".$this->getCorreoP().
 				", Grado estudios: ".$this->getGradoEstudios().
 				", Celular: ".$this->getCelular().
-				", Disponibilidad: ".$this->getDisponibilidad().
+				", idArea: ".$this->getIdArea().
+				", idGrado: ".$this->getIdGrado().
 			"]";
 		}
 
 		function toJSON():array{
 			return [
-					"idProfesor"=>$this->getNumeroEconomico(), // Keep for frontend compat
+					"idProfesor"=>$this->getNumeroEconomico(),
 					"numeroEconomico"=>$this->getNumeroEconomico(),
 					"nombre"=>$this->getNombre(),
 					"gradoEstudios"=>$this->getGradoEstudios(),
 					"celular"=>$this->getCelular(),
-					"disponibilidad"=>$this->getDisponibilidad(),
 					"correo_uam"=>$this->getCorreoUAM(),
 					"correo_personal"=>$this->getCorreoP(),
+					"idArea"=>$this->getIdArea(),
+					"idGrado"=>$this->getIdGrado()
 				];
 		}
 	}
