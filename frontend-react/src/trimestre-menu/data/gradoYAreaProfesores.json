@@ -1,0 +1,672 @@
+{
+    "12143": {
+        "nombre": "Aguilar Pliego Julia",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "28650": {
+        "nombre": "Aguilar Zavoznik Alejandro",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "5720": {
+        "nombre": "Alcántara  Moreno Felix",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "4828": {
+        "nombre": "Alvarez Garcia Arturo",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "6388": {
+        "nombre": "Amezcua Gómez Raúl",
+        "grado": "Licenciatura",
+        "area": "Matemáticas"
+    },
+    "24865": {
+        "nombre": "Ángeles Beltrán Deyanira",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "23083": {
+        "nombre": "Anzaldo Meneses Alfonso Moises",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "6864": {
+        "nombre": "Arellano  Balderas Salvador",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "13870": {
+        "nombre": "Arellano Peraza Juan Salvador",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "11101": {
+        "nombre": "Avila Jiménez Miguel",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "20427": {
+        "nombre": "Baez Juarez Maria Gabriela",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "41339": {
+        "nombre": "Baisón Olmo Antonio Luis",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "657": {
+        "nombre": "Barceló Quintanal Icela Dagmar",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "16966": {
+        "nombre": "Barrón Romero Carlos",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "20889": {
+        "nombre": "Basurto Uribe Eduardo",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "11294": {
+        "nombre": "Bastien Montoya Gustavo Mauricio",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "6865": {
+        "nombre": "Becerril Espinosa José Ventura",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "2346": {
+        "nombre": "Becerril Hernández Hugo Sergio",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "31449": {
+        "nombre": "Beltrán Conde Hiram Isaac",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "10996": {
+        "nombre": "Benitez Márquez Elia",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "4684": {
+        "nombre": "Castañeda  Briones María Teresa",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "36082": {
+        "nombre": "Chávez Esquivel Gerardo",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "25076": {
+        "nombre": "Chávez Lomelí Laura Elena",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "14721": {
+        "nombre": "Chávez Martínez Margarita",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "15307": {
+        "nombre": "Cid Reborido Alicia",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "42408": {
+        "nombre": "Corona  Sánchez Ricardo",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "12583": {
+        "nombre": "Coxtinica Aguilar Lucía",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "29462": {
+        "nombre": "Cruz Barriguete Victor Alberto",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "13413": {
+        "nombre": "Cruz Colín María del Rocío",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "5438": {
+        "nombre": "De la Portilla Maldonado César",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "11651": {
+        "nombre": "Del Valle Díaz Muñoz Luisa Gabriela",
+        "grado": "Licenciatura",
+        "area": "Física"
+    },
+    "19834": {
+        "nombre": "Diaz Leal  Guzmán Hector",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "29366": {
+        "nombre": "Domínguez Soria Víctor Daniel",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "13398": {
+        "nombre": "Elizarraráz Martínez David",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "14378": {
+        "nombre": "Elorza Guerrero María Eugenia",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "37492": {
+        "nombre": "Espinola Rocha Jesús Adrián",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "38956": {
+        "nombre": "Espinoza Castañeda Marisol",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "25795": {
+        "nombre": "Esquivel Avila Jorge Alfredo",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "14720": {
+        "nombre": "Estrada Guerrero Jose Maria Daniel",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "2470": {
+        "nombre": "Fernández Sánchez Lilia",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "22668": {
+        "nombre": "Flores Moreno Jorge Luis",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "1313": {
+        "nombre": "Flores Valverde Erasmo",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "4329": {
+        "nombre": "Fuentes Villaseñor Ramón",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "23160": {
+        "nombre": "García Albortante Julisa",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "7295": {
+        "nombre": "García Cruz Luz María",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "34355": {
+        "nombre": "García Hernández Victor Cuauhtémoc",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "13487": {
+        "nombre": "García Martínez Cesareo",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "15509": {
+        "nombre": "Garcia Martinez Cirilo",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "40158": {
+        "nombre": "García Villarreal Luis Angel",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "27821": {
+        "nombre": "Gavito Ticozzi Silvia Claudia",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "28447": {
+        "nombre": "Gómez Vieyra Armando",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "18140": {
+        "nombre": "González  Cortés María Del Carmen",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "35464": {
+        "nombre": "González  Reyes Leonardo",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "42466": {
+        "nombre": "González Torres Julio César",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "18677": {
+        "nombre": "Gonzalez Velez Virginia",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "3845": {
+        "nombre": "Goñi Cerdeño Hermilio Benito",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "4377": {
+        "nombre": "Grabinsky Y Steider Jaime",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "8083": {
+        "nombre": "Granados  Samaniego Jaime Alejandro Paulino",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "16930": {
+        "nombre": "Guillaumín España Elisa",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "27034": {
+        "nombre": "Gutiérrez Arzaluz Mirella",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "34786": {
+        "nombre": "Haro Perez Catalina Ester",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "9608": {
+        "nombre": "Hernández Martínez Leonardo",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "14562": {
+        "nombre": "Hernández Pérez Isaías",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "21569": {
+        "nombre": "Hernández Saldaña Hugo",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "35032": {
+        "nombre": "Hidalgo Gonzalez Julio Cesar",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "310": {
+        "nombre": "Holguín Quiñonez Saúl",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "10345": {
+        "nombre": "Huerta Flores José Luis",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "21565": {
+        "nombre": "Kunold Belo Alejandro",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "3876": {
+        "nombre": "Ladino Luna Delfino",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "34214": {
+        "nombre": "Loera Serna Sandra",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "23462": {
+        "nombre": "Lopez Bautista Pedro Ricardo",
+        "grado": "Postdoctorado",
+        "area": "Matemáticas"
+    },
+    "44471": {
+        "nombre": "López Monsalvo Cesar Simón",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "24351": {
+        "nombre": "Lopez Perez Lidia",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "19662": {
+        "nombre": "Loreto Gomez Carmen Estela",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "13168": {
+        "nombre": "Luevano Enríquez Jose Ruben",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "31154": {
+        "nombre": "Magaña Zapata Janeth Anabelle",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "23069": {
+        "nombre": "Martínez  Delgadillo Sergio Alejandro",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "14177": {
+        "nombre": "Martínez Hernández Guadalupe",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "27609": {
+        "nombre": "Martinez Jimenez Anatolio",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "940": {
+        "nombre": "Maubert Franco Ana Marisela",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "26155": {
+        "nombre": "May Lozano Marcos",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "10906": {
+        "nombre": "Mejía Huguet Virgilio Janitzio",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "14417": {
+        "nombre": "Merchand Hernández Teresa",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "4037": {
+        "nombre": "Molnar de la Parra René",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "23651": {
+        "nombre": "Monroy Mendieta María Magdalena",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "25837": {
+        "nombre": "Morales Guzmán Jacinto Dionisio",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "7689": {
+        "nombre": "Morales Rivas Jesús",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "8702": {
+        "nombre": "Mujica Álvarez Violeta",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "29040": {
+        "nombre": "Navarrete López Alejandra Montserrat",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "23041": {
+        "nombre": "Navarro Fuentes Jaime",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "1895": {
+        "nombre": "Negrón Silva Guillermo E",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "25485": {
+        "nombre": "Noreña Franco Luis Enrique",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "39375": {
+        "nombre": "Odriozola Prego Gerardo Miguel",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "14412": {
+        "nombre": "Olvera Amador María de la Luz",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "25979": {
+        "nombre": "Olvera Neria Oscar",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "11582": {
+        "nombre": "Omaña Pulido María Judith",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "11423": {
+        "nombre": "Ortiz  Romero Vargas María Elba",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "6370": {
+        "nombre": "Ovando Zúñiga Gerardo Antonio",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "14416": {
+        "nombre": "Paez  Hernández Ricardo Teodoro",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "4341": {
+        "nombre": "Pavía  Y Miller Carlos Germán",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "18248": {
+        "nombre": "Peña Gil José Juan",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "4606": {
+        "nombre": "Pereyra Padilla Pedro",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "12035": {
+        "nombre": "Pereyra Ramos Carlos Jesus",
+        "grado": "Licenciatura",
+        "area": "Química"
+    },
+    "17206": {
+        "nombre": "Pérez Flores Rafael",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "4038": {
+        "nombre": "Plata Perez Erasmo Netzahualcóyotl",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "27102": {
+        "nombre": "Poulain Garcia Enrique Gabriel",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "4818": {
+        "nombre": "Pulido Rodríguez Georgina María Guadalupe",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "27699": {
+        "nombre": "Ramírez Quirós Yara",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "14717": {
+        "nombre": "Ramirez Rojas Alejandro",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "16283": {
+        "nombre": "Resendis  Ocampo Lino Feliciano",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "12407": {
+        "nombre": "Rivera Valladares Irene",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "8181": {
+        "nombre": "Roa Limas Federico",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "10382": {
+        "nombre": "Robledo Martínez Arturo",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "4811": {
+        "nombre": "Rodríguez Sánchez Guadalupe",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "9434": {
+        "nombre": "Romero Melendez Cutberto Salvador",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "26274": {
+        "nombre": "Rubio Ponce Alberto",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "12535": {
+        "nombre": "Salas Brito Alvaro Lorenzo",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "14541": {
+        "nombre": "Salazar Antúnez Marina",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "36992": {
+        "nombre": "Salazar Peláez Mónica Liliana",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "42720": {
+        "nombre": "Sánchez  Eleuterio Alma",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "37373": {
+        "nombre": "Sandoval Santana Juan Carlos",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "34592": {
+        "nombre": "Santana Cruz Alejandra",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "6539": {
+        "nombre": "Serrano Domínguez Victor Gerardo",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    },
+    "38832": {
+        "nombre": "Sigalotti Díaz Leonardo Di Girolamo",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "22644": {
+        "nombre": "Soto Portas María Lídice",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "1312": {
+        "nombre": "Soto Tellez María De La Luz",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "2497": {
+        "nombre": "Torres Rodríguez Miguel",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "1360": {
+        "nombre": "Ulín Jiménez Carlos Antonio",
+        "grado": "Doctorado",
+        "area": "Matemáticas"
+    },
+    "7487": {
+        "nombre": "Valladares Rodríguez María Rita",
+        "grado": "Doctorado",
+        "area": "Química"
+    },
+    "42026": {
+        "nombre": "Valle Hernández Brenda Liz",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "14877": {
+        "nombre": "Vargas Carlos Alejandro",
+        "grado": "Doctorado",
+        "area": "Física"
+    },
+    "2639": {
+        "nombre": "Vázquez Rojas Jorge Hector",
+        "grado": "Maestría",
+        "area": "Química"
+    },
+    "6362": {
+        "nombre": "Velázquez  Arcos Juan Manuel",
+        "grado": "Maestría",
+        "area": "Física"
+    },
+    "3641": {
+        "nombre": "Zubieta Badillo Carlos",
+        "grado": "Maestría",
+        "area": "Matemáticas"
+    }
+}

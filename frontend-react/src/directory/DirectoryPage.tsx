@@ -9,8 +9,10 @@ import { CreateProfessorModal } from './components/modals/CreateProfessorModal';
 import { CreateAdminModal } from './components/modals/CreateAdminModal';
 import { EditProfessorModal } from './components/modals/EditProfessorModal';
 import { EditAdminModal } from './components/modals/EditAdminModal';
-
-
+import { UEA_AREA_MAPPING } from '../scripts/utils/constants';
+import profesoresData from '../trimestre-menu/data/gradoYAreaProfesores.json';
+import { importarGradoAreaBatch } from './api';
+import { GradoAreaImport } from './types';
 export const DirectoryPage: React.FC = () => {
     // 1. Global State
     const [state, setState] = useState<DirectoryState>({
@@ -89,6 +91,45 @@ export const DirectoryPage: React.FC = () => {
         }
     };
 
+    const handleImportGrado = async () => {
+        const payload: any[] = [];
+        // Iterate object keys: keys are numeroEconomico
+        Object.entries(profesoresData as Record<string, GradoAreaImport>).forEach(([numeroEconomico, datos]) => {
+            // Map Area name to ID
+            const nombreArea = datos.area;
+            const idArea = UEA_AREA_MAPPING[nombreArea];
+
+            if (!idArea) {
+                console.error(`Area ${nombreArea} no encontrada para número económico ${numeroEconomico}`);
+                return;
+            }
+
+            payload.push({
+                numeroEconomico: parseInt(numeroEconomico),
+                grado: datos.grado,
+                idArea: idArea
+            });
+
+        });
+
+        if (payload.length === 0) {
+            alert('No se encontraron datos válidos para importar.');
+            return;
+        }
+
+        const res = await importarGradoAreaBatch(payload);
+        if (res.isItOk) {
+            alert(`Importación finalizada.\nProcesados: ${res.processed}\nÉxitos: ${res.successes}\nErrores: ${res.errors}`);
+            if (res.errors > 0 || (res.details && res.details.length > 0)) {
+                console.error("Detalles de resultados importación grado y área:", res.details);
+            }
+            refresh();
+        } else {
+            alert('Error al importar: ' + (res.details ? res.details.join(', ') : 'Error desconocido'));
+            console.error("Detalles de resultados importación grado y área:", res.details);
+        }
+    };
+
     return (
         <div className="container-fluid mt-3">
             {/* Modals */}
@@ -138,6 +179,9 @@ export const DirectoryPage: React.FC = () => {
                         <div className="btn-group me-2">
                             <button className="btn btn-success btn-sm" onClick={handleNewProfessor}>+ Profesor</button>
                             <button className="btn btn-success btn-sm" onClick={handleNewAdmin}>+ Administrativo</button>
+                            <button className="btn btn-warning btn-sm" onClick={handleImportGrado}>
+                                <i className="bi bi-upload"></i> Importar grado y área
+                            </button>
                         </div>
                     )}
                     <button className="btn btn-outline-secondary btn-sm" onClick={() => setShowFilters(!showFilters)}>

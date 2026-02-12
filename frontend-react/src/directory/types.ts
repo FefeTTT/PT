@@ -136,3 +136,9 @@ export interface PreferenceData {
     ueas?: { idUEA: string | number; prioridad: number; nombreUEA?: string; claveUEA?: string }[];
     horarios?: { idHorario: string | number; dia: string; horaInicio: string; horaFin: string }[];
 }
+
+export interface GradoAreaImport {
+    nombre: string;
+    grado: string;
+    area: string;
+}

@@ -938,5 +938,59 @@
 				return $stmtIns->execute([$numeroEconomico, $idTipo]);
 			}
 		}
+
+		public function actualizarGradoYAreaBatch(array $items): array {
+			$sql = "UPDATE profesor
+					SET idArea = ?,
+						idGrado = (SELECT idGrado FROM grado_estudios WHERE nombre = ? LIMIT 1)
+					WHERE numeroEconomico = ?";
+			
+			try {
+				$stmt = $this->conexion->prepare($sql);
+			} catch (Exception $e) {
+				return [
+					'isItOk' => false, 
+					'error_prepare' => $e->getMessage()
+				];
+			}
+
+			$stats = [
+				'successes' => 0,
+				'errors' => 0,
+				'details' => []
+			];
+
+			foreach ($items as $item) {
+				$ne = $item['numeroEconomico'] ?? null;
+				if (!$ne) {
+					$stats['errors']++;
+					$stats['details'][] = "Fila sin número económico";
+					continue;
+				}
+
+				try {
+					// $item expects: ['numeroEconomico' => 123, 'grado' => 'Doctorado', 'idArea' => 1111]
+					$exec = $stmt->execute([
+						$item['idArea'],
+						$item['grado'],
+						$ne
+					]);
+					
+					if ($exec) {
+						$stats['successes']++;
+					} else {
+						$stats['errors']++;
+						$info = $stmt->errorInfo();
+						$stats['details'][] = "Error en número económico: $ne -> " . ($info[2] ?? 'Unknown error');
+					}
+				} catch (Exception $e) {
+					$stats['errors']++;
+					$stats['details'][] = "PHP - Exception en número económico: $ne -> " . $e->getMessage();
+				}
+			}
+			
+			$stats['isItOk'] = true;
+			return $stats;
+		}
 	}
 ?>
