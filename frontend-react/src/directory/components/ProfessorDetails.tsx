@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProfessorDetails } from '../hooks/useProfessorDetails';
 import { Professor, Location, Contract, EmergencyContact, AreaAssignment, GroupAssignment } from '../types';
 import { ManageLocationModal } from './modals/ManageLocationModal';
@@ -6,10 +6,10 @@ import { ManageContractModal } from './modals/ManageContractModal';
 import { ManageContactModal } from './modals/ManageContactModal';
 import { ManageAssignmentModal } from './modals/ManageAssignmentModal';
 import { ScheduleModal } from './modals/ScheduleModal';
-
 import { PreferencesModal } from './modals/PreferencesModal';
 import { UEA_AREA_MAPPING_REV } from '../../scripts/utils/constants';
 import { UpdateAreaModal } from './modals/UpdateAreaModal';
+import { UpdateDegreeModal } from './modals/UpdateDegreeModal';
 
 interface ProfessorDetailsProps {
     id: string | number;
@@ -43,6 +43,26 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
 
     // Generic Update Area Modal
     const [showAreaModal, setShowAreaModal] = useState(false);
+
+    // Generic Update Degree Modal
+    const [showDegreeModal, setShowDegreeModal] = useState(false);
+    const [degreesMap, setDegreesMap] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        // Fetch degrees mapping on mount
+        fetch('controlador/recuperaGrados.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.isItOk && Array.isArray(data.grados)) {
+                    const map: Record<string, string> = {};
+                    data.grados.forEach((g: any) => {
+                        map[g.idGrado] = g.nombre;
+                    });
+                    setDegreesMap(map);
+                }
+            })
+            .catch(err => console.error('Error loading degrees:', err));
+    }, []);
 
 
     // Location Handlers
@@ -262,6 +282,16 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
                 />
             )}
 
+            {showDegreeModal && (
+                <UpdateDegreeModal
+                    isOpen={showDegreeModal}
+                    onClose={() => setShowDegreeModal(false)}
+                    onSuccess={() => { refresh(); }}
+                    numeroEconomico={p.numeroEconomico}
+                    currentIdGrado={p.idGrado}
+                />
+            )}
+
             {/* Header ... */}
             <div className="card-header d-flex justify-content-between align-items-center bg-white">
                 <h5 className="mb-0 text-primary">{p.nombre}</h5>
@@ -296,6 +326,15 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
                         {p.idArea ? (UEA_AREA_MAPPING_REV[p.idArea as number] || p.idArea) : '-'}
                         {canEdit && (
                             <button className="btn btn-link btn-sm p-0 ms-2" onClick={() => setShowAreaModal(true)}>
+                                <i className="bi bi-pencil-square"></i>
+                            </button>
+                        )}
+                    </div>
+                    <div className="col-md-6 d-flex align-items-center">
+                        <strong className="me-2">Grado:</strong>
+                        {(p.idGrado && degreesMap[p.idGrado]) || p.gradoEstudios || '-'}
+                        {canEdit && (
+                            <button className="btn btn-link btn-sm p-0 ms-2" onClick={() => setShowDegreeModal(true)}>
                                 <i className="bi bi-pencil-square"></i>
                             </button>
                         )}
