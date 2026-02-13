@@ -6,7 +6,10 @@ import { ManageContractModal } from './modals/ManageContractModal';
 import { ManageContactModal } from './modals/ManageContactModal';
 import { ManageAssignmentModal } from './modals/ManageAssignmentModal';
 import { ScheduleModal } from './modals/ScheduleModal';
+
 import { PreferencesModal } from './modals/PreferencesModal';
+import { UEA_AREA_MAPPING_REV } from '../../scripts/utils/constants';
+import { UpdateAreaModal } from './modals/UpdateAreaModal';
 
 interface ProfessorDetailsProps {
     id: string | number;
@@ -37,6 +40,9 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
     // Schedule & Preferences
     const [showScheduleModal, setShowScheduleModal] = useState(false);
     const [showPreferencesModal, setShowPreferencesModal] = useState(false);
+
+    // Generic Update Area Modal
+    const [showAreaModal, setShowAreaModal] = useState(false);
 
 
     // Location Handlers
@@ -246,6 +252,16 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
                 />
             )}
 
+            {showAreaModal && (
+                <UpdateAreaModal
+                    isOpen={showAreaModal}
+                    onClose={() => setShowAreaModal(false)}
+                    onSuccess={() => { refresh(); }}
+                    numeroEconomico={p.numeroEconomico}
+                    currentIdArea={p.idArea}
+                />
+            )}
+
             {/* Header ... */}
             <div className="card-header d-flex justify-content-between align-items-center bg-white">
                 <h5 className="mb-0 text-primary">{p.nombre}</h5>
@@ -274,6 +290,15 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
                     </div>
                     <div className="col-md-6">
                         <strong>Correo Personal:</strong> {p.correo_personal ? <a href={`mailto:${p.correo_personal}`}>{p.correo_personal}</a> : '-'}
+                    </div>
+                    <div className="col-md-6 d-flex align-items-center">
+                        <strong className="me-2">Área:</strong>
+                        {p.idArea ? (UEA_AREA_MAPPING_REV[p.idArea as number] || p.idArea) : '-'}
+                        {canEdit && (
+                            <button className="btn btn-link btn-sm p-0 ms-2" onClick={() => setShowAreaModal(true)}>
+                                <i className="bi bi-pencil-square"></i>
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -331,7 +356,7 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
                             {areas && areas.length > 0 ? areas.map((a, i) => (
                                 <li key={i} className="mb-1 d-flex justify-content-between align-items-center">
                                     <span>
-                                        <span className="badge bg-light text-dark border me-1">Área</span>
+                                        <span className="badge bg-light text-dark border me-1">Área académica</span>
                                         {a.nombre}
                                         {a.puesto && <span className="text-muted ms-1">({a.puesto})</span>}
                                     </span>

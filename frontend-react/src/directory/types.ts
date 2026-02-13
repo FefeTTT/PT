@@ -7,6 +7,7 @@ export interface Professor {
     celular?: string;
     gradoEstudios?: string;
     // Extra fields often returned or needed
+    idArea?: string | number; // Knowledge Area (Física, Química, etc.)
     isJefeArea?: number | string;
     isJefeGrupo?: number | string;
     tipo?: 'profesor';
