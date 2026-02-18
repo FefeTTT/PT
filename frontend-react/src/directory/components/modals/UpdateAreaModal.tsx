@@ -39,7 +39,7 @@ export const UpdateAreaModal: React.FC<UpdateAreaModalProps> = ({
         setLoading(true);
         try {
             const res = await axios.get('controlador/recuperaAreas.php');
-            if (res.data.ok) {
+            if (res.data.isItOk) {
                 setAreas(res.data.areas);
             } else {
                 setError('Error al cargar áreas');
@@ -65,11 +65,7 @@ export const UpdateAreaModal: React.FC<UpdateAreaModalProps> = ({
 
             const res = await axios.post('controlador/actualizarProfesorArea.php', payload);
 
-            // The response key in updated controller is "ok?", but let's check both just in case or update controller if needed.
-            // Wait, I saw actualizarProfesorArea.php earlier.
-            // It returns { "ok?": boolean }
-
-            if (res.data && (res.data['ok?'] === true || res.data.ok === true)) {
+            if (res.data && (res.data['isItOk'] === true || res.data.isItOk === true)) {
                 onSuccess();
                 onClose();
             } else {

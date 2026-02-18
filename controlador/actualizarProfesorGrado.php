@@ -15,8 +15,8 @@ $idGrado = isset($data['idGrado']) ? (int)$data['idGrado'] : null;
 
 $profesorDAO = new ProfesorDAO($pdo);
 if ($profesorDAO->actualizarGrado($data['numeroEconomico'], $idGrado)) {
-    echo json_encode(['ok?' => true]);
+    echo json_encode(['isItOk' => true]);
 } else {
-    echo json_encode(['ok?' => false, 'error' => 'Error al actualizar grado']);
+    echo json_encode(['isItOk' => false, 'error' => 'Error al actualizar grado']);
 }
 ?>

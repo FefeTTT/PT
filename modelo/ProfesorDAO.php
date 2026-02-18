@@ -532,6 +532,12 @@
 			return $rows ?: [];
 		}
 
+		public function listarGrados(): array {
+			$sql = "SELECT idGrado, nombre FROM grado_estudios ORDER BY nombre";
+			$stmt = $this->conexion->query($sql);
+			return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+		}
+
 		/**
 		 * Listar tipos de área de profesor (tabla profesorareatipo).
 		 * Devuelve idProfesorAreaTipo, descripcion

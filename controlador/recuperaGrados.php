@@ -5,8 +5,8 @@ require_once __DIR__ . '/../modelo/ProfesorDAO.php';
 
 try {
     $dao = new ProfesorDAO($pdo);
-    $areas = $dao->listarAreas();
-    echo json_encode(['isItOk' => true, 'areas' => $areas], JSON_UNESCAPED_UNICODE);
+    $grados = $dao->listarGrados();
+    echo json_encode(['isItOk' => true, 'grados' => $grados], JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['isItOk' => false, 'error' => $e->getMessage()]);

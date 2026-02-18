@@ -49,7 +49,6 @@ export const ProfessorDetails: React.FC<ProfessorDetailsProps> = ({ id, canEdit,
     const [degreesMap, setDegreesMap] = useState<Record<string, string>>({});
 
     useEffect(() => {
-        // Fetch degrees mapping on mount
         fetch('controlador/recuperaGrados.php')
             .then(res => res.json())
             .then(data => {
