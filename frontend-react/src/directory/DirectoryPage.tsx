@@ -13,6 +13,8 @@ import { UEA_AREA_MAPPING } from '../scripts/utils/constants';
 import profesoresData from '../trimestre-menu/data/gradoYAreaProfesores.json';
 import { importarGradoAreaBatch } from './api';
 import { GradoAreaImport } from './types';
+import { ImportHorariosModal } from './components/modals/ImportHorariosModal';
+import { ImportHorariosProfesoresModal } from './components/modals/ImportHorariosProfesoresModal';
 export const DirectoryPage: React.FC = () => {
     // 1. Global State
     const [state, setState] = useState<DirectoryState>({
@@ -37,18 +39,17 @@ export const DirectoryPage: React.FC = () => {
         trimestre: state.trimestre
     });
 
-    // 3. Selection
     const [selectedItem, setSelectedItem] = useState<DirectoryItem | null>(null);
 
-    // 4. Permissions
     const canEdit = (window.FUNCION_ID === 1 || window.FUNCION_ID === 4);
 
-    // 5. UI Controls
     const [showFilters, setShowFilters] = useState(false);
     const [showCreateProf, setShowCreateProf] = useState(false);
     const [showCreateAdmin, setShowCreateAdmin] = useState(false);
     const [editingProfessor, setEditingProfessor] = useState<Professor | null>(null);
     const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
+    const [showImportHorarios, setShowImportHorarios] = useState(false);
+    const [showImportHorariosProfe, setShowImportHorariosProfe] = useState(false);
 
     // 6. Handlers
     const handleSelect = React.useCallback((item: DirectoryItem) => {
@@ -130,6 +131,14 @@ export const DirectoryPage: React.FC = () => {
         }
     };
 
+    const handleImportHorarios = () => {
+        setShowImportHorarios(true);
+    };
+
+    const handleImportHorariosProfe = () => {
+        setShowImportHorariosProfe(true);
+    };
+
     return (
         <div className="container-fluid mt-3">
             {/* Modals */}
@@ -167,6 +176,22 @@ export const DirectoryPage: React.FC = () => {
                 />
             )}
 
+            {showImportHorarios && (
+                <ImportHorariosModal
+                    isOpen={showImportHorarios}
+                    onClose={() => setShowImportHorarios(false)}
+                    onSuccess={() => { refresh(); }}
+                />
+            )}
+
+            {showImportHorariosProfe && (
+                <ImportHorariosProfesoresModal
+                    isOpen={showImportHorariosProfe}
+                    onClose={() => setShowImportHorariosProfe(false)}
+                    onSuccess={() => { refresh(); }}
+                />
+            )}
+
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="d-flex align-items-center">
                     <button className="btn btn-secondary btn-sm me-2" onClick={handleBack}>
@@ -181,6 +206,12 @@ export const DirectoryPage: React.FC = () => {
                             <button className="btn btn-success btn-sm" onClick={handleNewAdmin}>+ Administrativo</button>
                             <button className="btn btn-warning btn-sm" onClick={handleImportGrado}>
                                 <i className="bi bi-upload"></i> Importar grado y área
+                            </button>
+                            <button className="btn btn-warning btn-sm" onClick={handleImportHorarios}>
+                                <i className="bi bi-clock"></i> Importar horarios
+                            </button>
+                            <button className="btn btn-warning btn-sm" onClick={handleImportHorariosProfe}>
+                                <i className="bi bi-people"></i> Importar horarios profesores
                             </button>
                         </div>
                     )}

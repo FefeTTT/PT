@@ -23,3 +23,36 @@ export async function importarGradoAreaBatch(data: any[]): Promise<ImportResult>
         };
     }
 }
+
+export async function importarHorarios(data: any): Promise<ImportResult> {
+    try {
+        const response = await axios.post<ImportResult>('controlador/importar_horarios.php', data);
+        return response.data;
+    } catch (e: any) {
+        console.error("Error al importar horarios", e);
+        return {
+            isItOk: false,
+            processed: 0,
+            successes: 0,
+            errors: 1,
+            details: [e.message || 'Error de red']
+        };
+    }
+}
+
+export async function importarHorariosProfesores(data: any): Promise<ImportResult> {
+    try {
+        const response = await axios.post<ImportResult>('controlador/importar_horarios_profesores.php', data);
+        return response.data;
+    } catch (e: any) {
+        console.error("Error al importar horarios de profesores", e);
+        return {
+            isItOk: false,
+            processed: 0,
+            successes: 0,
+            errors: 1,
+            details: [e.message || 'Error de red']
+        };
+    }
+}
+
