@@ -1,25 +1,25 @@
 import { ProfesorDTO, GrupoDTO } from '../types/FrontendTypes';
 
 export class GrafoBipartito {
-    public readonly profesores: Map<string, ProfesorDTO>;
-    public readonly grupos: Map<string, GrupoDTO>;
-    public readonly adyacencias: Map<string, string[]>;
-    public readonly asignacionesInversas: Map<string, string>;
+    public readonly profesores: Map<number, ProfesorDTO>;
+    public readonly grupos: Map<number, GrupoDTO>;
+    public readonly adyacencias: Map<number, number[]>;
+    public readonly asignacionesInversas: Map<number, number>;
 
     /**
      * El constructor copia las estructuras para garantizar inmutabilidad
      * entre estados. Si se omiten mapas, se inicializan vacíos.
      */
     constructor(
-        profesores?: Map<string, ProfesorDTO>,
-        grupos?: Map<string, GrupoDTO>,
-        adyacencias?: Map<string, string[]>,
-        asignacionesInversas?: Map<string, string>
+        profesores?: Map<number, ProfesorDTO>,
+        grupos?: Map<number, GrupoDTO>,
+        adyacencias?: Map<number, number[]>,
+        asignacionesInversas?: Map<number, number>
     ) {
         this.profesores = profesores ? new Map(profesores) : new Map();
         this.grupos = grupos ? new Map(grupos) : new Map();
 
-        const copyAdy = new Map<string, string[]>();
+        const copyAdy = new Map<number, number[]>();
         if (adyacencias) {
             adyacencias.forEach((listaGrupos, profId) => {
                 copyAdy.set(profId, [...listaGrupos]);
@@ -38,12 +38,12 @@ export class GrafoBipartito {
     }
 
     public registrarGrupo(g: GrupoDTO) {
-        this.grupos.set(g.idGrupo, g);
+        this.grupos.set(g.idUeaGrupo, g);
     }
 
-    public asignar(numeroEconomico: string, idGrupo: string): GrafoBipartito {
-        if (this.asignacionesInversas.has(idGrupo)) {
-            throw new Error(`El grupo ${idGrupo} ya está asignado a otro profesor`);
+    public asignar(numeroEconomico: number, idUeaGrupo: number): GrafoBipartito {
+        if (this.asignacionesInversas.has(idUeaGrupo)) {
+            throw new Error(`El grupo ${idUeaGrupo} ya está asignado a otro profesor`);
         }
 
         // Construir la nueva instancia propagando maps actuales
@@ -56,10 +56,10 @@ export class GrafoBipartito {
 
         // Aplicar la mutación sobre la nueva instancia
         const listaGruposProf = nuevoGrafo.adyacencias.get(numeroEconomico) || [];
-        listaGruposProf.push(idGrupo);
+        listaGruposProf.push(idUeaGrupo);
         nuevoGrafo.adyacencias.set(numeroEconomico, listaGruposProf);
 
-        nuevoGrafo.asignacionesInversas.set(idGrupo, numeroEconomico);
+        nuevoGrafo.asignacionesInversas.set(idUeaGrupo, numeroEconomico);
 
         return nuevoGrafo;
     }

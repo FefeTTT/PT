@@ -61,7 +61,7 @@ export class ReglaMaxN_Horas extends ReglaBase {
      * @param numeroEconomico Identificador del Profesor.
      * @param grafo Estado inmutable de validación actual.
      */
-    protected _getHorasFrenteAGrupoActuales(numeroEconomico: string, grafo: GrafoBipartito): number {
+    protected _getHorasFrenteAGrupoActuales(numeroEconomico: number, grafo: GrafoBipartito): number {
         const listaClavesUeaAsignadas = grafo.adyacencias.get(numeroEconomico) || [];
         let horasAcumuladas = 0;
 

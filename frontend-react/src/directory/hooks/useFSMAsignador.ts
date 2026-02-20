@@ -23,9 +23,9 @@ export function useFSMAsignador() {
         setGrafo(tempGrafo);
     }, []);
 
-    const intentarAsignacion = useCallback((numeroEconomico: string, idGrupo: string): ResultadoAsignacion => {
+    const intentarAsignacion = useCallback((numeroEconomico: number, idUeaGrupo: number): ResultadoAsignacion => {
         const motor = new FSMAsignador(grafo, defaultRules);
-        const resultado = motor.procesarAsignacion(numeroEconomico, idGrupo);
+        const resultado = motor.procesarAsignacion(numeroEconomico, idUeaGrupo);
 
         // Si estado es OK se reescribe el state de React con la copia del Grafo
         if (resultado.estado === EstadoAsignacion.ASIGNACION_OK && resultado.nuevoGrafo) {
