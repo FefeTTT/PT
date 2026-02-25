@@ -42,7 +42,7 @@ try {
             $cupo = $horarioObj['cupo'];
             $dias = $horarioObj['dias'];
 
-            // 1. Nivel Superior: Resolver Grupo
+            // Resolver Grupo
             $stmtInsertGrupo->execute(['nombre' => $nombre_grupo]);
             $stmtSelectGrupo->execute(['nombre' => $nombre_grupo]);
             $idGrupo = $stmtSelectGrupo->fetchColumn();
@@ -51,7 +51,7 @@ try {
                 throw new Exception("No se pudo obtener el ID para el grupo: $nombre_grupo");
             }
 
-            // 2. Nivel Medio: Insertar/Resolver UEA_Grupo
+            // Insertar o Resolver UEA_Grupo
             $stmtInsertUeaGrupo->execute([
                 'uea_clave' => $clave_uea,
                 'idGrupo' => $idGrupo,
@@ -68,12 +68,12 @@ try {
                 throw new Exception("No se pudo obtener el ID para uea_grupo clave: $clave_uea, grupo: $idGrupo");
             }
 
-            // 3. Nivel Hoja: Insertar Horarios (Días)
+            // Insertar Horarios (Días)
             foreach ($dias as $diaLetra => $horas) {
                 if (isset($mapaDias[$diaLetra])) {
                     $diaInt = $mapaDias[$diaLetra];
                     
-                    // Mapeando las propiedades inicio y fin de JS como requested
+                    // Mapeando las propiedades inicio y fin de JS
                     $horaInicio = $horas['inicio'];
                     $horaFin = $horas['fin'];
                     

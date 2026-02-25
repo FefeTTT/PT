@@ -190,3 +190,32 @@ export async function ingestarProgramacion(ueasProcesadas: any[]): Promise<any> 
     }
 }
 
+export async function fetchProfesoresConHorario(listaNumerosEconomicos: number[]): Promise<{ isItOk: boolean; data?: any[]; message?: string; error?: string }> {
+    try {
+        const response = await fetch('controlador/fetchProfesoresConHorario.php', {
+            method: 'POST',
+            body: JSON.stringify({ listaNumerosEconomicos }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return await response.json();
+    } catch (e: any) {
+        return { isItOk: false, error: e.message || 'Error de red al conectar' };
+    }
+}
+
+export async function guardarLogJSON(payload: any): Promise<{ isItOk: boolean; message?: string }> {
+    try {
+        const response = await fetch('controlador/guardar_log.php', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return await response.json();
+    } catch (e: any) {
+        return { isItOk: false, message: e.message || 'Error de red al guardar log' };
+    }
+}

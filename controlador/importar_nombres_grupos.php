@@ -8,10 +8,10 @@ $response = ['isItOk' => false, 'error' => null, 'procesados' => 0, 'insertados'
 
 try {
     $data = file_get_contents("php://input");
-    if (!$data) throw new Exception("No se enviaron datos.");
+    if (!$data) throw new Exception("No se pudieron cargar los datos.");
     
     $jsonData = json_decode($data, true);
-    if (!is_array($jsonData)) throw new Exception("Formato JSON inválido.");
+    if (!is_array($jsonData)) throw new Exception("Formato de archivo JSON inválido.");
     
     global $pdo;
     $dao = new GrupoDAO($pdo);
@@ -29,7 +29,7 @@ try {
             if ($id !== null) {
                 $response['insertados']++;
             } else {
-                throw new Exception("Error al insertar el grupo: $nombreTrimmed");
+                throw new Exception("Error al insertar el nombre del grupo: $nombreTrimmed");
             }
         }
     }

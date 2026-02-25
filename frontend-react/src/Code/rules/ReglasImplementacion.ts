@@ -10,7 +10,10 @@ export class ReglaArea extends ReglaBase {// Match área profesor y área UEA
 
     evaluar(profesor: ProfesorDTO, grupo: GrupoDTO, _grafo: GrafoBipartito): EvaluacionRegla {
         if (profesor.idArea === grupo.idArea) {
-            return { resultadoExitoso: true };
+            return {
+                resultadoExitoso: true,
+                motivo: 'El área del profesor coincide de manera exacta con el área de la UEA.'
+            };
         }
         return {
             resultadoExitoso: false,
@@ -21,7 +24,7 @@ export class ReglaArea extends ReglaBase {// Match área profesor y área UEA
 
 export class ReglaHorario extends ReglaBase { // Comprueba que el horario laboral del profesor englobe el horario del grupo
     constructor() {
-        super('REGLA_HORARIO');
+        super('REGLA_HORARIOS_COMPATIBLES');
     }
 
     evaluar(profesor: ProfesorDTO, grupo: GrupoDTO, _grafo: GrafoBipartito): EvaluacionRegla {
@@ -35,7 +38,10 @@ export class ReglaHorario extends ReglaBase { // Comprueba que el horario labora
                 };
             }
         }
-        return { resultadoExitoso: true };
+        return {
+            resultadoExitoso: true,
+            motivo: 'El horario laboral del profesor cubre completamente el horario requerido para el grupo.'
+        };
     }
 }
 
@@ -44,7 +50,7 @@ export class ReglaMaxN_Horas extends ReglaBase {
     private _limiteHorasSemanales: number;
 
     constructor(horasMaximasSemanales: number = 20) {
-        super('REGLA_MAXIMO_N_HORAS');
+        super('REGLA_MAXIMO_N_HORAS_LABORALES');
         this._limiteHorasSemanales = horasMaximasSemanales;
     }
 
@@ -82,12 +88,68 @@ export class ReglaMaxN_Horas extends ReglaBase {
         const totalProyectado = horasOcupadas + horasQuePideEsteGrupo;
 
         if (totalProyectado <= this._limiteHorasSemanales) {
-            return { resultadoExitoso: true };
+            return {
+                resultadoExitoso: true,
+                motivo: `La asignación es válida. Carga proyectada: ${totalProyectado} hrs (Límite: ${this._limiteHorasSemanales} hrs).`
+            };
         }
 
         return {
             resultadoExitoso: false,
             motivo: `Asignarlo superaría su máxima carga. Carga actual (${horasOcupadas}h) + Grupo a asignar (${horasQuePideEsteGrupo}h) = ${totalProyectado}h (Límite: ${this._limiteHorasSemanales}h).`
+        };
+    }
+}
+
+export class ReglaGrupoTieneProgramacion extends ReglaBase {
+    constructor() {
+        super('REGLA_GRUPO_TIENE_PROGRAMACION');
+    }
+
+    evaluar(_profesor: ProfesorDTO, grupo: GrupoDTO, _grafo: GrafoBipartito): EvaluacionRegla {
+        if (!grupo.horarios || grupo.horarios.length === 0) {
+            return {
+                resultadoExitoso: false,
+                motivo: 'El grupo no cuenta con programacion_uea_grupo asignada.'
+            };
+        }
+        return {
+            resultadoExitoso: true,
+            motivo: 'Regla superada (Validación de Integridad). El grupo cuenta con horarios programados en BD.'
+        };
+    }
+}
+
+export class ReglaHorarioDisjunto extends ReglaBase {
+    private _profesoresHorarioDisjunto: Set<number>;
+
+    constructor(profesoresDisjuntos: Set<number>) {
+        super('REGLA_VERIFICACION_HUECOS');
+        this._profesoresHorarioDisjunto = profesoresDisjuntos;
+    }
+
+    evaluar(profesor: ProfesorDTO, grupo: GrupoDTO, _grafo: GrafoBipartito): EvaluacionRegla {
+        if (!this._profesoresHorarioDisjunto.has(profesor.numeroEconomico)) {
+            return {
+                resultadoExitoso: true,
+                motivo: 'El profesor tiene un horario continuo; validación de espacios vacíos omitida.'
+            };
+        }
+
+        const semanaProfesor = new SemanaLaboral(profesor.horariosContratacion);
+
+        for (const franjaGrupo of grupo.horarios) {
+            if (!semanaProfesor.intentarAsignarFranjaContigua(franjaGrupo)) {
+                return {
+                    resultadoExitoso: false,
+                    motivo: `El profesor (con horario disjunto) no puede cubrir la franja de clase del día ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}.`
+                };
+            }
+        }
+
+        return {
+            resultadoExitoso: true,
+            motivo: 'El horario de clase encaja en un bloque continuo del profesor sin crear espacios muertos.'
         };
     }
 }

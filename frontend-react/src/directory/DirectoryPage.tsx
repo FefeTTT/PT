@@ -15,6 +15,7 @@ import { importarGradoAreaBatch } from './api';
 import { GradoAreaImport } from './types';
 import { ImportHorariosModal } from './components/modals/ImportHorariosModal';
 import { ImportHorariosProfesoresModal } from './components/modals/ImportHorariosProfesoresModal';
+import { FSMVisualizerModal } from './components/modals/FSMVisualizerModal';
 export const DirectoryPage: React.FC = () => {
     // 1. Global State
     const [state, setState] = useState<DirectoryState>({
@@ -50,6 +51,7 @@ export const DirectoryPage: React.FC = () => {
     const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
     const [showImportHorarios, setShowImportHorarios] = useState(false);
     const [showImportHorariosProfe, setShowImportHorariosProfe] = useState(false);
+    const [showTestFSM, setShowTestFSM] = useState(false);
 
     // 6. Handlers
     const handleSelect = React.useCallback((item: DirectoryItem) => {
@@ -139,6 +141,10 @@ export const DirectoryPage: React.FC = () => {
         setShowImportHorariosProfe(true);
     };
 
+    const handleTestFSM = () => {
+        setShowTestFSM(true);
+    };
+
     return (
         <div className="container-fluid mt-3">
             {/* Modals */}
@@ -192,6 +198,11 @@ export const DirectoryPage: React.FC = () => {
                 />
             )}
 
+            <FSMVisualizerModal
+                isOpen={showTestFSM}
+                onClose={() => setShowTestFSM(false)}
+            />
+
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="d-flex align-items-center">
                     <button className="btn btn-secondary btn-sm me-2" onClick={handleBack}>
@@ -212,6 +223,9 @@ export const DirectoryPage: React.FC = () => {
                             </button>
                             <button className="btn btn-warning btn-sm" onClick={handleImportHorariosProfe}>
                                 <i className="bi bi-people"></i> Importar horarios profesores
+                            </button>
+                            <button className="btn btn-info btn-sm text-white" onClick={handleTestFSM}>
+                                <i className="bi bi-bug"></i> Visualizador FSM
                             </button>
                         </div>
                     )}

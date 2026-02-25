@@ -22,7 +22,6 @@ export class HorarioVO {
     get cupo() { return this._cupo; }
     get dias() { return this._dias; }
 
-    // Método para serializar al enviar al backend
     toJSON() {
         return { grupo: this._grupo, cupo: this._cupo, dias: this._dias };
     }

@@ -23,8 +23,8 @@ export interface ResultadoAsignacion {
  * FSM que ejecuta los intentos de asignación grupo, uea a profesor.
  */
 export class FSMAsignador {
-    private _grafoFijo: GrafoBipartito;
-    private _pipelineReglas: ReglaBase[];
+    protected _grafoFijo: GrafoBipartito;
+    protected _pipelineReglas: ReglaBase[];
 
     constructor(grafoActual: GrafoBipartito, reglas: ReglaBase[] = []) {
         this._grafoFijo = grafoActual; // El grafo que sirvió de snapshot inicial

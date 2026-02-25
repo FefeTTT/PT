@@ -48,12 +48,12 @@ class GrupoDAO {
     public function existeNombreGrupo(string $nombre): bool {
         $st = $this->conexion->prepare("SELECT id FROM grupo WHERE nombre = ? LIMIT 1");
         $st->execute([$nombre]);
-        return $st->fetch(PDO::FETCH_ASSOC) !== false;
+        return $st->fetch(PDO::FETCH_ASSOC) ? true : false;
     }
 
     public function insertarNombreGrupo(string $nombre): ?int {
         if ($this->existeNombreGrupo($nombre)) {
-            return null; // Already exists
+            return null;
         }
         $sql = "INSERT INTO grupo (nombre) VALUES (?)";
         $stmt = $this->conexion->prepare($sql);

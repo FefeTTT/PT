@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS uea_grupo (
     CONSTRAINT uk_uea_grupo UNIQUE (uea_clave, idGrupo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
-CREATE TABLE asignacion_uea_profesor (
+CREATE TABLE IF NOT EXISTS asignacion_uea_profesor (
     id_uea_grupo INT(11) PRIMARY KEY, -- PK y FK al mismo tiempo
     profesor_numeroEconomico INT(11) NOT NULL,
     

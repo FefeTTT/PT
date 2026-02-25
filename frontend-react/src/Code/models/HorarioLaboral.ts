@@ -1,5 +1,3 @@
-import { FranjaHorariaDTO } from '../types/FrontendTypes';
-
 const DIAS_MAP: Record<string, string[]> = {
     'L-V': ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
     'L-MI-V': ['Lunes', 'Miercoles', 'Viernes'],
@@ -12,18 +10,11 @@ const DIAS_MAP: Record<string, string[]> = {
 };
 
 export class HorarioLaboral {
-    private _idDiasDeTrabajo: string;
-    private _horaInicioStr: string;
-    private _horaFinStr: string;
-
     private _horaInicioNum: number;
     private _horaFinNum: number;
     private _diasExpandidos: string[];
 
     constructor(idDiasDeTrabajo: string, horaInicio: string, horaFin: string) {
-        this._idDiasDeTrabajo = idDiasDeTrabajo;
-        this._horaInicioStr = horaInicio;
-        this._horaFinStr = horaFin;
 
         this._horaInicioNum = this.parseTimeToNumber(horaInicio);
         this._horaFinNum = this.parseTimeToNumber(horaFin);
