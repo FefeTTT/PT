@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GrafoBipartito } from '../../../Code/models/GrafoBipartito';
 import { GraphFSMAsignador, StepSnapshot } from '../../../Code/fsm/GraphFSMAsignador';
-import { ReglaArea, ReglaHorario, ReglaMaxN_Horas, ReglaGrupoTieneProgramacion, ReglaHorarioDisjunto } from '../../../Code/rules/ReglasImplementacion';
+import { ReglaArea, ReglaHorario, ReglaMaxN_Horas, ReglaGrupoTieneProgramacion } from '../../../Code/rules/ReglasImplementacion';
 import { EstadoAsignacion } from '../../../Code/fsm/FSMAsignador';
 
 interface Props {
@@ -39,7 +39,6 @@ export const FSMVisualizerModal: React.FC<Props> = ({ isOpen, onClose }) => {
             }
 
             const grafoCompartido = new GrafoBipartito();
-            const disjuntos = new Set<number>();
 
             for (let i = 0; i < parsedInput.length; i++) {
                 const req = parsedInput[i];
@@ -54,14 +53,11 @@ export const FSMVisualizerModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
                 grafoCompartido.registrarProfesor(data.profesor);
                 grafoCompartido.registrarGrupo(data.grupo);
-
-                if (data.profesor.horariosContratacion.length > 1) disjuntos.add(data.profesor.numeroEconomico);
             }
 
             const reglasPipeline = [
                 new ReglaGrupoTieneProgramacion(),
                 new ReglaArea(),
-                new ReglaHorarioDisjunto(disjuntos),
                 new ReglaHorario(),
                 new ReglaMaxN_Horas(24)
             ];

@@ -10,68 +10,89 @@ const DIA_NUMERO_A_STRING: Record<number, string> = {
     5: 'Viernes'
 };
 
+export interface ResultadoDisponibilidad {
+    asignable: boolean;
+    esHoraMuerta?: boolean;
+}
+
 export class SemanaLaboral {
-    private _horariosLaborales: HorarioLaboral[] = [];
+    // Almacena los bloques de horario continuos, optimizados y fusionados por cada día
+    private _horariosFusionadosPorDia: Map<string, { inicio: number, fin: number }[]> = new Map();
 
     constructor(datosDB: HorarioDB_DTO[]) {
         this.construir(datosDB);
     }
 
-    private construir(datos: HorarioDB_DTO[]) {
-        for (const d of datos) {
-            this._horariosLaborales.push(new HorarioLaboral(d.idDiasDeTrabajo, d.horaInicio, d.horaFin));
+    private construir(datosDB: HorarioDB_DTO[]) {
+        // Agrupar los horarios crudos por día
+        const franjasPorDia = new Map<string, { inicio: number, fin: number }[]>();
+
+        for (const dato of datosDB) {
+            const horario = new HorarioLaboral(dato.idDiasDeTrabajo, dato.horaInicio, dato.horaFin);
+
+            for (const diaStr of horario.diasDesglosados) {
+                const diaNormalizado = diaStr.toLowerCase();
+                if (!franjasPorDia.has(diaNormalizado)) {
+                    franjasPorDia.set(diaNormalizado, []);
+                }
+                franjasPorDia.get(diaNormalizado)!.push({ inicio: horario.horaInicio, fin: horario.horaFin });
+            }
         }
-    }
 
-    public intentarAsignarFranja(franja: FranjaHorariaDTO): boolean {
-        const diaBuscado = DIA_NUMERO_A_STRING[franja.dia];
-        if (!diaBuscado) return false;
+        // Fusionar los bloques contiguos u solapados para cada día (Merge Intervals $O(K \log K)$)
+        for (const [dia, bloques] of franjasPorDia.entries()) {
+            if (bloques.length === 0) continue;
 
-        for (const tramo of this._horariosLaborales) {
-            const coversDay = tramo.diasDesglosados.some(d => d.toLowerCase() === diaBuscado.toLowerCase());
+            bloques.sort((a, b) => a.inicio - b.inicio);
 
-            if (coversDay) {
-                if (franja.horaInicio >= tramo.horaInicio && franja.horaFin <= tramo.horaFin) {
-                    return true;
+            const fusionados: { inicio: number, fin: number }[] = [];
+            let actual = { ...bloques[0] };
+
+            for (let i = 1; i < bloques.length; i++) {
+                const siguiente = bloques[i];
+                if (siguiente.inicio <= actual.fin) {
+                    actual.fin = Math.max(actual.fin, siguiente.fin);
+                } else {
+                    fusionados.push({ ...actual });
+                    actual = { ...siguiente };
                 }
             }
-        }
+            fusionados.push(actual);
 
-        return false;
+            this._horariosFusionadosPorDia.set(dia, fusionados);
+        }
     }
 
-    public intentarAsignarFranjaContigua(franja: FranjaHorariaDTO): boolean {
-        const diaBuscado = DIA_NUMERO_A_STRING[franja.dia];
-        if (!diaBuscado) return false
+    public intentarAsignarFranja(franja: FranjaHorariaDTO): ResultadoDisponibilidad {
+        const diaBuscadoOriginal = DIA_NUMERO_A_STRING[franja.dia];
+        if (!diaBuscadoOriginal) return { asignable: false };
 
-        const bloquesDelDia = this._horariosLaborales.filter(tramo =>
-            tramo.diasDesglosados.some(d => d.toLowerCase() === diaBuscado.toLowerCase())
-        );
+        const diaNormalizado = diaBuscadoOriginal.toLowerCase();
+        const bloquesOptimizados = this._horariosFusionadosPorDia.get(diaNormalizado);
 
-        if (bloquesDelDia.length === 0) return false;
+        // Si el profesor no trabaja ese día
+        if (!bloquesOptimizados || bloquesOptimizados.length === 0) {
+            return { asignable: false, esHoraMuerta: false };
+        }
 
-        bloquesDelDia.sort((a, b) => a.horaInicio - b.horaInicio);
-
-        const mergedIntervals: { inicio: number, fin: number }[] = [];
-        let currentInterval = {
-            inicio: bloquesDelDia[0].horaInicio,
-            fin: bloquesDelDia[0].horaFin
-        };
-
-        for (let i = 1; i < bloquesDelDia.length; ++i) {
-            const nextBlock = bloquesDelDia[i];
-
-            if (nextBlock.horaInicio <= currentInterval.fin) {
-                currentInterval.fin = Math.max(currentInterval.fin, nextBlock.horaFin);
-            } else {
-                mergedIntervals.push({ ...currentInterval });
-                currentInterval = { inicio: nextBlock.horaInicio, fin: nextBlock.horaFin };
+        // Búsqueda estricta O(1) sobre los bloques pre-calculados
+        for (const bloque of bloquesOptimizados) {
+            if (franja.horaInicio >= bloque.inicio && franja.horaFin <= bloque.fin) {
+                return { asignable: true };
             }
         }
-        mergedIntervals.push(currentInterval);
 
-        return mergedIntervals.some(interval =>
-            franja.horaInicio >= interval.inicio && franja.horaFin <= interval.fin
-        );
+        // Si llegamos aquí, la franja no cabe en ningún bloque. 
+        // Vamos a verificar si cayó en una "hora muerta" 
+        // (es decir, entre el inicio del primer bloque laboral y el fin del último bloque laboral de su día)
+        const primerBloque = bloquesOptimizados[0];
+        const ultimoBloque = bloquesOptimizados[bloquesOptimizados.length - 1];
+
+        const caeDentroDeLaJornada = franja.horaInicio >= primerBloque.inicio && franja.horaFin <= ultimoBloque.fin;
+
+        return {
+            asignable: false,
+            esHoraMuerta: caeDentroDeLaJornada
+        };
     }
 }

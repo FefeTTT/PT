@@ -31,11 +31,19 @@ export class ReglaHorario extends ReglaBase { // Comprueba que el horario labora
         const semanaProfesor = new SemanaLaboral(profesor.horariosContratacion);
 
         for (const franjaGrupo of grupo.horarios) {
-            if (!semanaProfesor.intentarAsignarFranja(franjaGrupo)) {
-                return {
-                    resultadoExitoso: false,
-                    motivo: `El profesor no tiene horario disponible para la clase del horario ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}.`
-                };
+            const val = semanaProfesor.intentarAsignarFranja(franjaGrupo);
+            if (!val.asignable) {
+                if (val.esHoraMuerta) {
+                    return {
+                        resultadoExitoso: false,
+                        motivo: `Restricción de Horario: La clase solicitada (Día ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}) cae en un HUECO NO LABORABLE (Hora muerta) en el horario del profesor.`
+                    };
+                } else {
+                    return {
+                        resultadoExitoso: false,
+                        motivo: `Restricción de Horario: El profesor no tiene disponibilidad programada para cubrir la clase del Día ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}.`
+                    };
+                }
             }
         }
         return {
@@ -115,41 +123,7 @@ export class ReglaGrupoTieneProgramacion extends ReglaBase {
         }
         return {
             resultadoExitoso: true,
-            motivo: 'Regla superada (Validación de Integridad). El grupo cuenta con horarios programados en BD.'
-        };
-    }
-}
-
-export class ReglaHorarioDisjunto extends ReglaBase {
-    private _profesoresHorarioDisjunto: Set<number>;
-
-    constructor(profesoresDisjuntos: Set<number>) {
-        super('REGLA_VERIFICACION_HUECOS');
-        this._profesoresHorarioDisjunto = profesoresDisjuntos;
-    }
-
-    evaluar(profesor: ProfesorDTO, grupo: GrupoDTO, _grafo: GrafoBipartito): EvaluacionRegla {
-        if (!this._profesoresHorarioDisjunto.has(profesor.numeroEconomico)) {
-            return {
-                resultadoExitoso: true,
-                motivo: 'El profesor tiene un horario continuo; validación de espacios vacíos omitida.'
-            };
-        }
-
-        const semanaProfesor = new SemanaLaboral(profesor.horariosContratacion);
-
-        for (const franjaGrupo of grupo.horarios) {
-            if (!semanaProfesor.intentarAsignarFranjaContigua(franjaGrupo)) {
-                return {
-                    resultadoExitoso: false,
-                    motivo: `El profesor (con horario disjunto) no puede cubrir la franja de clase del día ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}.`
-                };
-            }
-        }
-
-        return {
-            resultadoExitoso: true,
-            motivo: 'El horario de clase encaja en un bloque continuo del profesor sin crear espacios muertos.'
+            motivo: 'Regla superada (Validación de Integridad). El grupo cuenta con horarios programados en BD siempre.'
         };
     }
 }
