@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as API from './api';
 import styles from './trimestre-menu.module.css';
 import TrimestreTableHeaders from './TrimestreTableHeaders';
@@ -11,6 +11,7 @@ import listaDeUEA from './data/listaDeUEA.json';
 import { UEA_AREA_MAPPING } from '../scripts/utils/constants';
 import { UEA_AREA_MAPPING_REV } from '../scripts/utils/constants';
 import { DatosUEA } from '../scripts/utils/types';
+import { UeaVO, HorarioVO } from './programacionVO';
 
 interface SortState {
     col: string | null;
@@ -26,6 +27,101 @@ const MenuTrimestres: React.FC = () => {
     const [showNewModal, setShowNewModal] = useState<boolean>(false);
     const [showImportModal, setShowImportModal] = useState<boolean>(false);
     const [selectedTrimestreForProfessors, setSelectedTrimestreForProfessors] = useState<API.Trimestre | null>(null);
+
+    const fileInputNombresRef = useRef<HTMLInputElement>(null);
+    const fileInputProgramacionRef = useRef<HTMLInputElement>(null);
+
+    const handleImportarNombresGrupos = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            let json: any[] = [];
+            try {
+                json = JSON.parse(text);
+            } catch (err) {
+                alert('El archivo no es un JSON válido.');
+                return;
+            }
+
+            if (!Array.isArray(json)) {
+                alert('El archivo JSON no tiene el formato esperado (debe ser un arreglo de nombres).');
+                return;
+            }
+
+            setLoading(true);
+            const res = await API.importarNombresGrupos(json);
+            if (res.isItOk) {
+                alert(`Importación finalizada.\nProcesados: ${res.procesados}\nInsertados: ${res.insertados}\nOmitidos (ya existían): ${res.omitidos}`);
+            } else {
+                alert(`Error al importar: ${res.error}`);
+            }
+        } catch (err) {
+            alert('Error al leer el archivo.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+            if (fileInputNombresRef.current) {
+                fileInputNombresRef.current.value = '';
+            }
+        }
+    };
+
+    const handleCargarProgramacion = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            let jsonCrudo: any;
+            try {
+                jsonCrudo = JSON.parse(text);
+            } catch (err) {
+                alert('El archivo no es un JSON válido.');
+                return;
+            }
+
+            setLoading(true);
+            const ueasProcesadas: UeaVO[] = [];
+
+            // Creación de objetos paso a paso (Padre -> Hijo)
+            for (const [claveStr, data] of Object.entries(jsonCrudo)) {
+                const claveUea = parseInt(claveStr, 10);
+                const ueaPadre = new UeaVO(claveUea);
+
+                const horariosRaw = (data as any).horarios_programados || [];
+
+                for (const hRaw of horariosRaw) {
+                    const horarioHijo = new HorarioVO(hRaw.grupo, hRaw.cupo, hRaw.dias);
+                    ueaPadre.addHorario(horarioHijo);
+                }
+
+                ueasProcesadas.push(ueaPadre);
+            }
+
+            // Enviar al backend PHP
+            const ueasPayload = ueasProcesadas.map(u => u.toJSON());
+            const result = await API.ingestarProgramacion(ueasPayload);
+
+            if (result.status === 'success') {
+                console.log('Inserción exitosa:', result.data || result);
+                alert('Programación cargada con éxito.');
+            } else {
+                console.error('Error del servidor:', result.message, 'Error DB:', result.db_error);
+                alert(`Error al cargar programación:\n${result.message}\n${result.db_error || ''}`);
+            }
+
+        } catch (err) {
+            alert('Error al procesar el archivo.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+            if (fileInputProgramacionRef.current) {
+                fileInputProgramacionRef.current.value = '';
+            }
+        }
+    };
 
     useEffect(() => {
         loadTrimestres(selectedYear);
@@ -217,9 +313,10 @@ const MenuTrimestres: React.FC = () => {
                     <ActionButton textLabel="Nuevo trimestre" onButtonClicked={() => handleAction('Nuevo Trimestre')} />
                     <ActionButton textLabel="Importar UEA" onButtonClicked={() => handleAction('importar-uea')} />
                     <ActionButton textLabel="Cargar todas las UEA" onButtonClicked={handleLoadAllUEAs} />
+                    <ActionButton textLabel="Cargar nombres de grupos" onButtonClicked={() => fileInputNombresRef.current?.click()} />
                     <ActionButton textLabel="Refrescar" onButtonClicked={() => loadTrimestres(selectedYear)} />
-                    {/* Legacy Placeholders */}
-                    {['cargar-planeacion', 'hist-programacion'].map(act => (
+                    <ActionButton textLabel="Cargar Planeación Horario" onButtonClicked={() => fileInputProgramacionRef.current?.click()} />
+                    {['hist-programacion'].map(act => (
                         <ActionButton key={act} textLabel={act} onButtonClicked={() => handleAction(act)} />
                     ))}
                 </div>
@@ -307,6 +404,20 @@ const MenuTrimestres: React.FC = () => {
             <ImportUEAModal
                 show={showImportModal}
                 onClose={() => setShowImportModal(false)}
+            />
+            <input
+                type="file"
+                accept=".json"
+                style={{ display: 'none' }}
+                ref={fileInputNombresRef}
+                onChange={handleImportarNombresGrupos}
+            />
+            <input
+                type="file"
+                accept=".json"
+                style={{ display: 'none' }}
+                ref={fileInputProgramacionRef}
+                onChange={handleCargarProgramacion}
             />
         </div>
     );

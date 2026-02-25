@@ -153,3 +153,40 @@ export async function fetchUEA(clave: number): Promise<{ exists: boolean; error?
         return { exists: false, error: e.message || 'Error de red' };
     }
 }
+
+export async function importarNombresGrupos(nombres: string[]): Promise<{
+    isItOk: boolean;
+    error?: string;
+    procesados?: number;
+    insertados?: number;
+    omitidos?: number;
+}> {
+    try {
+        const response = await fetch('controlador/importar_nombres_grupos.php', {
+            method: 'POST',
+            body: JSON.stringify(nombres),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return await response.json();
+    } catch (e: any) {
+        return { isItOk: false, error: e.message || 'Error de red' };
+    }
+}
+
+export async function ingestarProgramacion(ueasProcesadas: any[]): Promise<any> {
+    try {
+        const response = await fetch('controlador/ingestar_horarios_programacion.php', {
+            method: 'POST',
+            body: JSON.stringify(ueasProcesadas),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return await response.json();
+    } catch (e: any) {
+        return { status: 'error', message: e.message || 'Error de red al conectar' };
+    }
+}
+

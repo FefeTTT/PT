@@ -16,5 +16,17 @@
         "usuario": "ayudante_cb$$",
         "pwd": "_CB...",
         "reason": "Contraseña inválida."
+    },
+    "20260224214458_0599510001771965898": {
+        "timestamp": "2026-02-24T21:44:58+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_CB...",
+        "reason": "Contraseña inválida."
+    },
+    "20260224214515_0865658001771965915": {
+        "timestamp": "2026-02-24T21:45:15+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_CB...",
+        "reason": "Contraseña inválida."
     }
 }

@@ -19,6 +19,9 @@ export interface ResultadoAsignacion {
     };
 }
 
+/**
+ * FSM que ejecuta los intentos de asignación grupo, uea a profesor.
+ */
 export class FSMAsignador {
     private _grafoFijo: GrafoBipartito;
     private _pipelineReglas: ReglaBase[];
@@ -59,6 +62,7 @@ export class FSMAsignador {
 
         estadoActual = EstadoAsignacion.EVALUANDO;
 
+        // Ejecutar pipeline de reglas inyectadas
         for (const regla of this._pipelineReglas) {
             const evaluacion = regla.evaluar(profesor, grupo, this._grafoFijo);
 

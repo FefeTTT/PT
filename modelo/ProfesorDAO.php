@@ -18,7 +18,7 @@
 					$row['nombre'],
 					$row['correo_uam'],
 					$row['correo_personal'],
-					$row['gradoEstudios'],
+					null,
 					$row['celular'],
 					$row['idArea'],
 					$row['idGrado']
@@ -37,7 +37,7 @@
 				$row['nombre'],
 				$row['correo_uam'],
 				$row['correo_personal'],
-				$row['gradoEstudios'],
+				null,
 				$row['celular'],
 				$row['idArea'] ?? null,
 				$row['idGrado'] ?? null
@@ -49,7 +49,7 @@
 		 * Devuelve array JSON (como toJSON) o null si no existe.
 		 */
 		public function obtenerProfesorPorNumeroEconomico(int $numeroEconomico): ?array {
-			$sql = "SELECT nombre, gradoEstudios, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE numeroEconomico = ? LIMIT 1";
+			$sql = "SELECT nombre, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE numeroEconomico = ? LIMIT 1";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$numeroEconomico]);
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -95,7 +95,7 @@
 		 */
 		public function obtenerProfesorPorNombre(string $nombre): ?array {
 			// Ensure uniqueness: there should not be more than one professor with the same name
-			$sql = "SELECT numeroEconomico, gradoEstudios, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE nombre = ?";
+			$sql = "SELECT numeroEconomico, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE nombre = ?";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([$nombre]);
 			$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -391,7 +391,7 @@
 				$selectExtra = '';
 			}
 
-			$sql = "SELECT DISTINCT p.numeroEconomico, p.nombre, p.gradoEstudios, p.celular, p.correo_uam, p.correo_personal, p.idArea, p.idGrado" . $selectExtra . "
+			$sql = "SELECT DISTINCT p.numeroEconomico, p.nombre, p.celular, p.correo_uam, p.correo_personal, p.idArea, p.idGrado" . $selectExtra . "
 				FROM profesor p
 				LEFT JOIN areaacademica_has_profesor aap ON p.numeroEconomico = aap.profesor_numeroEconomico
 				LEFT JOIN areaacademica aa ON aap.areaAcademica_idAreaAcademica = aa.idAreaAcademica
@@ -496,7 +496,7 @@
 					$row['nombre'],
 					$row['correo_uam'],
 					$row['correo_personal'],
-					$row['gradoEstudios'],
+					null,
 					$row['celular'],
 					$row['idArea'],
 					$row['idGrado']
@@ -657,12 +657,11 @@
 		 * Retorna el registro insertado como arreglo asociativo.
 		 */
 		public function insertarProfesor(ProfesorVO $vo): array {
-			$sql = "INSERT INTO profesor (numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal, idArea, idGrado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			$sql = "INSERT INTO profesor (numeroEconomico, nombre, celular, correo_uam, correo_personal, idArea, idGrado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 			$stmt = $this->conexion->prepare($sql);
 			$stmt->execute([
 				(int)$vo->getNumeroEconomico(),
 				$vo->getNombre(),
-				$vo->getGradoEstudios(),
 				$vo->getCelular(),
 				$vo->getCorreoUAM(),
 				$vo->getCorreoP(),
@@ -672,7 +671,7 @@
 			// No lastInsertId needed, we inserted numeroEconomico manually as PK
 			$newId = (int)$vo->getNumeroEconomico();
 			
-			$sql2 = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE numeroEconomico = ? LIMIT 1";
+			$sql2 = "SELECT numeroEconomico, nombre, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE numeroEconomico = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
 			$s2->execute([$newId]);
 			$row = $s2->fetch(PDO::FETCH_ASSOC);
@@ -776,7 +775,7 @@
 		 * Retorna el registro actualizado como arreglo asociativo.
 		 */
 		public function actualizarProfesor(ProfesorVO $vo, ?int $oldNumeroEconomico = null): array {
-			$sql = "UPDATE profesor SET numeroEconomico = ?, nombre = ?, gradoEstudios = ?, celular = ?, correo_uam = ?, correo_personal = ?, idArea = ?, idGrado = ? WHERE numeroEconomico = ?";
+			$sql = "UPDATE profesor SET numeroEconomico = ?, nombre = ?, celular = ?, correo_uam = ?, correo_personal = ?, idArea = ?, idGrado = ? WHERE numeroEconomico = ?";
 			$stmt = $this->conexion->prepare($sql);
 			
 			$targetId = ($oldNumeroEconomico !== null) ? $oldNumeroEconomico : (int)$vo->getNumeroEconomico();
@@ -784,7 +783,6 @@
 			$stmt->execute([
 				(int)$vo->getNumeroEconomico(),
 				$vo->getNombre(),
-				$vo->getGradoEstudios(),
 				$vo->getCelular(),
 				$vo->getCorreoUAM(),
 				$vo->getCorreoP(),
@@ -794,7 +792,7 @@
 			]);
 			
 			// retornar fila actualizada
-			$sql2 = "SELECT numeroEconomico, nombre, gradoEstudios, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE numeroEconomico = ? LIMIT 1";
+			$sql2 = "SELECT numeroEconomico, nombre, celular, correo_uam, correo_personal, idArea, idGrado FROM profesor WHERE numeroEconomico = ? LIMIT 1";
 			$s2 = $this->conexion->prepare($sql2);
 			// Use the NEW numeroEconomico to fetch
 			$s2->execute([(int)$vo->getNumeroEconomico()]);

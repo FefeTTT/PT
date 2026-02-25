@@ -1,16 +1,16 @@
 export interface FranjaHorariaDTO {
-    dia: number; // 1 (L), 2 (M), 3 (MI), 4 (J), 5 (V)
+    dia: number; // 1 - 5 respectivamente
     horaInicio: number; // Ejemplo: 8:30 AM -> 8.5
     horaFin: number; // Ejemplo: 10:00 AM -> 10.0
 }
 
 export interface GrupoDTO {
-    idUeaGrupo: number; // ID único real para asignación (tabla uea_grupo)
-    idGrupo: number; // Referencia a tabla grupo
+    idUeaGrupo: number;
+    idGrupo: number;
     claveGrupo: string; // Ejemplo: CCB01, CCB81
-    idArea: number; // Continúa usándose para ReglaArea
-    ueaClave: number; // Referencia a uea(clave)
-    horarios: FranjaHorariaDTO[]; // Horarios de impartición en tabla_horario_grupo_uea
+    idArea: number;
+    ueaClave: number;
+    horarios: FranjaHorariaDTO[];
 }
 
 export interface HorarioDB_DTO {
@@ -20,7 +20,7 @@ export interface HorarioDB_DTO {
 }
 
 export interface ProfesorDTO {
-    numeroEconomico: number; // PK
+    numeroEconomico: number;
     idArea: number;
     horariosContratacion: HorarioDB_DTO[];
 }
