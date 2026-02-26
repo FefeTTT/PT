@@ -1,24 +1,24 @@
-const DIAS_MAP: Record<string, string[]> = {
-    'L-V': ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
-    'L-MI-V': ['Lunes', 'Miercoles', 'Viernes'],
-    'M-J': ['Martes', 'Jueves'],
-    'L': ['Lunes'],
-    'M': ['Martes'],
-    'MI': ['Miercoles'],
-    'J': ['Jueves'],
-    'V': ['Viernes'],
+const DIAS_MAP: Record<string, number[]> = {
+    'L-V': [1, 2, 3, 4, 5],
+    'L-MI-V': [1, 3, 5],
+    'M-J': [2, 4],
+    'L': [1],
+    'M': [2],
+    'MI': [3],
+    'J': [4],
+    'V': [5],
 };
 
 export class HorarioLaboral {
     private _horaInicioNum: number;
     private _horaFinNum: number;
-    private _diasExpandidos: string[];
+    private _diasExpandidos: number[];
 
     constructor(idDiasDeTrabajo: string, horaInicio: string, horaFin: string) {
 
         this._horaInicioNum = this.parseTimeToNumber(horaInicio);
         this._horaFinNum = this.parseTimeToNumber(horaFin);
-        this._diasExpandidos = DIAS_MAP[idDiasDeTrabajo.toUpperCase()] || [idDiasDeTrabajo];
+        this._diasExpandidos = DIAS_MAP[idDiasDeTrabajo.toUpperCase()] || [];
     }
 
     private parseTimeToNumber(timeStr: string): number {
@@ -37,7 +37,7 @@ export class HorarioLaboral {
         return this._horaFinNum;
     }
 
-    public get diasDesglosados(): string[] {
+    public get diasDesglosados(): number[] {
         return this._diasExpandidos;
     }
 }

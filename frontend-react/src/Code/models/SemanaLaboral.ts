@@ -2,14 +2,6 @@ import { HorarioDB_DTO, FranjaHorariaDTO } from '../types/FrontendTypes';
 import { HorarioLaboral } from './HorarioLaboral';
 
 
-const DIA_NUMERO_A_STRING: Record<number, string> = {
-    1: 'Lunes',
-    2: 'Martes',
-    3: 'Miercoles',
-    4: 'Jueves',
-    5: 'Viernes'
-};
-
 export interface ResultadoDisponibilidad {
     asignable: boolean;
     esHoraMuerta?: boolean;
@@ -17,7 +9,7 @@ export interface ResultadoDisponibilidad {
 
 export class SemanaLaboral {
     // Almacena los bloques de horario continuos, optimizados y fusionados por cada día
-    private _horariosFusionadosPorDia: Map<string, { inicio: number, fin: number }[]> = new Map();
+    private _horariosFusionadosPorDia: Map<number, { inicio: number, fin: number }[]> = new Map();
 
     constructor(datosDB: HorarioDB_DTO[]) {
         this.construir(datosDB);
@@ -25,17 +17,16 @@ export class SemanaLaboral {
 
     private construir(datosDB: HorarioDB_DTO[]) {
         // Agrupar los horarios crudos por día
-        const franjasPorDia = new Map<string, { inicio: number, fin: number }[]>();
+        const franjasPorDia = new Map<number, { inicio: number, fin: number }[]>();
 
         for (const dato of datosDB) {
             const horario = new HorarioLaboral(dato.idDiasDeTrabajo, dato.horaInicio, dato.horaFin);
 
-            for (const diaStr of horario.diasDesglosados) {
-                const diaNormalizado = diaStr.toLowerCase();
-                if (!franjasPorDia.has(diaNormalizado)) {
-                    franjasPorDia.set(diaNormalizado, []);
+            for (const diaNum of horario.diasDesglosados) {
+                if (!franjasPorDia.has(diaNum)) {
+                    franjasPorDia.set(diaNum, []);
                 }
-                franjasPorDia.get(diaNormalizado)!.push({ inicio: horario.horaInicio, fin: horario.horaFin });
+                franjasPorDia.get(diaNum)!.push({ inicio: horario.horaInicio, fin: horario.horaFin });
             }
         }
 
@@ -64,27 +55,18 @@ export class SemanaLaboral {
     }
 
     public intentarAsignarFranja(franja: FranjaHorariaDTO): ResultadoDisponibilidad {
-        const diaBuscadoOriginal = DIA_NUMERO_A_STRING[franja.dia];
-        if (!diaBuscadoOriginal) return { asignable: false };
+        const bloquesOptimizados = this._horariosFusionadosPorDia.get(franja.dia);
 
-        const diaNormalizado = diaBuscadoOriginal.toLowerCase();
-        const bloquesOptimizados = this._horariosFusionadosPorDia.get(diaNormalizado);
-
-        // Si el profesor no trabaja ese día
-        if (!bloquesOptimizados || bloquesOptimizados.length === 0) {
+        if (!bloquesOptimizados || bloquesOptimizados.length === 0) {// Si el profesor no trabaja ese día
             return { asignable: false, esHoraMuerta: false };
         }
 
-        // Búsqueda estricta O(1) sobre los bloques pre-calculados
-        for (const bloque of bloquesOptimizados) {
+        for (const bloque of bloquesOptimizados) {// Búsqueda O(1) sobre los bloques precalculados
             if (franja.horaInicio >= bloque.inicio && franja.horaFin <= bloque.fin) {
                 return { asignable: true };
             }
         }
 
-        // Si llegamos aquí, la franja no cabe en ningún bloque. 
-        // Vamos a verificar si cayó en una "hora muerta" 
-        // (es decir, entre el inicio del primer bloque laboral y el fin del último bloque laboral de su día)
         const primerBloque = bloquesOptimizados[0];
         const ultimoBloque = bloquesOptimizados[bloquesOptimizados.length - 1];
 
