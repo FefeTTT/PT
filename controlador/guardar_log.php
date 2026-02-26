@@ -25,9 +25,6 @@ try {
         ]);
     }
 
-    // Attempt to target the specific frontend directory 
-    // This script is in controlador/  
-    // Root should be parent.
     $logsDir = __DIR__ . '/../frontend-react/logs';
     
     if (!is_dir($logsDir)) {
