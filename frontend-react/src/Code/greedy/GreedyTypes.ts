@@ -13,6 +13,10 @@ export interface MetricasGreedy {
     totalRechazados: number;
     tiempoMs: number;
     gruposSinAsignar: number[];
+    /** Valor de la función objetivo Z tras la ejecución completa (GRASP). */
+    scoreZ: number;
+    /** Cantidad de mejoras encontradas por la búsqueda local (Ejection Chains). */
+    mejorasLocales: number;
 }
 
 /** Resultado completo de una ejecución del Greedy. */

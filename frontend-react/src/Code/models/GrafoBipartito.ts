@@ -80,4 +80,27 @@ export class GrafoBipartito {
 
         this.asignacionesInversas.set(idUeaGrupo, numeroEconomico);
     }
+
+    /**
+     * Des-asignación in-place (mutable). Revierte una asignación existente.
+     * Uso exclusivo de EjectionChain para búsqueda local O(1).
+     */
+    public desasignarMutable(idUeaGrupo: number): void {
+        const numEco = this.asignacionesInversas.get(idUeaGrupo);
+        if (numEco === undefined) {
+            throw new Error(`El grupo ${idUeaGrupo} no está asignado a ningún profesor`);
+        }
+
+        // Remover de la lista de adyacencias del profesor
+        const listaGruposProf = this.adyacencias.get(numEco);
+        if (listaGruposProf) {
+            const idx = listaGruposProf.indexOf(idUeaGrupo);
+            if (idx !== -1) {
+                listaGruposProf.splice(idx, 1);
+            }
+        }
+
+        // Remover de las asignaciones inversas
+        this.asignacionesInversas.delete(idUeaGrupo);
+    }
 }
