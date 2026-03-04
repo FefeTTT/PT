@@ -1,8 +1,7 @@
 import { useState, useCallback } from 'react';
 import { GrafoBipartito } from '../../Code/models/GrafoBipartito';
 import { FSMAsignador, ResultadoAsignacion, EstadoAsignacion } from '../../Code/fsm/FSMAsignador';
-import { ReglaBase } from '../../Code/rules/ReglaBase';
-import { ReglaArea, ReglaHorario, ReglaMaxN_Horas, ReglaGrupoTieneProgramacion } from '../../Code/rules/ReglasImplementacion';
+import { ReglasPipeline } from '../../Code/rules/ReglasPipeline';
 import { ProfesorDTO, GrupoDTO } from '../../Code/types/FrontendTypes';
 
 export function useFSMAsignador() {
@@ -17,12 +16,7 @@ export function useFSMAsignador() {
     }, []);
 
     const intentarAsignacion = useCallback((numeroEconomico: number, idUeaGrupo: number): ResultadoAsignacion => {
-        const reglasPipeline: ReglaBase[] = [
-            new ReglaGrupoTieneProgramacion(),
-            new ReglaArea(),
-            new ReglaHorario(), // Normal validation for 99%
-            new ReglaMaxN_Horas(24)
-        ];
+        const reglasPipeline = ReglasPipeline.crear(24);
 
         const motor = new FSMAsignador(grafo, reglasPipeline);
         const resultado = motor.procesarAsignacion(numeroEconomico, idUeaGrupo);

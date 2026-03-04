@@ -63,4 +63,21 @@ export class GrafoBipartito {
 
         return nuevoGrafo;
     }
+
+    /**
+     * Asignación in-place (mutable). NO crea una nueva instancia.
+     * Uso exclusivo del GreedyOrchestrator para evitar el costo O(P+G+E) de copia por éxito.
+     * Para uso desde React/debugger, usar `asignar()` inmutable.
+     */
+    public asignarMutable(numeroEconomico: number, idUeaGrupo: number): void {
+        if (this.asignacionesInversas.has(idUeaGrupo)) {
+            throw new Error(`El grupo ${idUeaGrupo} ya está asignado a otro profesor`);
+        }
+
+        const listaGruposProf = this.adyacencias.get(numeroEconomico) || [];
+        listaGruposProf.push(idUeaGrupo);
+        this.adyacencias.set(numeroEconomico, listaGruposProf);
+
+        this.asignacionesInversas.set(idUeaGrupo, numeroEconomico);
+    }
 }

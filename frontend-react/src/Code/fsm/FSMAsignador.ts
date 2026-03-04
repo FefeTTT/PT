@@ -31,6 +31,16 @@ export class FSMAsignador {
         this._pipelineReglas = reglas;
     }
 
+    /** Reemplaza el grafo interno para la siguiente evaluación. */
+    public actualizarGrafo(nuevoGrafo: GrafoBipartito): void {
+        this._grafoFijo = nuevoGrafo;
+    }
+
+    /** Lectura del estado actual del grafo. */
+    public get grafoActual(): GrafoBipartito {
+        return this._grafoFijo;
+    }
+
     public procesarAsignacion(numeroEconomico: number, idUeaGrupo: number): ResultadoAsignacion { //Intenta mutar el estado. Devuelve Éxito+NuevoGrafo O Fallo+Motivo.
         let estadoActual = EstadoAsignacion.INICIO;
 

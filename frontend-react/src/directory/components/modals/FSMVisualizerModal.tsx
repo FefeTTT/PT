@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GrafoBipartito } from '../../../Code/models/GrafoBipartito';
 import { GraphFSMAsignador, StepSnapshot } from '../../../Code/fsm/GraphFSMAsignador';
-import { ReglaArea, ReglaHorario, ReglaMaxN_Horas, ReglaGrupoTieneProgramacion } from '../../../Code/rules/ReglasImplementacion';
+import { ReglasPipeline } from '../../../Code/rules/ReglasPipeline';
 import { EstadoAsignacion } from '../../../Code/fsm/FSMAsignador';
 
 interface Props {
@@ -55,12 +55,7 @@ export const FSMVisualizerModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 grafoCompartido.registrarGrupo(data.grupo);
             }
 
-            const reglasPipeline = [
-                new ReglaGrupoTieneProgramacion(),
-                new ReglaArea(),
-                new ReglaHorario(),
-                new ReglaMaxN_Horas(24)
-            ];
+            const reglasPipeline = ReglasPipeline.crear(24);
 
             const motorLocal = new GraphFSMAsignador(grafoCompartido, reglasPipeline);
 

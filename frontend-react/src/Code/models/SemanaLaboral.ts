@@ -8,6 +8,33 @@ export interface ResultadoDisponibilidad {
 }
 
 export class SemanaLaboral {
+    // ── Caché Singleton por profesor ──
+    private static _cache: Map<number, SemanaLaboral> = new Map();
+
+    /**
+     * Obtiene una instancia de SemanaLaboral del caché si existe,
+     * o la construye y almacena para reutilización futura.
+     */
+    public static obtenerOCrear(numeroEconomico: number, datosDB: HorarioDB_DTO[]): SemanaLaboral {
+        const cached = SemanaLaboral._cache.get(numeroEconomico);
+        if (cached) return cached;
+
+        const nueva = new SemanaLaboral(datosDB);
+        SemanaLaboral._cache.set(numeroEconomico, nueva);
+        return nueva;
+    }
+
+    /** Limpia todo el caché (ej. al iniciar nueva sesión del orquestador). */
+    public static invalidarCache(): void {
+        SemanaLaboral._cache.clear();
+    }
+
+    /** Invalida la entrada de un profesor específico. */
+    public static invalidarProfesor(numeroEconomico: number): void {
+        SemanaLaboral._cache.delete(numeroEconomico);
+    }
+
+    // ── Instancia ──
     // Almacena los bloques de horario continuos, optimizados y fusionados por cada día
     private _horariosFusionadosPorDia: Map<number, { inicio: number, fin: number }[]> = new Map();
 
