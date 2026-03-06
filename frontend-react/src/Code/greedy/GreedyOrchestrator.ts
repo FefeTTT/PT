@@ -7,7 +7,7 @@ import { AsignacionInput, ResultadoGreedy, MetricasGreedy, EstrategiaOrdenamient
 import { EstrategiaMCV } from './EstrategiaMCV';
 import { IModeloML, ModeloMLUniforme } from '../ml/IModeloML';
 import { FuncionObjetivoZ, ConstraintPonderada } from '../objective/FuncionObjetivoZ';
-import { PenalizacionHuecos, PenalizacionConsecutiva } from '../objective/SoftConstraints';
+import { PenalizacionHuecos, PenalizacionCargaConsecutiva } from '../objective/SoftConstraints';
 import { EjectionChain } from './EjectionChain';
 
 /**
@@ -46,7 +46,7 @@ export class GreedyOrchestrator {
         // Constraints por defecto si no se proporcionan
         const constraints = constraintsPersonalizados ?? [
             { constraint: new PenalizacionHuecos(), lambda: 2.0 },
-            { constraint: new PenalizacionConsecutiva(3), lambda: 1.5 }
+            { constraint: new PenalizacionCargaConsecutiva(3), lambda: 1.5 }
         ];
 
         this._funcionZ = new FuncionObjetivoZ(constraints, this._modelo);
@@ -63,30 +63,18 @@ export class GreedyOrchestrator {
     public ejecutar(profesores: ProfesorDTO[], grupos: GrupoDTO[]): ResultadoGreedy {
         const inicio = performance.now();
 
-        // 1. Invalidar caché de SemanaLaboral al inicio de cada ejecución
         SemanaLaboral.invalidarCache();
 
-        // 2. Construir el grafo bipartito con todos los datos
         const grafo = new GrafoBipartito();
         profesores.forEach(p => grafo.registrarProfesor(p));
         grupos.forEach(g => grafo.registrarGrupo(g));
 
-        // 3. Crear la FSM con el pipeline de reglas (una sola instancia)
         const reglas = ReglasPipeline.crear(this._limiteHorasSemanales);
         const fsm = new FSMAsignador(grafo, reglas);
-
-        // 4. Agrupar grupos por idArea
         const gruposPorArea = this._agruparPorArea(grupos);
-
-        // 5. Ordenar áreas por la estrategia (MCV o RCL)
         const areasOrdenadas = this._estrategia.ordenarAreas(gruposPorArea);
-
-        // 6. Indexar profesores por idArea para lookup rápido
         const profesoresPorArea = this._agruparProfesoresPorArea(profesores);
 
-        // ═══════════════════════════════════════════
-        // FASE 1: Constructiva (Greedy / RCL)
-        // ═══════════════════════════════════════════
         const gruposAsignados = new Set<number>();
         let totalEvaluaciones = 0;
         let totalRechazados = 0;
@@ -120,22 +108,14 @@ export class GreedyOrchestrator {
             }
         }
 
-        // ═══════════════════════════════════════════
-        // FASE 2: Evaluación de Z pre-búsqueda local
-        // ═══════════════════════════════════════════
         fsm.actualizarGrafo(grafo);
 
-        // ═══════════════════════════════════════════
-        // FASE 3: Búsqueda Local (Ejection Chains)
-        // ═══════════════════════════════════════════
-        const resultadoMejora = this._ejectionChain.mejorar(grafo, fsm, this._funcionZ);
+        // Computar huérfanos pre-búsqueda local para Fase 1 de reparación
+        const todosLosGrupoIds = grupos.map(g => g.idUeaGrupo);
+        const huerfanosPreRepair = todosLosGrupoIds.filter(id => !grafo.asignacionesInversas.has(id));
 
-        // ═══════════════════════════════════════════
-        // FASE 4: Evaluación Z final
-        // ═══════════════════════════════════════════
-        const resultadoZ = this._funcionZ.evaluar(grafo);
-
-        // 8. Extraer asignaciones finales del grafo
+        const resultadoMejora = this._ejectionChain.mejorar(grafo, fsm, this._funcionZ, huerfanosPreRepair);
+        const resultadoZ = this._funcionZ.evaluarGrafo(grafo);
         const asignaciones: AsignacionInput[] = [];
         for (const [idGrupo, numEco] of grafo.asignacionesInversas) {
             asignaciones.push({
@@ -144,8 +124,7 @@ export class GreedyOrchestrator {
             });
         }
 
-        // 9. Computar grupos sin asignar
-        const todosLosGrupoIds = grupos.map(g => g.idUeaGrupo);
+        // Re-computar grupos sin asignar después de la fase de mejora
         const gruposSinAsignar = todosLosGrupoIds.filter(id => !grafo.asignacionesInversas.has(id));
 
         const fin = performance.now();
@@ -157,13 +136,13 @@ export class GreedyOrchestrator {
             tiempoMs: Math.round(fin - inicio),
             gruposSinAsignar,
             scoreZ: resultadoZ.Z,
-            mejorasLocales: resultadoMejora.mejoras
+            mejorasLocales: resultadoMejora.mejoras,
+            reparaciones: resultadoMejora.reparaciones
         };
 
         return { asignaciones, metricas };
     }
 
-    /** Agrupa los grupos por su idArea. */
     private _agruparPorArea(grupos: GrupoDTO[]): Map<number, GrupoDTO[]> {
         const mapa = new Map<number, GrupoDTO[]>();
         for (const grupo of grupos) {
@@ -175,7 +154,6 @@ export class GreedyOrchestrator {
         return mapa;
     }
 
-    /** Agrupa los profesores por su idArea. */
     private _agruparProfesoresPorArea(profesores: ProfesorDTO[]): Map<number, ProfesorDTO[]> {
         const mapa = new Map<number, ProfesorDTO[]>();
         for (const profesor of profesores) {

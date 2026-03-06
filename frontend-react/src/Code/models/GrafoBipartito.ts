@@ -91,7 +91,6 @@ export class GrafoBipartito {
             throw new Error(`El grupo ${idUeaGrupo} no está asignado a ningún profesor`);
         }
 
-        // Remover de la lista de adyacencias del profesor
         const listaGruposProf = this.adyacencias.get(numEco);
         if (listaGruposProf) {
             const idx = listaGruposProf.indexOf(idUeaGrupo);
@@ -100,7 +99,32 @@ export class GrafoBipartito {
             }
         }
 
-        // Remover de las asignaciones inversas
         this.asignacionesInversas.delete(idUeaGrupo);
+    }
+
+    /**
+     * Serialización determinista del estado mutable para verificación de rollback.
+     * Dos grafos con las mismas asignaciones producen el mismo string.
+     */
+    public hashEstado(): string {
+        const parteInversas = this._serializarAsignacionesInversas();
+        const parteAdyacencias = this._serializarAdyacencias();
+        return `INV:${parteInversas}|ADY:${parteAdyacencias}`;
+    }
+
+    private _serializarAsignacionesInversas(): string {
+        const entradas = Array.from(this.asignacionesInversas.entries());
+        entradas.sort((a, b) => a[0] - b[0]);
+        return entradas.map(([g, p]) => `${g}:${p}`).join(',');
+    }
+
+    private _serializarAdyacencias(): string {
+        const claves = Array.from(this.adyacencias.keys()).sort((a, b) => a - b);
+        return claves
+            .map(k => {
+                const grupos = [...(this.adyacencias.get(k) || [])].sort((a, b) => a - b);
+                return `${k}=[${grupos.join(',')}]`;
+            })
+            .join(';');
     }
 }

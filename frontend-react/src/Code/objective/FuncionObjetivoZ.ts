@@ -2,17 +2,11 @@ import { GrafoBipartito } from '../models/GrafoBipartito';
 import { IModeloML, ModeloMLUniforme } from '../ml/IModeloML';
 import { ISoftConstraint } from './SoftConstraints';
 
-/**
- * Configuración de una restricción suave con su peso de penalización.
- */
-export interface ConstraintPonderada {
+export interface ConstraintPonderada { //SoftConstraint
     constraint: ISoftConstraint;
     lambda: number;
 }
 
-/**
- * Resultado detallado de la evaluación de Z.
- */
 export interface ResultadoZ {
     /** Valor total de Z (recompensa − penalización). */
     Z: number;
@@ -28,10 +22,7 @@ export interface ResultadoZ {
  * Función Objetivo Z para el GRASP.
  *
  *   Z = Σ(i∈P, g∈G) w_ig · x_ig  −  Σ(k∈K) λ_k · f_k(X)
- *
- * Clase pura (sin dependencias React/DOM).
- * - El componente de recompensa usa scores del modelo ML (w_ig).
- * - El componente de penalización usa restricciones suaves ponderadas.
+ * - El componente de recompensa usa scores del modelo xgbOOST
  */
 export class FuncionObjetivoZ {
     private _modelo: IModeloML;
@@ -50,7 +41,7 @@ export class FuncionObjetivoZ {
      * @param grafo  Estado actual de asignaciones.
      * @returns Resultado con Z, recompensa, penalización y desglose.
      */
-    public evaluar(grafo: GrafoBipartito): ResultadoZ {
+    public evaluarGrafo(grafo: GrafoBipartito): ResultadoZ {
         // ── Componente de recompensa: Σ w_ig · x_ig ──
         let recompensa = 0;
         for (const [idGrupo, numEco] of grafo.asignacionesInversas) {
@@ -63,7 +54,7 @@ export class FuncionObjetivoZ {
         const desglose: ResultadoZ['desglose'] = [];
 
         for (const cp of this._constraints) {
-            const violacion = cp.constraint.evaluar(grafo);
+            const violacion = cp.constraint.evaluar(grafo, this._modelo);
             const penalizacion = cp.lambda * violacion;
             penalizacionTotal += penalizacion;
 
