@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiagramaFlujoGRASP>
+    <Metadata>
+        <Titulo>Sistema de Asignación Profesor-Grupo — GRASP Completo</Titulo>
+        <Estilo>Diagrama de flujo vertical profesional, colores oscuros con acentos vibrantes, tipografía sans-serif, bordes redondeados, flechas con etiquetas</Estilo>
+        <Dimensiones>1600x2400px mínimo, alta resolución para lectura académica</Dimensiones>
+    </Metadata>
+
+    <Instrucciones>
+        <General>
+            Generar un diagrama de flujo completo del sistema de asignación GRASP.
+            El diagrama debe mostrar las 4 fases principales como columnas o secciones verticales claramente delimitadas.
+            Usar código de colores por fase. Incluir los nombres de las clases TypeScript entre paréntesis junto a cada nodo.
+            Las decisiones deben ser rombos, los procesos rectángulos redondeados, y los datos paralelogramos.
+        </General>
+    </Instrucciones>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- ENTRADA DEL SISTEMA                                 -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <Fase nombre="Entrada" color="#4A90D9">
+        <Nodo id="START" tipo="terminal" texto="Inicio" />
+        <Nodo id="INPUT_PROF" tipo="datos" texto="Catálogo Profesores (ProfesorDTO[])" />
+        <Nodo id="INPUT_GRUP" tipo="datos" texto="Catálogo Grupos (GrupoDTO[])" />
+        <Nodo id="INVALIDAR_CACHE" tipo="proceso" texto="Invalidar caché SemanaLaboral" clase="SemanaLaboral.invalidarCache()" />
+        <Nodo id="CONSTRUIR_GRAFO" tipo="proceso" texto="Construir Grafo Bipartito vacío" clase="GrafoBipartito" />
+        <Nodo id="REGISTRAR" tipo="proceso" texto="Registrar profesores y grupos en el grafo" />
+        <Nodo id="CREAR_FSM" tipo="proceso" texto="Crear FSM con pipeline de reglas" clase="FSMAsignador + ReglasPipeline" />
+
+        <Flujo desde="START" hacia="INPUT_PROF" />
+        <Flujo desde="INPUT_PROF" hacia="INPUT_GRUP" />
+        <Flujo desde="INPUT_GRUP" hacia="INVALIDAR_CACHE" />
+        <Flujo desde="INVALIDAR_CACHE" hacia="CONSTRUIR_GRAFO" />
+        <Flujo desde="CONSTRUIR_GRAFO" hacia="REGISTRAR" />
+        <Flujo desde="REGISTRAR" hacia="CREAR_FSM" />
+    </Fase>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- FASE 1: CONSTRUCTIVA (GREEDY / RCL)                -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <Fase nombre="Fase 1 — Constructiva" color="#27AE60" subtitulo="Greedy con RCL probabilístico">
+        <Nodo id="AGRUPAR_AREA" tipo="proceso" texto="Agrupar grupos y profesores por idArea" />
+        <Nodo id="ORDENAR_AREAS" tipo="proceso" texto="Ordenar áreas por estrategia (MCV o RCL)" clase="EstrategiaOrdenamiento" />
+
+        <Nodo id="LOOP_AREA" tipo="decision" texto="¿Quedan áreas por procesar?" />
+        <Nodo id="SELECT_AREA" tipo="proceso" texto="Seleccionar siguiente área" />
+        <Nodo id="ORDENAR_GRUPOS" tipo="proceso" texto="Ordenar grupos del área (MCV: más restrictivos primero)" />
+        <Nodo id="ORDENAR_PROFS" tipo="proceso" texto="Ordenar profesores del área (RCL: filtro α + aleatorización)" clase="EstrategiaRCL" />
+
+        <Nodo id="LOOP_GRUPO" tipo="decision" texto="¿Quedan grupos sin asignar en el área?" />
+        <Nodo id="SELECT_GRUPO" tipo="proceso" texto="Seleccionar siguiente grupo" />
+
+        <Nodo id="LOOP_PROF" tipo="decision" texto="¿Quedan profesores candidatos?" />
+        <Nodo id="SELECT_PROF" tipo="proceso" texto="Seleccionar siguiente profesor" />
+
+        <Nodo id="FSM_EVALUAR" tipo="proceso" texto="FSM: Evaluar pipeline de reglas (hard constraints)" clase="FSMAsignador.procesarAsignacion()" />
+        <Nodo id="FSM_RESULTADO" tipo="decision" texto="¿ASIGNACION_OK?" />
+
+        <Nodo id="ASIGNAR_MUTABLE" tipo="proceso" texto="Asignar profesor↔grupo en el grafo" clase="GrafoBipartito.asignarMutable()" />
+        <Nodo id="RECHAZAR" tipo="proceso" texto="Registrar rechazo, totalRechazados++" />
+
+        <SubFase titulo="Pipeline FSM (Hard Constraints)" color="#E67E22">
+            <Regla orden="1" nombre="INVARIANTE_COLISION" texto="¿Grupo ya asignado a otro profesor?" />
+            <Regla orden="2" nombre="REGLA_AREA" texto="¿Profesor pertenece al área del grupo?" />
+            <Regla orden="3" nombre="REGLA_TRASLAPE" texto="¿Hay traslape horario con grupos ya asignados?" />
+            <Regla orden="4" nombre="REGLA_HORAS_SEMANALES" texto="¿Excede límite de horas semanales (24h)?" />
+        </SubFase>
+
+        <Flujo desde="CREAR_FSM" hacia="AGRUPAR_AREA" />
+        <Flujo desde="AGRUPAR_AREA" hacia="ORDENAR_AREAS" />
+        <Flujo desde="ORDENAR_AREAS" hacia="LOOP_AREA" />
+        <Flujo desde="LOOP_AREA" hacia="SELECT_AREA" etiqueta="Sí" />
+        <Flujo desde="SELECT_AREA" hacia="ORDENAR_GRUPOS" />
+        <Flujo desde="ORDENAR_GRUPOS" hacia="ORDENAR_PROFS" />
+        <Flujo desde="ORDENAR_PROFS" hacia="LOOP_GRUPO" />
+        <Flujo desde="LOOP_GRUPO" hacia="SELECT_GRUPO" etiqueta="Sí" />
+        <Flujo desde="SELECT_GRUPO" hacia="LOOP_PROF" />
+        <Flujo desde="LOOP_PROF" hacia="SELECT_PROF" etiqueta="Sí" />
+        <Flujo desde="SELECT_PROF" hacia="FSM_EVALUAR" />
+        <Flujo desde="FSM_EVALUAR" hacia="FSM_RESULTADO" />
+        <Flujo desde="FSM_RESULTADO" hacia="ASIGNAR_MUTABLE" etiqueta="OK" />
+        <Flujo desde="FSM_RESULTADO" hacia="RECHAZAR" etiqueta="ERROR_REGLA" />
+        <Flujo desde="ASIGNAR_MUTABLE" hacia="LOOP_GRUPO" etiqueta="break → siguiente grupo" />
+        <Flujo desde="RECHAZAR" hacia="LOOP_PROF" etiqueta="siguiente profesor" />
+        <Flujo desde="LOOP_PROF" hacia="LOOP_GRUPO" etiqueta="No (agotados)" />
+        <Flujo desde="LOOP_GRUPO" hacia="LOOP_AREA" etiqueta="No" />
+    </Fase>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- FASE 2: REPARACIÓN (EJECTION CHAIN — FASE 1)       -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <Fase nombre="Fase 2 — Reparación" color="#E74C3C" subtitulo="Ejection Chain: Hard Constraints">
+        <Nodo id="CALCULAR_HUERFANOS" tipo="proceso" texto="Identificar grupos sin asignar (huérfanos)" />
+        <Nodo id="LOOP_HUERFANO" tipo="decision" texto="¿Quedan huérfanos por reparar?" />
+        <Nodo id="SELECT_HUERFANO" tipo="proceso" texto="Seleccionar siguiente huérfano" />
+
+        <Nodo id="YA_ASIGNADO" tipo="decision" texto="¿Ya fue reparado?" />
+
+        <Nodo id="BUSCAR_VICTIMAS" tipo="proceso" texto="Buscar asignaciones del mismo área" />
+        <Nodo id="LOOP_VICTIMA" tipo="decision" texto="¿Quedan víctimas para eyectar?" />
+
+        <Nodo id="EYECTAR" tipo="proceso" texto="Eyectar víctima del grafo" clase="desasignarMutable()" />
+        <Nodo id="ASIGNAR_HUERFANO" tipo="decision" texto="¿FSM acepta huérfano → profesor víctima?" />
+        <Nodo id="REASIGNAR_VICTIMA" tipo="decision" texto="¿FSM acepta grupo víctima → otro profesor?" />
+
+        <Nodo id="CADENA_EXITO" tipo="proceso" texto="Cadena exitosa: reparaciones++" color="#27AE60" />
+        <Nodo id="REVERTIR_CADENA" tipo="proceso" texto="Revertir: restaurar víctima + desasignar huérfano" />
+        <Nodo id="RESTAURAR_VICTIMA" tipo="proceso" texto="Restaurar víctima original" />
+
+        <Nodo id="ASIGNACION_DIRECTA" tipo="proceso" texto="Intentar asignación directa sin eyectar" />
+        <Nodo id="DIRECTA_OK" tipo="decision" texto="¿Algún profesor acepta al huérfano?" />
+
+        <Flujo desde="LOOP_AREA" hacia="CALCULAR_HUERFANOS" etiqueta="No (áreas agotadas)" />
+        <Flujo desde="CALCULAR_HUERFANOS" hacia="LOOP_HUERFANO" />
+        <Flujo desde="LOOP_HUERFANO" hacia="SELECT_HUERFANO" etiqueta="Sí" />
+        <Flujo desde="SELECT_HUERFANO" hacia="YA_ASIGNADO" />
+        <Flujo desde="YA_ASIGNADO" hacia="LOOP_HUERFANO" etiqueta="Sí (skip)" />
+        <Flujo desde="YA_ASIGNADO" hacia="BUSCAR_VICTIMAS" etiqueta="No" />
+        <Flujo desde="BUSCAR_VICTIMAS" hacia="LOOP_VICTIMA" />
+        <Flujo desde="LOOP_VICTIMA" hacia="EYECTAR" etiqueta="Sí" />
+        <Flujo desde="EYECTAR" hacia="ASIGNAR_HUERFANO" />
+        <Flujo desde="ASIGNAR_HUERFANO" hacia="REASIGNAR_VICTIMA" etiqueta="OK" />
+        <Flujo desde="ASIGNAR_HUERFANO" hacia="RESTAURAR_VICTIMA" etiqueta="Fallo" />
+        <Flujo desde="RESTAURAR_VICTIMA" hacia="LOOP_VICTIMA" />
+        <Flujo desde="REASIGNAR_VICTIMA" hacia="CADENA_EXITO" etiqueta="OK" />
+        <Flujo desde="REASIGNAR_VICTIMA" hacia="REVERTIR_CADENA" etiqueta="Fallo" />
+        <Flujo desde="REVERTIR_CADENA" hacia="LOOP_VICTIMA" />
+        <Flujo desde="CADENA_EXITO" hacia="LOOP_HUERFANO" />
+        <Flujo desde="LOOP_VICTIMA" hacia="ASIGNACION_DIRECTA" etiqueta="No (agotadas)" />
+        <Flujo desde="ASIGNACION_DIRECTA" hacia="DIRECTA_OK" />
+        <Flujo desde="DIRECTA_OK" hacia="LOOP_HUERFANO" etiqueta="Sí/No" />
+    </Fase>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- FASE 3: OPTIMIZACIÓN (EJECTION CHAIN — FASE 2)     -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <Fase nombre="Fase 3 — Optimización" color="#9B59B6" subtitulo="Ejection Chain: Soft Constraints vía Z">
+        <Nodo id="EVAL_Z_INICIAL" tipo="proceso" texto="Evaluar Z inicial sobre el grafo" clase="FuncionObjetivoZ.evaluarGrafo()" />
+
+        <SubFase titulo="Función Objetivo Z" color="#8E44AD">
+            <Formula>Z = Σ w_ig · x_ig − Σ λ_k · f_k(X, modelo)</Formula>
+            <Componente nombre="Recompensa" formula="Σ w_ig (scores XGBoost por par profesor-grupo)" />
+            <Componente nombre="PenalizacionHuecos" formula="(1/P_activos) × Σ (huecoNorm × (1 − w̄_ig))" lambda="2.0" />
+            <Componente nombre="PenalizacionConsecutiva" formula="(1/P_activos) × Σ (excesoNorm × (1 − w̄_ig))" lambda="1.5" />
+            <Nota>Soft constraints normalizados a [0,1] para mantener escala con w_ig ∈ [0,1]</Nota>
+        </SubFase>
+
+        <Nodo id="LOOP_OPT" tipo="decision" texto="iteración &lt; maxIteraciones AND sinMejora &lt; maxSinMejora?" />
+        <Nodo id="SELECT_RANDOM" tipo="proceso" texto="Seleccionar asignación aleatoria del grafo" />
+        <Nodo id="BUSCAR_CAND" tipo="proceso" texto="Buscar profesores candidatos del mismo área" />
+        <Nodo id="HAY_CAND" tipo="decision" texto="¿Hay candidatos?" />
+        <Nodo id="BARAJAR" tipo="proceso" texto="Barajar candidatos (Fisher-Yates)" />
+        <Nodo id="EYECTAR_OPT" tipo="proceso" texto="Eyectar asignación seleccionada" />
+        <Nodo id="FSM_SWAP" tipo="decision" texto="¿FSM acepta swap?" />
+        <Nodo id="ASIGNAR_SWAP" tipo="proceso" texto="Asignar nuevo profesor al grupo" />
+        <Nodo id="EVAL_Z_NUEVO" tipo="proceso" texto="Evaluar Z nuevo" />
+
+        <Nodo id="CLASIFICAR" tipo="decision" texto="CriterioAceptacion.clasificarDelta()" clase="Tolerancia" />
+
+        <Nodo id="ACEPTAR" tipo="proceso" texto="Aceptar swap: zActual = zNuevo, sinMejora = 0" color="#27AE60" />
+        <Nodo id="RECHAZAR_SWAP" tipo="proceso" texto="Revertir swap, sinMejora++, contabilizar rechazo" />
+        <Nodo id="RESTAURAR_OPT" tipo="proceso" texto="Restaurar asignación original" />
+
+        <SubFase titulo="Clasificación del Delta" color="#7D3C98">
+            <Caso nombre="MEJORA_SIGNIFICATIVA" condicion="ΔZ > tol + α·numCambios" accion="Aceptar" />
+            <Caso nombre="RUIDO_NUMERICO" condicion="|ΔZ| ≤ tol" accion="Rechazar (ruido IEEE-754)" />
+            <Caso nombre="RECHAZADA_POR_UMBRAL" condicion="tol &lt; ΔZ ≤ tol + α" accion="Rechazar (insuficiente)" />
+            <Caso nombre="SIN_MEJORA" condicion="ΔZ ≤ 0" accion="Rechazar" />
+        </SubFase>
+
+        <Flujo desde="LOOP_HUERFANO" hacia="EVAL_Z_INICIAL" etiqueta="No (huérfanos agotados)" />
+        <Flujo desde="EVAL_Z_INICIAL" hacia="LOOP_OPT" />
+        <Flujo desde="LOOP_OPT" hacia="SELECT_RANDOM" etiqueta="Sí" />
+        <Flujo desde="SELECT_RANDOM" hacia="BUSCAR_CAND" />
+        <Flujo desde="BUSCAR_CAND" hacia="HAY_CAND" />
+        <Flujo desde="HAY_CAND" hacia="BARAJAR" etiqueta="Sí" />
+        <Flujo desde="HAY_CAND" hacia="LOOP_OPT" etiqueta="No (sinMejora++)" />
+        <Flujo desde="BARAJAR" hacia="EYECTAR_OPT" />
+        <Flujo desde="EYECTAR_OPT" hacia="FSM_SWAP" />
+        <Flujo desde="FSM_SWAP" hacia="ASIGNAR_SWAP" etiqueta="OK" />
+        <Flujo desde="FSM_SWAP" hacia="RESTAURAR_OPT" etiqueta="Fallo" />
+        <Flujo desde="RESTAURAR_OPT" hacia="LOOP_OPT" etiqueta="sinMejora++" />
+        <Flujo desde="ASIGNAR_SWAP" hacia="EVAL_Z_NUEVO" />
+        <Flujo desde="EVAL_Z_NUEVO" hacia="CLASIFICAR" />
+        <Flujo desde="CLASIFICAR" hacia="ACEPTAR" etiqueta="MEJORA_SIGNIFICATIVA" />
+        <Flujo desde="CLASIFICAR" hacia="RECHAZAR_SWAP" etiqueta="Otro" />
+        <Flujo desde="ACEPTAR" hacia="LOOP_OPT" />
+        <Flujo desde="RECHAZAR_SWAP" hacia="LOOP_OPT" />
+    </Fase>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- FASE 4: EVALUACIÓN FINAL Y SALIDA                  -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <Fase nombre="Fase 4 — Resultado" color="#F39C12">
+        <Nodo id="EVAL_Z_FINAL" tipo="proceso" texto="Evaluar Z final del grafo optimizado" />
+        <Nodo id="EXTRAER_ASIG" tipo="proceso" texto="Extraer AsignacionInput[] del grafo" />
+        <Nodo id="COMPUTAR_SIN" tipo="proceso" texto="Computar gruposSinAsignar post-reparación" />
+        <Nodo id="METRICAS" tipo="datos" texto="MetricasGreedy: evaluaciones, asignados, rechazados, scoreZ, mejoras, reparaciones, telemetría" />
+        <Nodo id="OUTPUT" tipo="datos" texto="ResultadoGreedy { asignaciones, metricas }" />
+        <Nodo id="END" tipo="terminal" texto="Fin" />
+
+        <Flujo desde="LOOP_OPT" hacia="EVAL_Z_FINAL" etiqueta="No (convergió)" />
+        <Flujo desde="EVAL_Z_FINAL" hacia="EXTRAER_ASIG" />
+        <Flujo desde="EXTRAER_ASIG" hacia="COMPUTAR_SIN" />
+        <Flujo desde="COMPUTAR_SIN" hacia="METRICAS" />
+        <Flujo desde="METRICAS" hacia="OUTPUT" />
+        <Flujo desde="OUTPUT" hacia="END" />
+    </Fase>
+</DiagramaFlujoGRASP>
