@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRASP + ML - Flujo actual</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; background: #0d1117; color: #c9d1d9; padding: 24px; line-height: 1.45; }
+  h1 { font-size: 1.45rem; margin-bottom: 8px; color: #58a6ff; }
+  h2 { font-size: 1.08rem; margin: 28px 0 12px; color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 6px; }
+  p { max-width: 1080px; margin: 8px 0 14px; color: #adbac7; }
+  code { background: #161b22; padding: 1px 5px; border-radius: 3px; font-size: 0.92em; }
+  .diagram { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin: 12px 0; overflow-x: auto; }
+  .tabs { display: flex; gap: 4px; margin: 18px 0 16px; flex-wrap: wrap; }
+  .tabs button { padding: 6px 14px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 0.86rem; }
+  .tabs button.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 18px; font-size: 0.82rem; }
+  .legend span { padding: 2px 8px; border-radius: 4px; border: 1px solid; }
+  .legend .ok { background: #1a3824; color: #3fb950; border-color: #238636; }
+  .legend .strict { background: #3a1111; color: #f85149; border-color: #da3633; }
+  .legend .ml { background: #0d253d; color: #7dd3fc; border-color: #38bdf8; }
+  .legend .note { background: #3c2a00; color: #d29922; border-color: #9e6a03; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 12px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 12px; }
+  .card h3 { color: #7dd3fc; font-size: 0.96rem; margin-bottom: 6px; }
+  .card ul { padding-left: 18px; color: #adbac7; font-size: 0.9rem; }
+  .callout { padding: 10px 12px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #38bdf8; background: #0d253d66; color: #d6e8ff; }
+  .warn { border-left-color: #d29922; background: #3c2a0066; color: #f0d99a; }
+  .strictBox { border-left-color: #f85149; background: #3a111166; color: #ffc2c0; }
+</style>
+</head>
+<body>
+
+<h1>GRASP + ML - Flujo actual de asignacion academica</h1>
+<p>
+  Este diagrama describe el flujo vigente en <code>frontend-react/solution</code>:
+  ingesta filtrada por FSM, GRASP async de produccion, RCL con top K por <code>S_ijh</code>,
+  penalty observado real dentro de la RCL, y cache exacto persistente en Redis.
+</p>
+
+<div class="legend">
+  <span class="ok">Activo</span>
+  <span class="ml">ML / Redis</span>
+  <span class="strict">Sin fallback</span>
+  <span class="note">Compatibilidad / cuidado</span>
+</div>
+
+<div class="tabs">
+  <button class="active" onclick="showTab('overview')">Vista General</button>
+  <button onclick="showTab('ingesta')">Ingesta</button>
+  <button onclick="showTab('rcl')">RCL + Penalty</button>
+  <button onclick="showTab('penalty')">Penalty Cache</button>
+  <button onclick="showTab('z')">Z + Ejection</button>
+  <button onclick="showTab('ops')">Operativo</button>
+</div>
+
+<!-- ==================== OVERVIEW ==================== -->
+<div id="panel-overview" class="panel active">
+<h2>Arquitectura actual</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart TB
+    subgraph DATA["Archivos JSON locales"]
+        PROF["ecos_vigentes_con_horario_regular.json"]
+        AREAS["area_profesor.json"]
+        PROG["programacion_vacia_26P.json"]
+    end
+
+    subgraph ING["JSONAssignmentAdapter"]
+        PARSE["parsearProfesores / parsearGrupos"]
+        FSMING["filtrarGruposPorFSMIngesta"]
+        MCVLOG["identificarMCV sobre grupos validos"]
+    end
+
+    subgraph GRASP["GreedyOrchestrator"]
+        ASYNC["ejecutarAsync - ruta productiva"]
+        CONSTR["Fase 1 constructiva"]
+        RCL["RCL: top K Sijh + penalty observado"]
+        LOCAL["EjectionChain async"]
+        MET["metricas + logs fase1/ejection"]
+    end
+
+    subgraph ML["ML runtime"]
+        SIJH["ModeloSijhCached<br>Sijh_{eco}_{uea}_{dia-horario}"]
+        PENSTATS["ModeloPenaltyCached<br>estadisticos reales"]
+        PENCACHE["PenaltyObservedCache<br>LRU + Redis + HTTP"]
+        PY["Python /get_horario_penalty_finetuned"]
+    end
+
+    subgraph OUT["Salidas"]
+        JSONLOG["debug_grasp_fase1.json<br>debug_grasp_ejection.json"]
+        MAP["asignaciones_eco_grupo.json"]
+        XLS["programacion_reconstruida.xlsx"]
+    end
+
+    PROF --> PARSE
+    AREAS --> PARSE
+    PROG --> PARSE
+    PARSE --> FSMING
+    FSMING --> MCVLOG
+    FSMING --> ASYNC
+    ASYNC --> CONSTR
+    CONSTR --> SIJH
+    CONSTR --> RCL
+    RCL --> PENCACHE
+    PENCACHE -->|miss real| PY
+    PENCACHE -->|hit exacto| RCL
+    SIJH --> RCL
+    RCL --> LOCAL
+    LOCAL --> MET
+    MET --> JSONLOG
+    MET --> MAP
+    MET --> XLS
+    PENSTATS --> RCL
+
+    style ASYNC fill:#1a3824,stroke:#238636,color:#d7ffd9
+    style RCL fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+    style PENCACHE fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+    style PY fill:#3a1111,stroke:#f85149,color:#ffd9d7
+    style FSMING fill:#1a3824,stroke:#238636,color:#d7ffd9
+</pre>
+</div>
+
+<div class="callout">
+  La ruta productiva es <code>ejecutarAsync()</code>. La ruta <code>ejecutar()</code> queda como compatibilidad legacy y no debe usarse para afinar produccion porque no bloquea con penalty observado real dentro de la RCL.
+</div>
+</div>
+
+<!-- ==================== INGESTA ==================== -->
+<div id="panel-ingesta" class="panel">
+<h2>Ingesta y filtrado previo al MCV</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart TD
+    A["Leer JSON de profesores, areas y programacion"]
+    B["parsearGrupos genera GrupoDTO con idUeaGrupo estable"]
+    C["FSM de ingesta de grupos"]
+    D["ReglaGrupoTieneProgramacion"]
+    E["ReglaIgnorarGrupos<br>rechaza SAI / PRO"]
+    F{Grupo valido?}
+    G["Grupos validos"]
+    H["Grupos rechazados con regla y motivo"]
+    I["identificarMCV solo sobre validos"]
+    J["EstrategiaUeaMenosVista<br>UEA menos vista a mas vista"]
+    K["GRASP recibe solo grupos validos"]
+
+    A --> B --> C
+    C --> D --> E --> F
+    F -->|si| G --> I --> J --> K
+    F -->|no| H
+
+    style C fill:#1a3824,stroke:#238636,color:#d7ffd9
+    style H fill:#3a1111,stroke:#f85149,color:#ffd9d7
+    style J fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+</pre>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <h3>Por que existe esta FSM</h3>
+    <ul>
+      <li>Evita que grupos <code>CPRO</code>/<code>SAI</code> aparezcan en Top MCV.</li>
+      <li>Evita que reparacion/ejection intente rescatar grupos que no deben existir.</li>
+      <li>Hace que warmup, elbow, GRASP y Excel usen la misma lista saneada.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Reglas de ingesta</h3>
+    <ul>
+      <li><code>ReglaGrupoTieneProgramacion</code></li>
+      <li><code>ReglaIgnorarGrupos</code></li>
+      <li>No evalua profesores ni horarios laborales.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ==================== RCL + PENALTY ==================== -->
+<div id="panel-rcl" class="panel">
+<h2>Fase constructiva: RCL con Sijh + penalty observado</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart TD
+    START["Para cada grupo ordenado"]
+    PROF["Ordenar profesores por estrategia"]
+    FAST["FSM fast-fail<br>vigente, area vista, grupo programado, no SAI/PRO"]
+    SIJH["score Sijh desde Redis<br>sin HTTP fallback"]
+    REG["FSM regular<br>global, traslape, horario laboral, max horas dia"]
+    VALID["Lista de candidatos viables"]
+    TOPK["Ordenar por Sijh desc<br>tomar top K"]
+    PEN["Para cada candidato top K<br>evaluarCandidatoAsync"]
+    PAYLOAD["Payload exacto:<br>eco + horario candidato + UEAs actuales + horarios actuales + uea_prediccion"]
+    VIAB["viabilidadPenalty = normalizacion real<br>penalty alto => viabilidad baja"]
+    SCORE["scoreRcl = Sijh + lambdaPenalty * viabilidadPenalty"]
+    ALPHA["Filtro alpha sobre scoreRcl"]
+    PICK["Seleccion aleatoria entre filtrados"]
+    ASSIGN["asignarMutable eco -> grupo"]
+    LOG["logsFase1 incluye<br>idUeaGrupo, claveGrupo, ecoElegido, Sijh, penaltyRaw, viabilidadPenalty, scoreRcl"]
+
+    START --> PROF --> FAST
+    FAST -->|fail| START
+    FAST -->|ok| SIJH
+    SIJH -->|0 / missing| START
+    SIJH -->|score real| REG
+    REG -->|fail| START
+    REG -->|ok| VALID
+    VALID --> TOPK --> PEN --> PAYLOAD --> VIAB --> SCORE --> ALPHA --> PICK --> ASSIGN --> LOG
+
+    style TOPK fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+    style PEN fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+    style SCORE fill:#1a3824,stroke:#238636,color:#d7ffd9
+    style SIJH fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+    style PAYLOAD fill:#3a1111,stroke:#f85149,color:#ffd9d7
+</pre>
+</div>
+
+<div class="callout">
+  Semantica actual: <code>S_ijh</code> forma el yeso base de afinidad; <code>penalty</code> talla el top K con geometria diaria y carga academica real. Alpha ya no decide sobre <code>S_ijh</code> puro, sino sobre <code>scoreRcl</code>.
+</div>
+
+<div class="cards">
+  <div class="card">
+    <h3>Top K</h3>
+    <ul>
+      <li>Primero se recolectan candidatos que pasan FSM.</li>
+      <li>Se ordenan por <code>S_ijh</code> descendente.</li>
+      <li>Solo a esos K se les pide penalty real.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Alpha</h3>
+    <ul>
+      <li><code>umbral = max - alpha * (max - min)</code></li>
+      <li>Se aplica sobre <code>scoreRcl</code>.</li>
+      <li>El elegido se sortea entre candidatos filtrados.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ==================== PENALTY CACHE ==================== -->
+<div id="panel-penalty" class="panel">
+<h2>PenaltyObservedCache: valores reales y cache exacto</h2>
+<div class="diagram">
+<pre class="mermaid">
+sequenceDiagram
+    participant G as GreedyOrchestrator
+    participant V as ViabilidadPenalizacionCarga
+    participant C as PenaltyObservedCache
+    participant R as Redis
+    participant P as Python backend
+
+    G->>V: evaluarCandidatoAsync(grafo, eco, grupo)
+    V->>V: construir payload exacto observado
+    V->>C: getOrFetch(payload, context)
+    C->>C: key = PenaltyObserved:v1:sha1(payloadExacto)
+    C->>C: buscar LRU memoria
+    alt hit memoria
+        C-->>V: total_penalty real
+    else miss memoria
+        C->>R: GET key exacta
+        alt hit Redis
+            R-->>C: total_penalty real persistido
+            C-->>V: total_penalty real
+        else miss Redis
+            C->>C: esperar turno por concurrencia limitada
+            C->>P: POST /get_horario_penalty_finetuned
+            P-->>C: total_penalty real
+            C->>R: SET key exacta
+            C->>C: guardar en LRU
+            C-->>V: total_penalty real
+        end
+    end
+    V-->>G: penaltyRaw + viabilidadPenalty
+</pre>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <h3>Key exacta</h3>
+    <ul>
+      <li><code>PenaltyObserved:v1:${sha1(payloadExacto)}</code></li>
+      <li>No deduplica por <code>eco + horario</code>.</li>
+      <li>No fusiona dias ni geometria diaria.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Payload</h3>
+    <ul>
+      <li><code>eco</code></li>
+      <li><code>horario</code> del candidato predicho</li>
+      <li><code>ueas_asignadas_actuales</code></li>
+      <li><code>horarios_asignados_actuales</code></li>
+      <li><code>uea_prediccion</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Errores duros</h3>
+    <ul>
+      <li>Timeout por intento configurable.</li>
+      <li>Retries configurables.</li>
+      <li>Watchdog si no completa ninguna request.</li>
+      <li>Sin mock, sin baseline, sin formula fallback.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ==================== Z + EJECTION ==================== -->
+<div id="panel-z" class="panel">
+<h2>Evaluacion Z y busqueda local</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart TD
+    A["Grafo tras fase constructiva"]
+    B["EjectionChain.mejorarSolucionAsync"]
+    C["Reparar huerfanos con FSM regular"]
+    D["Optimizar swaps"]
+    E["FuncionObjetivoZ.evaluarGrafoAsync"]
+    F["Reward = suma Sijh asignado"]
+    G["ViabilidadHuecos"]
+    H["ViabilidadPenalizacionCarga async<br>penalty observado por profesor activo"]
+    I["Z = reward + sum(lambda * viabilidad)"]
+    J["Aceptar swap si mejora Z"]
+    K["Resultado final"]
+
+    A --> B --> C --> D --> E
+    E --> F --> I
+    E --> G --> I
+    E --> H --> I
+    I --> J --> K
+
+    style E fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+    style H fill:#0d253d,stroke:#38bdf8,color:#dff6ff
+    style I fill:#1a3824,stroke:#238636,color:#d7ffd9
+</pre>
+</div>
+
+<div class="callout warn">
+  La funcion Z sigue evaluando el grafo completo despues de construir la solucion. La diferencia actual es que penalty ya no espera a la fase Z para influir: tambien participa en la RCL, antes de asignar.
+</div>
+</div>
+
+<!-- ==================== OPS ==================== -->
+<div id="panel-ops" class="panel">
+<h2>Operacion, comandos y cuidados</h2>
+
+<div class="cards">
+  <div class="card">
+    <h3>Comando GRASP productivo</h3>
+    <ul>
+      <li><code>cd .\frontend-react</code></li>
+      <li><code>$env:NODE_OPTIONS="--max-old-space-size=4096"</code></li>
+      <li><code>npx tsx .\solution\greedy\testIngestaML.ts</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Variables penalty</h3>
+    <ul>
+      <li><code>PENALTY_ML_BASE_URL</code></li>
+      <li><code>PENALTY_ML_TIMEOUT_MS</code></li>
+      <li><code>PENALTY_ML_CONCURRENCY</code></li>
+      <li><code>PENALTY_ML_WATCHDOG_MS</code></li>
+      <li><code>PENALTY_LRU_MAX_ENTRIES</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Logs actuales</h3>
+    <ul>
+      <li>Todos los asignados de fase 1 salen en <code>debug_grasp_fase1.json</code>.</li>
+      <li>Incluye <code>ecoElegido</code>, <code>penaltyRaw</code>, <code>viabilidadPenalty</code> y <code>scoreRcl</code>.</li>
+      <li>Los JSON existentes deben regenerarse corriendo GRASP.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Estado de decisiones</h2>
+<div class="callout">
+  <strong>Produccion:</strong> usar <code>ejecutarAsync()</code>. Esta ruta exige <code>ViabilidadPenalizacionCarga</code> con <code>PenaltyObservedCache</code> real.
+</div>
+<div class="callout strictBox">
+  <strong>No fallback:</strong> si Redis no tiene la key exacta y Python no responde tras retries, la ejecucion falla. Esto es intencional para afinar con datos productivos reales.
+</div>
+<div class="callout warn">
+  <strong>Costo:</strong> cada grupo evalua penalty para los top K candidatos por <code>S_ijh</code>. Redis persistente amortiza corridas posteriores, pero la primera corrida puede ser lenta.
+</div>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { useMaxWidth: true, htmlLabels: true }
+  });
+
+  async function renderMermaid() {
+    const blocks = document.querySelectorAll('.mermaid');
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+      const graphDefinition = block.textContent;
+      try {
+        const result = await mermaid.render('mermaid-svg-' + i, graphDefinition);
+        block.innerHTML = result.svg;
+      } catch (err) {
+        block.innerHTML = '<div style="color:#ff9b9b;border:1px solid #f85149;padding:10px;border-radius:6px;">'
+          + '<strong>Error en diagrama ' + i + '</strong><pre style="white-space:pre-wrap;">'
+          + (err.message || err.str || err)
+          + '</pre></div>';
+      }
+    }
+  }
+
+  renderMermaid();
+
+  function showTab(name) {
+    document.querySelectorAll('.panel').forEach(function(panel) {
+      panel.classList.remove('active');
+    });
+    document.querySelectorAll('.tabs button').forEach(function(button) {
+      button.classList.remove('active');
+    });
+    document.getElementById('panel-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>

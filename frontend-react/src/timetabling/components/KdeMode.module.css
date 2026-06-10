@@ -1,0 +1,1452 @@
+/* KdeMode.module.css — look "Taller" vía variables CSS (--tt-*). Ver styles/taller.css. */
+
+.section {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: var(--tt-panel2);
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    box-shadow: var(--tt-shadow);
+}
+
+.sectionTitle {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--tt-accent2);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.configGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px 12px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+}
+
+.field label {
+    font-weight: 700;
+    color: var(--tt-ink);
+}
+
+.field input,
+.field select {
+    border: var(--tt-border);
+    border-radius: var(--tt-radius-sm);
+    padding: 5px 6px;
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    font-family: var(--tt-mono);
+    font-size: 12px;
+}
+
+.checkboxRow {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.runRow {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Botones de ejecución (look Taller). */
+.runBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    padding: 9px 15px;
+    font-family: var(--tt-font);
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: var(--tt-shadow-soft);
+}
+
+.runBtn:disabled {
+    cursor: wait;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+.runBtnPrimary {
+    background: var(--tt-accent);
+    color: var(--tt-on-ink);
+}
+
+.runBtnAuto {
+    background: var(--tt-accent2);
+    color: var(--tt-on-ink);
+}
+
+.runBtnCancel {
+    background: var(--tt-danger);
+    color: #fff7ed;
+}
+
+.downloadBtn {
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    padding: 6px 10px;
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.statusBox {
+    margin-top: 8px;
+    padding: 6px 10px;
+    border: 1px dashed var(--tt-sub);
+    border-radius: var(--tt-radius-sm);
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    color: var(--tt-sub);
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+.progressModalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2600;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(34, 29, 22, 0.58);
+}
+
+.progressModal {
+    width: min(620px, calc(100vw - 28px));
+    max-height: calc(100vh - 36px);
+    overflow: auto;
+    border: 3px solid var(--tt-ink);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+    box-shadow: 8px 8px 0 rgba(34, 29, 22, 0.28);
+}
+
+.progressModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 15px 16px;
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+}
+
+.progressModalHeader h3 {
+    margin: 2px 0 0;
+    font-size: 20px;
+}
+
+.progressModalEyebrow {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tt-on-ink-soft);
+}
+
+.progressLiveBadge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 3px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.progressModalBody {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+}
+
+.progressCurrent {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel);
+}
+
+.progressCurrent strong {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tt-sub);
+}
+
+.progressCurrent span:not(.progressSpinner) {
+    font-weight: 800;
+    color: var(--tt-ink);
+}
+
+.progressSpinner {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    border: 3px solid rgba(53, 107, 82, 0.22);
+    border-top-color: var(--tt-accent);
+    border-radius: 999px;
+    animation: graspProgressSpin 0.8s linear infinite;
+}
+
+.progressIndeterminate {
+    position: relative;
+    height: 12px;
+    overflow: hidden;
+    border: var(--tt-border);
+    border-radius: 999px;
+    background: var(--tt-panel);
+}
+
+.progressIndeterminate::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 42%;
+    background: linear-gradient(90deg, var(--tt-accent), var(--tt-accent2));
+    animation: graspProgressSlide 1.15s ease-in-out infinite;
+}
+
+.progressHint {
+    margin: 0;
+    color: var(--tt-sub);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.progressLogList {
+    display: grid;
+    gap: 6px;
+    max-height: 220px;
+    overflow: auto;
+    padding: 8px;
+    border: 1px dashed var(--tt-sub);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+    font-family: var(--tt-mono);
+    font-size: 11px;
+}
+
+.progressLogItem {
+    padding: 6px 8px;
+    border-left: 3px solid var(--tt-accent);
+    background: var(--tt-panel2);
+    color: var(--tt-sub);
+}
+
+.progressModalFooter {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 16px 16px;
+}
+
+@keyframes graspProgressSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes graspProgressSlide {
+    0% {
+        transform: translateX(-120%);
+    }
+
+    100% {
+        transform: translateX(250%);
+    }
+}
+
+.errorBox {
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1.5px solid var(--tt-bad);
+    background: var(--tt-con-tint);
+    border-radius: var(--tt-radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--tt-bad);
+}
+
+/* ── Anticipar el pase (pieza Eje 3) ── */
+.anticipate {
+    margin-top: 12px;
+    padding: 14px;
+    background: var(--tt-panel);
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius);
+    box-shadow: var(--tt-shadow-soft);
+}
+
+.anticipateHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--tt-ink);
+}
+
+.anticipateGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.antCell {
+    padding: 12px;
+    border-radius: var(--tt-radius-sm);
+    border: 1px solid var(--tt-line);
+}
+
+.antNum {
+    font-family: var(--tt-mono);
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.antLabel {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--tt-ink);
+    margin-top: 6px;
+}
+
+.antDesc {
+    font-size: 10.5px;
+    color: var(--tt-sub);
+    margin-top: 2px;
+    line-height: 1.4;
+}
+
+.anticipateFoot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px solid var(--tt-line);
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    color: var(--tt-sub);
+}
+
+.convergedBanner {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 12px;
+    padding: 13px 15px;
+    background: rgba(63, 125, 94, 0.10);
+    border: 1px solid rgba(63, 125, 94, 0.3);
+    border-radius: var(--tt-radius);
+    color: var(--tt-good);
+    font-weight: 700;
+}
+
+.summaryBar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.summaryItem {
+    padding: 8px 10px;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+}
+
+.summaryItem strong {
+    display: block;
+    font-size: 18px;
+    font-family: var(--tt-mono);
+    color: var(--tt-accent);
+}
+
+.summaryItem span {
+    font-size: 11px;
+    color: var(--tt-sub);
+    text-transform: uppercase;
+}
+
+.tableWrap {
+    margin-top: 12px;
+    max-height: 540px;
+    overflow: auto;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius-sm);
+}
+
+.lockTable {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+}
+
+.lockTable th,
+.lockTable td {
+    border: 1px solid var(--tt-line);
+    padding: 4px 6px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.lockTable th {
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.lockTable tr.locked {
+    background: var(--tt-lock-tint);
+}
+
+.lockTable tr.contradiction {
+    background: var(--tt-con-tint);
+}
+
+.lockTable tr.warning {
+    background: color-mix(in srgb, var(--tt-warn) 18%, var(--tt-panel2));
+}
+
+.mutuoAcuerdoBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border: 1.5px solid var(--tt-warn);
+    border-radius: var(--tt-radius-sm);
+    background: color-mix(in srgb, var(--tt-warn) 16%, var(--tt-panel));
+    color: var(--tt-warn);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.searchBar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.searchBar input {
+    flex: 1;
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    padding: 6px 9px;
+    font-family: var(--tt-font);
+    font-size: 12px;
+}
+
+.searchBar select {
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    padding: 6px 8px;
+    font-family: var(--tt-font);
+    font-size: 12px;
+}
+
+.bulkRow {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+    align-items: center;
+}
+
+.bulkRow button {
+    font-family: var(--tt-font);
+    font-size: 11px;
+    padding: 5px 9px;
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.bulkRow button:hover {
+    background: var(--tt-line-soft);
+}
+
+.bulkRow button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.passDelta {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    background: var(--tt-accent2);
+    color: var(--tt-on-ink);
+    border-radius: var(--tt-radius-sm);
+    font-weight: 800;
+}
+
+.passConverged {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 11px;
+    background: var(--tt-accent);
+    color: var(--tt-on-ink);
+    border-radius: var(--tt-radius-sm);
+    font-weight: 800;
+}
+
+/* ═══ Master-detail: lista Balanceada (izq) + ficha Radical (der) ═══ */
+.masterDetail {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+    align-items: start;
+}
+
+.masterCol {
+    min-width: 0;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+    box-shadow: var(--tt-shadow);
+    overflow: hidden;
+}
+
+.detailCol {
+    min-width: 0;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+    box-shadow: var(--tt-shadow);
+    padding: 14px;
+    max-height: 640px;
+    overflow: auto;
+    position: sticky;
+    top: 8px;
+}
+
+/* grupos Balanceado (agrupados por ECO/profesor) */
+.ecoGroup {
+    border-top: 1.5px solid var(--tt-line);
+}
+
+.ecoGroupHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+    cursor: pointer;
+}
+
+.ecoGroupName {
+    font-size: 12.5px;
+    font-weight: 800;
+}
+
+.ecoGroupEco {
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    color: var(--tt-on-ink-soft);
+}
+
+.ecoBadge {
+    padding: 2px 7px;
+    border-radius: var(--tt-radius-sm);
+    background: rgba(255, 255, 255, 0.13);
+    color: var(--tt-on-ink);
+    font-size: 10.5px;
+    font-weight: 800;
+}
+
+/* ── Badge con tooltip de penalización de carga (hover/focus) ────────────────── */
+.ecoBadgeWrap {
+    position: relative;
+    display: inline-flex;
+    outline: none;
+}
+
+.ecoBadgeWrap:focus-visible .ecoBadge {
+    box-shadow: 0 0 0 2px var(--tt-on-ink);
+}
+
+/* Afordancia: subrayado punteado + cursor de ayuda para señalar que es hoverable. */
+.ecoBadgeHover {
+    cursor: help;
+    text-decoration: underline dotted rgba(255, 255, 255, 0.55);
+    text-underline-offset: 2px;
+}
+
+.penaltyTip {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 220px;
+    max-width: 280px;
+    padding: 9px 11px;
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    box-shadow: var(--tt-shadow);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: default;
+    white-space: normal;
+}
+
+.penaltyTipTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--tt-sub);
+}
+
+.penaltyTipInfo {
+    font: inherit;
+    font-size: 11px;
+    line-height: 1;
+    padding: 1px 4px;
+    border: 1px solid var(--tt-line);
+    border-radius: var(--tt-radius-sm);
+    background: transparent;
+    color: var(--tt-sub);
+    cursor: pointer;
+    text-transform: none;
+}
+
+.penaltyTipInfo:hover,
+.penaltyTipInfo[aria-pressed='true'] {
+    color: var(--tt-ink);
+    border-color: var(--tt-border);
+}
+
+.penaltyTipDot {
+    margin-right: 5px;
+}
+
+.penaltyTipRaw {
+    margin-left: 6px;
+    font-weight: 600;
+    color: var(--tt-sub);
+}
+
+.penaltyTipClause {
+    margin-top: 1px;
+    padding-top: 5px;
+    border-top: 1px solid var(--tt-line);
+    color: var(--tt-sub);
+    font-style: italic;
+    font-weight: 600;
+    white-space: normal;
+    line-height: 1.35;
+}
+
+.penaltyTipRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.penaltyTipLabel {
+    color: var(--tt-ink);
+}
+
+.penaltyTipVal {
+    font-family: var(--tt-mono);
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.penaltyTipMuted {
+    color: var(--tt-sub);
+    font-style: italic;
+    font-weight: 600;
+}
+
+.penaltyTipError {
+    color: var(--tt-bad);
+    font-weight: 700;
+}
+
+.penaltyTipDelta {
+    margin-top: 1px;
+    padding-top: 5px;
+    border-top: 1px solid var(--tt-line);
+}
+
+.penaltyOk {
+    color: var(--tt-good);
+}
+
+.penaltyWarn {
+    color: var(--tt-warn);
+}
+
+.penaltyBad {
+    color: var(--tt-bad);
+}
+
+.ecoBadgeDone {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-accent);
+    color: var(--tt-on-ink);
+    font-size: 10.5px;
+    font-weight: 800;
+}
+
+.groupLockAll {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--tt-on-ink);
+    font-family: var(--tt-font);
+    font-weight: 800;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.ueaRow {
+    display: grid;
+    /* Día = 48px para alojar "HH:MM" + etiqueta L/M/Mi/J/V apilada. */
+    grid-template-columns: 92px 1fr repeat(5, 48px) 62px 36px 40px 50px;
+    gap: 6px;
+    align-items: center;
+    padding: 7px 12px 7px 18px;
+    border-top: 1px solid var(--tt-line-soft);
+    cursor: pointer;
+}
+
+.ueaRowSelected {
+    background: rgba(53, 107, 82, 0.12);
+    box-shadow: inset 3px 0 0 var(--tt-accent);
+}
+
+.ueaRowLocked {
+    background: var(--tt-lock-tint);
+}
+
+.ueaName {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--tt-ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ueaMeta {
+    font-family: var(--tt-mono);
+    font-size: 10px;
+    color: var(--tt-sub);
+}
+
+.lockBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    border: 1.5px solid var(--tt-line);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+    color: var(--tt-sub);
+    font-family: var(--tt-font);
+    font-weight: 800;
+    font-size: 10.5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.lockBtnOn {
+    background: var(--tt-accent);
+    color: var(--tt-on-ink);
+    border-color: var(--tt-accent);
+}
+
+/** Cabecera de día: misma rejilla que .ueaRow, con espaciadores sobre lock/nombre y score/editar
+ *  y las etiquetas L/M/Mi/J/V justo encima de las celdas de horario. */
+.dayHeaderRow {
+    display: grid;
+    grid-template-columns: 92px 1fr repeat(5, 48px) 62px 36px 40px 50px;
+    gap: 6px;
+    align-items: end;
+    padding: 5px 12px 2px 18px;
+}
+
+.dayHead {
+    text-align: center;
+    font-family: var(--tt-mono);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--tt-sub);
+}
+
+.dayCell {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    width: 100%;
+    height: 32px;
+    border-radius: 5px;
+    font-family: var(--tt-mono);
+    font-weight: 700;
+    border: 1px solid var(--tt-line-soft);
+    background: var(--tt-panel);
+    color: var(--tt-line);
+    line-height: 1.05;
+}
+
+/** Hora de inicio HH:MM (o "·" cuando no hay clase). */
+.dayCellTime {
+    font-size: 9px;
+}
+
+/** Hora de fin HH:MM, atenuada para que el inicio domine visualmente. */
+.dayCellEnd {
+    font-size: 8.5px;
+    opacity: 0.72;
+}
+
+.dayCellOn {
+    background: rgba(53, 107, 82, 0.14);
+    color: var(--tt-accent);
+    border-color: rgba(53, 107, 82, 0.35);
+}
+
+.iconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--tt-radius-sm);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--tt-sub);
+}
+
+.iconBtn:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+/* ── Desasignar (bote) por fila: wrapper + tooltip "desasignar" + confirmación inline ── */
+.rowActWrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rowActWrap:hover .iconBtn {
+    color: var(--tt-danger);
+    background: rgba(192, 57, 43, 0.10);
+}
+
+/* Tooltip "desasignar": aparece ARRIBA del bote al hover. */
+.rowActTip {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px 7px;
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+    font-family: var(--tt-font);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+    z-index: 30;
+}
+
+.rowActWrap:hover .rowActTip {
+    opacity: 1;
+}
+
+/* Popover de confirmación de desasignar (arriba-derecha del bote). */
+.rowConfirm {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    padding: 6px 8px;
+    background: var(--tt-panel);
+    border: 2px solid var(--tt-ink);
+    border-radius: 6px;
+    box-shadow: 4px 4px 0 rgba(34, 29, 22, 0.2);
+    z-index: 40;
+}
+
+.rowConfirmText {
+    font-family: var(--tt-font);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tt-ink);
+}
+
+.rowConfirmCancel,
+.rowConfirmOk {
+    font-family: var(--tt-font);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1.5px solid var(--tt-ink);
+}
+
+.rowConfirmCancel {
+    background: transparent;
+    color: var(--tt-ink);
+}
+
+.rowConfirmOk {
+    background: var(--tt-danger);
+    color: var(--tt-on-ink);
+    border-color: var(--tt-danger);
+}
+
+/* ── Botón por-ECO "asignar manualmente" (pie del grupo, full-width) ── */
+.ecoAssignRow {
+    padding: 4px 12px 10px 18px;
+}
+
+.ecoAssignBtn {
+    width: 100%;
+    padding: 6px 10px;
+    font-family: var(--tt-font);
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--tt-accent);
+    background: transparent;
+    border: 1.5px dashed var(--tt-border);
+    border-radius: var(--tt-radius-sm);
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.ecoAssignBtn:hover:not(:disabled) {
+    background: rgba(53, 107, 82, 0.08);
+    border-color: var(--tt-accent);
+}
+
+.ecoAssignBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.scoreCell {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--tt-mono);
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.impartidasCell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--tt-sub);
+}
+
+.filterTabs {
+    display: flex;
+    gap: 4px;
+}
+
+.filterTab {
+    padding: 6px 10px;
+    font-family: var(--tt-font);
+    font-size: 11.5px;
+    font-weight: 800;
+    border-radius: var(--tt-radius-sm);
+    background: transparent;
+    color: var(--tt-sub);
+    border: none;
+    cursor: pointer;
+}
+
+.filterTabActive {
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+}
+
+/* ── Ficha de detalle (Radical) ── */
+.detailHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.detailName {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.detailEco {
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    color: var(--tt-sub);
+}
+
+.detailActions {
+    display: flex;
+    gap: 6px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.detailBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    border-radius: var(--tt-radius-sm);
+    border: var(--tt-border-line);
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    font-family: var(--tt-font);
+    font-weight: 800;
+    font-size: 11.5px;
+    cursor: pointer;
+}
+
+.detailBtnPrimary {
+    background: var(--tt-accent);
+    color: var(--tt-on-ink);
+    border-color: var(--tt-accent);
+}
+
+/* ── Intercambiar UEA con otro profesor ── */
+.tooltipWrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    outline: none;
+}
+
+.tooltipCard {
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 0;
+    z-index: 50;
+    display: grid;
+    gap: 5px;
+    min-width: 230px;
+    max-width: 300px;
+    padding: 9px 11px;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+    box-shadow: var(--tt-shadow);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.35;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(3px);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.tooltipWrap:hover .tooltipCard,
+.tooltipWrap:focus-within .tooltipCard {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tooltipTitle {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--tt-sub);
+}
+
+.tooltipMono {
+    font-family: var(--tt-mono);
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--tt-accent);
+}
+
+.exchangeHint {
+    margin: 8px 0 0;
+    color: var(--tt-sub);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.exchangeActions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.exchangePanel {
+    margin-top: 10px;
+    padding: 11px 12px;
+    border: var(--tt-border-line);
+    border-left: 4px solid var(--tt-accent2);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel);
+    box-shadow: var(--tt-shadow-soft);
+}
+
+.exchangePanelTitle {
+    margin: 0 0 6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--tt-accent2);
+}
+
+.exchangeHelp {
+    margin: 0 0 8px;
+    color: var(--tt-sub);
+    font-size: 11.5px;
+    line-height: 1.4;
+}
+
+.exchangeAlert {
+    margin-top: 8px;
+    padding: 7px 9px;
+    border: 1px solid color-mix(in srgb, var(--tt-warn) 55%, var(--tt-line));
+    border-radius: var(--tt-radius-sm);
+    background: color-mix(in srgb, var(--tt-warn) 14%, var(--tt-panel));
+    color: var(--tt-ink);
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.exchangeOptionRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 0;
+    border-top: 1px solid var(--tt-line-soft);
+}
+
+.detailSectionLabel {
+    font-family: var(--tt-mono);
+    font-size: 10px;
+    color: var(--tt-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 16px 0 8px;
+}
+
+.lensLegend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    background: var(--tt-panel);
+    border: 1px solid var(--tt-line);
+    border-radius: var(--tt-radius-sm);
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+.lensLegendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--tt-ink);
+}
+
+.detailUeaCard {
+    border: var(--tt-border-soft);
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel);
+    padding: 11px 12px;
+    margin-bottom: 10px;
+}
+
+.scoreLensRow {
+    margin-bottom: 10px;
+}
+
+.scoreLensTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.scoreLensLabel {
+    font-family: var(--tt-mono);
+    font-size: 10.5px;
+    color: var(--tt-sub);
+}
+
+.scoreLensVal {
+    font-family: var(--tt-mono);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.scoreLensDesc {
+    font-size: 10px;
+    color: var(--tt-sub);
+    margin-top: 3px;
+}
+
+.detailPlaceholder {
+    color: var(--tt-sub);
+    font-size: 13px;
+    padding: 36px 8px;
+    text-align: center;
+}
+
+.chartFallback {
+    color: var(--tt-bad);
+    font-style: italic;
+    padding: 24px 0;
+    text-align: center;
+    font-size: 12px;
+}
+
+/* ── Toast de deshacer ── */
+.undoToast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+    border-radius: var(--tt-radius);
+    box-shadow: 0 8px 24px rgba(20, 30, 50, 0.25);
+    z-index: 1500;
+}
+
+.undoToastBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: var(--tt-radius-sm);
+    border: none;
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--tt-on-ink);
+    font-family: var(--tt-font);
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* ── Panel de historial (auto-guardados navegables) ── */
+.historyPanel {
+    margin-top: 10px;
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel);
+    overflow: hidden;
+}
+
+.historyHead {
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--tt-line);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tt-sub);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.historyRow {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 13px;
+    border-top: 1px solid var(--tt-line-soft);
+}
+
+.historyRowMeta {
+    flex: 1;
+    min-width: 0;
+}
+
+.historyBack {
+    font-family: var(--tt-font);
+    font-weight: 800;
+    font-size: 11.5px;
+    color: var(--tt-accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* ── Confirmación destructiva (Reiniciar a pase 0) ── */
+.dangerCard {
+    margin-top: 10px;
+    border: 1.5px solid var(--tt-bad);
+    border-radius: var(--tt-radius);
+    overflow: hidden;
+}
+
+.dangerHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: var(--tt-con-tint);
+    border-bottom: 1px solid rgba(168, 70, 52, 0.25);
+    color: var(--tt-bad);
+    font-weight: 800;
+}
+
+.dangerBody {
+    padding: 14px;
+    background: var(--tt-panel);
+}
+
+.dangerInput {
+    width: 140px;
+    padding: 8px 10px;
+    border: 1px solid var(--tt-line);
+    border-radius: var(--tt-radius-sm);
+    font-family: var(--tt-mono);
+    font-size: 13px;
+}
+
+/* ── Laptops físicamente pequeños (p.ej. 13" a 1920×1080 @100% = 1920px CSS "true size"):
+ *    master/detail 60/40 y columnas fijas compactas para regalar píxeles al nombre de la UEA
+ *    (antes quedaba aplastado, p.ej. "CÁLCU…"). El umbral 1920 incluye el laptop a tamaño real
+ *    y excluye el monitor de 2560px (que conserva el layout ancho por defecto). Media query por
+ *    ancho de viewport en px CSS: a escalado 100% el laptop reporta 1920, no 1280/1440.
+ *    IMPORTANTE: .ueaRow y .dayHeaderRow comparten rejilla y deben permanecer sincronizadas. ── */
+@media (max-width: 1920px) {
+    .masterDetail {
+        /* 1.5fr/1fr ≈ 60/40 entre tabla principal y panel de información avanzada. */
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    }
+
+    .ueaRow,
+    .dayHeaderRow {
+        /* Botón Asignar/Asignada 92→72px; veces impartida 36→22px (entero de 1-2 dígitos). */
+        grid-template-columns: 72px 1fr repeat(5, 48px) 62px 22px 40px 50px;
+        gap: 4px;
+        padding-left: 12px;
+        padding-right: 8px;
+    }
+
+    .lockBtn {
+        padding: 5px 6px;
+        font-size: 10px;
+        letter-spacing: -0.01em;
+    }
+
+    /* Sin candado en pantallas angostas: el estado lo comunican el texto y el color (.lockBtnOn). */
+    .lockBtn svg {
+        display: none;
+    }
+}
+
+@media (max-width: 1080px) {
+    .masterDetail {
+        grid-template-columns: 1fr;
+    }
+
+    .detailCol {
+        position: static;
+        max-height: none;
+    }
+}

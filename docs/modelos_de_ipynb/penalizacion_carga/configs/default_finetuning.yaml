@@ -1,0 +1,107 @@
+# Configuración de Fine-Tuning v2 — Pesos recalibrados
+# 
+# Cambios respecto a v1:
+#   - penalty_scale desactivado (w=0): la escala emerge de la calibración
+#   - regularization más suave (0.0001): no ahogar la señal de los datos
+#   - bounds más ceñidos: evitar divergencia catastrófica de parámetros
+#   - random search inicia desde defaults + perturbación local
+
+# ══════════════════════════════════════════════════════════════════════════
+# Parámetros optimizables y sus cotas [lower, upper, log_scale]
+# ══════════════════════════════════════════════════════════════════════════
+
+param_bounds_semanal:
+  lambda_semanal:                 [0.50, 6.0, false]
+  lambda_ueas:                    [0.20, 3.0, true]     # mismo bound para los 5
+  peso_exceso_ueas_semana:        [0.50, 6.0, true]
+  exponente_rareza_ueas_totales:  [0.50, 4.0, true]
+  shrinkage_weight:               [0.50, 10.0, true]
+  individual_alpha_min:           [0.00, 0.30, false]
+  individual_decay_power:         [0.50, 3.0, true]
+  individual_floor_strength:      [0.00, 0.50, false]
+  individual_extra_gap_max:       [0.00, 2.0, false]
+  individual_extra_gap_recent:    [0.00, 0.30, false]
+  individual_habit_strength:      [0.00, 1.5, false]
+  individual_habit_power:         [0.50, 3.0, true]
+  habit_recent_weight:            [0.10, 0.95, false]
+  habit_q_weight:                 [0.05, 0.80, false]
+  habit_max_weight:               [0.01, 0.30, false]
+
+param_bounds_bloques:
+  lambda_diaria:                      [0.25, 5.0, false]
+  lambda_bloques_historicos:         [0.10, 3.0, true]
+  lambda_horas_bloque_normal:         [0.25, 4.0, true]
+  lambda_horas_bloque_laboratorio:    [0.05, 2.0, true]
+  peso_rareza_horas_bloque_hist:      [0.25, 5.0, true]
+  peso_rareza_ueas_bloque_hist:       [0.25, 5.0, true]
+  peso_rareza_fragmentacion_bloques:  [0.10, 5.0, true]
+  peso_rareza_huecos_bloques:         [0.10, 5.0, true]
+  peso_rareza_patron_bloques:         [0.05, 3.0, true]
+  premio_respaldo_bloques:            [0.00, 0.40, false]
+  premio_cap_bloques:                 [0.00, 0.40, false]
+  exponente_rareza_bloques:           [0.50, 4.0, true]
+
+# ══════════════════════════════════════════════════════════════════════════
+# Pesos de la función de pérdida distribucional
+# pesan ~1.0 entre todos los componentes activos
+# ══════════════════════════════════════════════════════════════════════════
+
+loss:
+  w_calibration: 0.40
+  w_monotonicity: 0.25
+  w_coverage: 0.10
+  w_smoothness: 0.15
+  w_regularization: 0.10
+  w_penalty_scale: 0.00          # DESACTIVADO: la escala emerge de la calibración
+
+  calibration_quantiles: [0.25, 0.50, 0.75, 0.90, 0.95]
+  n_bootstrap_samples: 500
+  wasserstein_p: 1
+
+  monotonicity_tolerance: 0.02
+  monotonicity_max_penalty: 5.0
+
+  coverage_min_entropy: 0.25
+  coverage_n_bins: 20
+
+  smoothness_n_neighbors: 5
+  smoothness_bandwidth: 0.5
+
+  regularization_strength: 0.0005  # Muy suave: solo evitar divergencia catastrófica
+  # Con 0.0005, un param *10 (delta=9) aporta 0.0005*81 = 0.04 a la pérdida
+
+  penalty_scale_target_median: 0.15
+  penalty_scale_target_iqr: 0.20
+
+# ══════════════════════════════════════════════════════════════════════════
+# Algoritmo de optimización
+# ══════════════════════════════════════════════════════════════════════════
+
+optimizer:
+  algorithm: differential_evolution
+  max_iterations: 100
+  population_size: 8
+  seed: 42
+
+  de_tol: 0.001
+  de_polish: false
+  de_mutation: [0.5, 1.0]
+  de_recombination: 0.7
+
+  random_samples: 3000
+  lbfgsb_maxiter: 100
+
+  optuna_n_trials: 200
+  optuna_sampler: TPE
+
+  early_stopping_patience: 30
+  early_stopping_min_delta: 0.0001
+
+# ══════════════════════════════════════════════════════════════════════════
+# Evaluación
+# ══════════════════════════════════════════════════════════════════════════
+
+n_evaluation_scenarios_per_eco: 5
+# n_evaluation_ecos_sample: 150
+evaluation_seed: 12345
+min_trimestres_eco: 2

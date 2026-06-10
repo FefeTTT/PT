@@ -12,6 +12,9 @@ import { UEA_AREA_MAPPING } from '../scripts/utils/constants';
 import { UEA_AREA_MAPPING_REV } from '../scripts/utils/constants';
 import { DatosUEA } from '../scripts/utils/types';
 import { UeaVO, HorarioVO } from './programacionVO';
+import { GRASPTestModal } from '../directory/components/modals/GRASPTestModal';
+import { HttpAssignmentData } from '../directory/adapters/HttpAssignmentData';
+import { GraspRCLModal } from '../../solution/components/GraspRCLModal';
 
 interface SortState {
     col: string | null;
@@ -27,6 +30,8 @@ const MenuTrimestres: React.FC = () => {
     const [showNewModal, setShowNewModal] = useState<boolean>(false);
     const [showImportModal, setShowImportModal] = useState<boolean>(false);
     const [selectedTrimestreForProfessors, setSelectedTrimestreForProfessors] = useState<API.Trimestre | null>(null);
+    const [showGRASPModal, setShowGRASPModal] = useState<boolean>(false);
+    const [showGraspRCLModal, setShowGraspRCLModal] = useState<boolean>(false);
 
     const fileInputNombresRef = useRef<HTMLInputElement>(null);
     const fileInputProgramacionRef = useRef<HTMLInputElement>(null);
@@ -316,6 +321,8 @@ const MenuTrimestres: React.FC = () => {
                     <ActionButton textLabel="Cargar nombres de grupos" onButtonClicked={() => fileInputNombresRef.current?.click()} />
                     <ActionButton textLabel="Refrescar" onButtonClicked={() => loadTrimestres(selectedYear)} />
                     <ActionButton textLabel="Cargar Planeación Horario" onButtonClicked={() => fileInputProgramacionRef.current?.click()} />
+                    <ActionButton textLabel="probar asignación" onButtonClicked={() => setShowGRASPModal(true)} />
+                    <ActionButton textLabel="Probar RCL UI" onButtonClicked={() => setShowGraspRCLModal(true)} />
                     {['hist-programacion'].map(act => (
                         <ActionButton key={act} textLabel={act} onButtonClicked={() => handleAction(act)} />
                     ))}
@@ -419,6 +426,14 @@ const MenuTrimestres: React.FC = () => {
                 ref={fileInputProgramacionRef}
                 onChange={handleCargarProgramacion}
             />
+            <GRASPTestModal isOpen={showGRASPModal} onClose={() => setShowGRASPModal(false)} />
+            {showGraspRCLModal && (
+                <GraspRCLModal 
+                    isOpen={showGraspRCLModal} 
+                    onClose={() => setShowGraspRCLModal(false)} 
+                    dataService={new HttpAssignmentData()} 
+                />
+            )}
         </div>
     );
 };

@@ -1,22 +1,23 @@
 /**
- * Interfaz placeholder para consumir scores w_ig de un modelo ML externo (XGBoost).
- *
- * El modelo se entrena por fuera del sistema y califica la factibilidad
- * de cada par profesor-grupo. El sistema consume los scores vía esta interfaz.
+ * Retorna el score de factibilidad s_ig en [0, 1] para el par profesor-grupo.
+ * El grupo debe identificarse por idUeaGrupo, no por claveGrupo.
  */
 export interface IModeloML {
-    /**
-     * Retorna el score de factibilidad w_ig ∈ [0, 1] para el par dado.
-     * @param profesorId  Número económico del profesor.
-     * @param grupoId     ID de la UEA-grupo.
-     */
     score(profesorId: number, grupoId: number): number;
 }
 
+export function clamp01(valor: number): number {
+    if (!Number.isFinite(valor)) return 0;
+    return Math.max(0, Math.min(1, valor));
+}
+
+export function scoreNormalizado(modelo: IModeloML, profesorId: number, grupoId: number): number {
+    return clamp01(modelo.score(profesorId, grupoId));
+}
+
 /**
- * Implementación por defecto: peso uniforme w_ig = 1 para todo par.
- * Usada cuando el modelo XGBoost externo aún no está integrado.
- * Con esta implementación, Z evalúa solo penalizaciones de restricciones suaves.
+ * Implementacion por defecto: peso uniforme s_ig = 1 para todo par.
+ * Usada cuando el modelo externo aun no esta integrado.
  */
 export class ModeloMLUniforme implements IModeloML {
     score(_profesorId: number, _grupoId: number): number {

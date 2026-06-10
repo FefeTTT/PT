@@ -1,0 +1,779 @@
+\documentclass[12pt, a4paper]{article}
+
+% ── Codificación y lengua ─────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\setlength{\headheight}{15pt}
+
+% ── Matemáticas ───────────────────────────────────────────────────────────────
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ── Algoritmos ────────────────────────────────────────────────────────────────
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\algnewcommand\algorithmicforeach{\textbf{para cada}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \textbf{hacer}}
+
+% ── Código fuente ─────────────────────────────────────────────────────────────
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codebg}{RGB}{248,249,250}
+\definecolor{kwcolor}{RGB}{0,90,158}
+\definecolor{cmcolor}{RGB}{80,130,80}
+\definecolor{stcolor}{RGB}{160,30,30}
+\definecolor{numcolor}{RGB}{130,130,130}
+\definecolor{rulecolor}{RGB}{200,200,200}
+
+\lstset{
+  language=Python,
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{kwcolor}\bfseries,
+  commentstyle=\color{cmcolor}\itshape,
+  stringstyle=\color{stcolor},
+  numbers=left,
+  numberstyle=\tiny\color{numcolor},
+  frame=single,
+  framerule=0.5pt,
+  rulecolor=\color{rulecolor},
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4,
+  captionpos=b,
+  xleftmargin=1.5em,
+  framexleftmargin=1.5em,
+  aboveskip=10pt,
+  belowskip=6pt
+}
+
+% ── Tablas ────────────────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+
+% ── Gráficos y diagramas ──────────────────────────────────────────────────────
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, fit, backgrounds, calc}
+
+% ── Diseño de página ──────────────────────────────────────────────────────────
+\usepackage{geometry}
+\geometry{a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm}
+\usepackage{setspace}
+\onehalfspacing
+
+% ── Encabezados y pie de página ───────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Ejection Chains en Grafos Bipartitos — GRASP}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Hipervínculos ─────────────────────────────────────────────────────────────
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=kwcolor,
+  urlcolor=kwcolor,
+  citecolor=kwcolor,
+  pdftitle={Ejection Chains en Grafos Bipartitos construidos mediante GRASP},
+  pdfauthor={},
+}
+
+% ── Entornos matemáticos ──────────────────────────────────────────────────────
+\theoremstyle{definition}
+\newtheorem{definition}{Definición}[section]
+\newtheorem{example}{Ejemplo}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{proposition}{Proposición}[section]
+\newtheorem{lemma}{Lema}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Observación}[section]
+\newtheorem{corollary}{Corolario}[section]
+
+% ── Macros propias ────────────────────────────────────────────────────────────
+\newcommand{\GE}{G_{\!E}}
+\newcommand{\dom}[1]{D\!\left(#1\right)}
+\newcommand{\domk}[2]{D_{#1}\!\left(#2\right)}
+\newcommand{\inv}[1]{f^{-1}\!\left(#1\right)}
+\newcommand{\Nset}[1]{N\!\left(#1\right)}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Portada ───────────────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\LARGE\bfseries Ejection Chains en Grafos Bipartitos\\[0.4em]
+   construidos mediante GRASP\par}
+  \vspace{1.5cm}
+  {\large\itshape Formulaciones, Dominios y Métodos de Búsqueda\\
+   con Conjunto Eyectado Mínimo\par}
+  \vspace{3cm}
+  \rule{0.6\linewidth}{0.8pt}\\[0.4em]
+  {\large Informe Técnico\par}
+  \rule{0.6\linewidth}{0.8pt}
+  \vfill
+  {\large \today\par}
+\end{titlepage}
+
+% ── Índice ────────────────────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{Introducción y Motivación}
+% =============================================================================
+
+Las \textbf{Ejection Chains} (cadenas de eyección) son una técnica de búsqueda
+local avanzada introducida por Glover~(1991) en el contexto de la metaheurística
+Tabu Search. Su principio central consiste en realizar una secuencia de
+reasignaciones encadenadas, donde cada movimiento ``eyecta'' un elemento de su
+posición actual y lo desplaza a otra, de manera que el elemento desplazado
+queda libre para iniciar el siguiente eslabón de la cadena.
+
+Cuando la solución inicial proviene de un procedimiento \textbf{GRASP} (Greedy
+Randomized Adaptive Search Procedure), el grafo bipartito resultante posee una
+estructura bien definida que permite explotar sistemáticamente los dominios de
+los nodos para construir cadenas cortas y de alta calidad.
+
+Este informe presenta:
+\begin{itemize}
+  \item la formulación matemática del problema de dominios en grafos bipartitos,
+  \item la condición de subconjunto $\domk{k}{x_k} \subseteq \dom{x_0}$,
+  \item el modelado de la búsqueda de cadena mínima como un problema de camino
+        más corto, y
+  \item los algoritmos BFS y A* con heurística admisible, junto con estrategias
+        de poda de dominio.
+\end{itemize}
+
+% =============================================================================
+\section{Preliminares y Notación}
+% =============================================================================
+
+\begin{definition}[Grafo Bipartito con Asignación]
+  Sea $G = (X \cup Y,\, E)$ un grafo bipartito donde $X$ es el conjunto de
+  \emph{agentes} e $Y$ el conjunto de \emph{recursos}.  Una
+  \emph{asignación factible} es una función inyectiva $f: X \to Y$ tal que
+  $(x, f(x)) \in E$ para todo $x \in X$.
+\end{definition}
+
+\begin{definition}[Vecindad y Dominio]
+  Para un nodo $x \in X$, su \emph{vecindad} en $G$ es
+  $\Nset{x} = \{y \in Y \mid (x,y) \in E\}$.
+  El \emph{dominio de reasignación} de $x$ dado el estado actual $S$ es:
+  \[
+    \dom{x} \;=\; \Nset{x} \setminus \{f(x)\},
+  \]
+  es decir, los recursos alcanzables por $x$ distintos de su asignación
+  vigente.
+\end{definition}
+
+\begin{definition}[Nodo Eyectado]
+  Un nodo $x_k \in X$ queda \emph{eyectado} en el paso $k$ de la cadena
+  cuando el nodo anterior $x_{k-1}$ se reasigna al recurso $y_{k-1} = f(x_k)$,
+  privando a $x_k$ de su asignación.
+\end{definition}
+
+% =============================================================================
+\section{Formulación del Dominio en la Ejection Chain}
+% =============================================================================
+
+\subsection{Dominio del nodo inicial}
+
+Sea $x_0$ el nodo que se desea mover (nodo inicial de la cadena).  Su dominio
+en el paso $0$ es:
+
+\begin{equation}
+  \domk{0}{x_0} \;=\; \dom{x_0} \;=\; \Nset{x_0} \setminus \{f(x_0)\}.
+  \label{eq:dom0}
+\end{equation}
+
+\subsection{Dominio del nodo eyectado en el paso \texorpdfstring{$k$}{k}}
+
+Cuando $x_{k-1}$ elige $y_{k-1} \in \domk{k-1}{x_{k-1}}$, el nodo
+$x_k = \inv{y_{k-1}}$ es eyectado.  Su dominio candidato en el paso $k$ es:
+
+\begin{equation}
+  \domk{k}{x_k} \;=\;
+  \bigl(\Nset{x_k} \setminus \{f(x_k)\}\bigr)
+  \;\setminus\;
+  \mathcal{V}_{k-1},
+  \label{eq:domk}
+\end{equation}
+
+donde $\mathcal{V}_{k-1} = \{y_0, y_1, \ldots, y_{k-2}\}$ es el conjunto de
+recursos ya visitados en la cadena (filtro anti-ciclo).
+
+\subsection{Condición de subconjunto del dominio inicial}
+
+La condición central para que la cadena sea \emph{válida} respecto al dominio
+inicial establece:
+
+\begin{equation}
+  \boxed{\domk{k}{x_k} \;\subseteq\; \domk{0}{x_0}}
+  \qquad \forall\, k \geq 1.
+  \label{eq:subset}
+\end{equation}
+
+Esta condición puede imponerse mediante tres mecanismos complementarios:
+
+\paragraph{Filtro directo.} En cada paso $k$, antes de extender la cadena:
+\[
+  \domk{k,\,\text{filt}}{x_k}
+  \;=\;
+  \domk{k}{x_k} \cap \domk{0}{x_0}.
+\]
+
+\paragraph{Etiquetado de Glover.} Asignar a cada recurso $y \in Y$ una etiqueta
+de nivel:
+\[
+  \ell(y) =
+  \begin{cases}
+    0 & \text{si } y \in \domk{0}{x_0}, \\
+    k & \text{si } y \text{ fue liberado en el paso } k > 0.
+  \end{cases}
+\]
+Solo se permiten extensiones a recursos con $\ell(y) = 0$.
+
+\paragraph{Condición estructural.} Si el grafo satisface
+$\Nset{x_k} \subseteq \Nset{x_0}$ para todo $x_k$ en la cadena
+(vecindades anidadas), la condición~\eqref{eq:subset} se cumple
+automáticamente.
+
+% =============================================================================
+\section{Modelado como Problema de Camino Más Corto}
+% =============================================================================
+
+El objetivo de mover $x_0 \to y^*$ con el \textbf{número mínimo de eyecciones}
+se reduce a encontrar el camino más corto en el \emph{grafo de eyección}
+$\GE$.
+
+\begin{definition}[Grafo de Eyección \texorpdfstring{$\GE$}{GE}]
+  \label{def:ge}
+  El grafo de eyección $\GE = (V_E, A_E)$ asociado a la solución $S$ se
+  define por:
+  \begin{align}
+    V_E &= \bigl\{(x,\, y) \;\bigm|\; x \in X,\; y \in \dom{x}\bigr\},
+    \label{eq:VE}\\[4pt]
+    A_E &= \Bigl\{(x_i, y_j) \to (x_k, y_\ell) \;\Bigm|\;
+            x_k = \inv{y_j},\;
+            y_\ell \in \dom{x_k}\Bigr\},
+    \label{eq:AE}
+  \end{align}
+  con función de costo $c\bigl((x_i,y_j),(x_k,y_\ell)\bigr) = 1$ para
+  minimizar el número de nodos eyectados.
+\end{definition}
+
+\begin{proposition}
+  Un camino de longitud $k$ en $\GE$ desde $(x_0, y^*)$ hasta cualquier
+  estado $(x_k, y_{\text{libre}})$ con $y_{\text{libre}} \notin \operatorname{Im}(f)$
+  corresponde a una ejection chain que mueve $x_0 \to y^*$ eyectando
+  exactamente $k$ nodos intermedios.
+\end{proposition}
+
+\subsection{Estructura del estado y reconstrucción}
+
+Un estado $(x_k, y_k)$ en $\GE$ codifica: ``el nodo $x_k$ desea ser asignado
+al recurso $y_k$''.  La cadena completa se representa como:
+
+\[
+  x_0 \xrightarrow{y_0} x_1 \xrightarrow{y_1} \cdots
+  \xrightarrow{y_{k-1}} x_k \xrightarrow{y^*} \varnothing,
+\]
+
+donde $y^* \notin \operatorname{Im}(f)$ es un recurso libre.
+
+La \textbf{reconstrucción} de la solución se realiza en orden inverso:
+\begin{enumerate}
+  \item $f(x_k) \leftarrow y^*$
+  \item $f(x_{k-1}) \leftarrow y_{k-1}$ \quad (ahora libre)
+  \item $\vdots$
+  \item $f(x_0) \leftarrow y_0$
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.4cm and 2.2cm,
+    agent/.style={circle, draw=kwcolor, fill=kwcolor!10,
+                  minimum size=9mm, font=\small\bfseries},
+    resource/.style={rectangle, draw=cmcolor, fill=cmcolor!10,
+                     minimum width=1.1cm, minimum height=8mm,
+                     font=\small\bfseries, rounded corners=2pt},
+    arrow/.style={-{Stealth[length=6pt]}, thick},
+    dasharrow/.style={{Stealth[length=5pt]}-{Stealth[length=5pt]},
+                       dashed, gray, thick},
+  ]
+  % Agentes (X)
+  \node[agent] (x0) {$x_0$};
+  \node[agent, below=of x0] (x1) {$x_1$};
+  \node[agent, below=of x1] (x2) {$x_2$};
+
+  % Recursos (Y)
+  \node[resource, right=2.4cm of x0] (y0) {$y_0$};
+  \node[resource, right=2.4cm of x1] (y1) {$y_1$};
+  \node[resource, right=2.4cm of x2] (yf) {$y^*$};
+
+  % Asignaciones actuales (gris punteado)
+  \draw[dasharrow] (x0) -- node[above,font=\tiny]{$f(x_0)$} ($(x0)!0.5!(y0)+(0,0)$);
+  \draw[dasharrow] (x1) -- node[above,font=\tiny]{$f(x_1)\!=\!y_0$} (y0);
+  \draw[dasharrow] (x2) -- node[above,font=\tiny]{$f(x_2)\!=\!y_1$} (y1);
+
+  % Reasignaciones de la cadena
+  \draw[arrow, kwcolor] (x0) to[bend left=15]
+    node[above,font=\small]{eyecta} (y0);
+  \draw[arrow, kwcolor] (x1) to[bend left=15]
+    node[above,font=\small]{eyecta} (y1);
+  \draw[arrow, kwcolor!60!black] (x2) to[bend left=15]
+    node[above,font=\small]{libre} (yf);
+
+  % Leyenda
+  \node[font=\tiny, gray, below=0.3cm of yf]
+    {$y^* \notin \operatorname{Im}(f)$};
+\end{tikzpicture}
+\caption{Estructura de una ejection chain de longitud 2: $x_0$ eyecta a $x_1$,
+         que a su vez eyecta a $x_2$, el cual se reasigna a un recurso libre.}
+\label{fig:chain}
+\end{figure}
+
+% =============================================================================
+\section{Estrategias de Restricción del Dominio}
+% =============================================================================
+
+Para mantener cadenas cortas se aplican tres niveles de poda sobre $\dom{x_k}$:
+
+\subsection{Nivel 1 — Filtro estructural (condición de subconjunto)}
+
+\begin{equation}
+  \domk{k,\,(1)}{x_k}
+  \;=\;
+  \domk{k}{x_k} \cap \domk{0}{x_0}.
+  \label{eq:filt1}
+\end{equation}
+
+Elimina recursos que no pertenecen al espacio de soluciones
+alcanzable desde $x_0$.
+
+\subsection{Nivel 2 — Filtro de calidad (GRASP-guided)}
+
+\begin{equation}
+  \domk{k,\,(2)}{x_k}
+  \;=\;
+  \Bigl\{\, y \in \domk{k,\,(1)}{x_k}
+  \;\Bigm|\;
+  \Delta f(x_k \to y) \;\geq\; \theta \,\Bigr\},
+  \label{eq:filt2}
+\end{equation}
+
+donde $\theta$ es el umbral mínimo de variación en la función objetivo y
+$\Delta f(x_k \to y) = f_{\text{obj}}(S') - f_{\text{obj}}(S)$ con $S'$
+obtenida al reasignar $x_k \to y$.
+
+\subsection{Nivel 3 — Filtro anti-ciclo}
+
+\begin{equation}
+  \domk{k,\,(3)}{x_k}
+  \;=\;
+  \domk{k,\,(2)}{x_k} \;\setminus\; \mathcal{V}_{k-1},
+  \qquad
+  \mathcal{V}_{k-1} = \{y_0, \ldots, y_{k-2}\}.
+  \label{eq:filt3}
+\end{equation}
+
+Garantiza que la cadena no revisita recursos ya procesados.
+
+\begin{remark}
+  La composición de los tres filtros da el \emph{dominio efectivo}:
+  \[
+    \domk{k,\,\text{eff}}{x_k}
+    \;=\;
+    \bigl(\dom{x_k} \cap \dom{x_0}\bigr)
+    \;\setminus\;
+    \bigl(\mathcal{V}_{k-1} \cup \{f(x_k)\}\bigr).
+  \]
+\end{remark}
+
+% =============================================================================
+\section{Algoritmos de Búsqueda}
+% =============================================================================
+
+\subsection{BFS — Búsqueda en Anchura (cadena de longitud mínima garantizada)}
+
+BFS es el algoritmo de referencia cuando el costo de arco es uniforme
+($c = 1$), ya que garantiza encontrar la cadena con el menor número de
+eyecciones.
+
+\begin{algorithm}[H]
+\caption{BFS para Ejection Chain Mínima}
+\label{alg:bfs}
+\begin{algorithmic}[1]
+\Require $f$, $\domk{k,\text{eff}}{\cdot}$, $x_0$, $y^*$
+\Ensure Camino mínimo $\pi$ o \texttt{Ninguno}
+\State $\text{inicio} \leftarrow (x_0,\; y^*)$
+\State $Q \leftarrow \langle (\text{inicio},\; [\text{inicio}]) \rangle$
+\State $\text{visitado} \leftarrow \{\text{inicio}\}$
+\While{$Q \neq \emptyset$}
+  \State $((x,\, y),\, \pi) \leftarrow Q.\text{pop\_izquierda}()$
+  \If{$y \notin \operatorname{Im}(f)$}
+    \Return $\pi$ \Comment{Recurso libre: cadena válida}
+  \EndIf
+  \State $x' \leftarrow \inv{y}$
+  \ForEach{$y' \in \domk{k,\text{eff}}{x'}$}
+    \State $s' \leftarrow (x',\, y')$
+    \If{$s' \notin \text{visitado}$}
+      \State $\text{visitado} \leftarrow \text{visitado} \cup \{s'\}$
+      \State $Q.\text{encolar}((s',\; \pi + [s']))$
+    \EndIf
+  \EndFor
+\EndWhile
+\Return \texttt{Ninguno}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lstlisting}[caption={Implementación BFS en Python}]
+from collections import deque
+
+def bfs_ejection(assignment, eff_domain, source, target):
+    """
+    assignment  : dict  x -> y
+    eff_domain  : callable (x, visited) -> set de recursos candidatos
+    source      : nodo inicial x_0
+    target      : recurso destino y*
+    """
+    inv = {v: k for k, v in assignment.items()}
+    free = set(assignment.values())      # Im(f)
+
+    start = (source, target)
+    queue = deque([(start, [start], {target})])  # estado, camino, visitados
+    seen  = {start}
+
+    while queue:
+        (node, slot), path, visited = queue.popleft()
+
+        if slot not in free:             # recurso libre -> exito
+            return path
+
+        evicted = inv[slot]
+        for nxt in eff_domain(evicted, visited):
+            state = (evicted, nxt)
+            if state not in seen:
+                seen.add(state)
+                queue.append((state, path + [state], visited | {nxt}))
+
+    return None
+\end{lstlisting}
+
+\subsection{A* — Búsqueda Heurística (cadena óptima con menor exploración)}
+
+A* reduce el espacio explorado mediante una función heurística admisible
+$h: V_E \to \mathbb{R}_{\geq 0}$.
+
+\begin{definition}[Heurística Admisible para Ejection Chains]
+  \label{def:heuristic}
+  Sea $Y_{\text{libre}} = Y \setminus \operatorname{Im}(f)$ el conjunto de
+  recursos libres.  Se define:
+  \[
+    h(x,\, y) \;=\;
+    \begin{cases}
+      0 & \text{si } y \in Y_{\text{libre}},\\[3pt]
+      1 & \text{si } \exists\, y' \in \dom{\inv{y}} \cap Y_{\text{libre}},\\[3pt]
+      2 & \text{en otro caso (cota conservadora).}
+    \end{cases}
+  \]
+\end{definition}
+
+\begin{theorem}
+  La heurística de la Definición~\ref{def:heuristic} es \emph{admisible}
+  (no sobreestima el número real de pasos restantes) y, por lo tanto,
+  A* con esta heurística devuelve una ejection chain de longitud mínima.
+\end{theorem}
+
+\begin{proof}[Esquema]
+  Si $y \in Y_{\text{libre}}$, el estado ya es meta: $h = 0 \leq 0$ pasos
+  reales.  Si el ocupante de $y$ tiene un recurso libre en su dominio,
+  se requiere exactamente 1 eyección más: $h = 1$.  En caso contrario,
+  se necesitan al menos 2 pasos adicionales: $h = 2$.
+  En ningún caso $h$ supera el número real de eyecciones restantes.\qed
+\end{proof}
+
+\begin{algorithm}[H]
+\caption{A* para Ejection Chain Mínima}
+\label{alg:astar}
+\begin{algorithmic}[1]
+\Require $f$, $\domk{k,\text{eff}}{\cdot}$, $h$, $x_0$, $y^*$
+\Ensure Camino óptimo $\pi$ o \texttt{Ninguno}
+\State $s_0 \leftarrow (x_0,\, y^*)$
+\State $\text{montículo} \leftarrow [(h(s_0),\, 0,\, s_0,\, [s_0])]$
+\State $\text{mejor} \leftarrow \{\}$
+\While{montículo $\neq \emptyset$}
+  \State $(f,\, g,\, (x, y),\, \pi) \leftarrow \text{extraer\_mín}(\text{montículo})$
+  \If{$y \in Y_{\text{libre}}$}
+    \Return $\pi$
+  \EndIf
+  \If{$\text{mejor}[(x,y)] \leq g$}
+    \State \textbf{continuar}
+  \EndIf
+  \State $\text{mejor}[(x,y)] \leftarrow g$
+  \State $x' \leftarrow \inv{y}$
+  \ForEach{$y' \in \domk{k,\text{eff}}{x'}$}
+    \State $g' \leftarrow g + 1$;
+           \quad $s' \leftarrow (x',\, y')$;
+           \quad $f' \leftarrow g' + h(s')$
+    \State $\text{insertar}(\text{montículo},\; (f',\, g',\, s',\, \pi+[s']))$
+  \EndFor
+\EndWhile
+\Return \texttt{Ninguno}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{lstlisting}[caption={Implementación A* en Python}]
+import heapq
+
+def heuristic(slot, inv, domains, free):
+    if slot in free:
+        return 0
+    occ = inv.get(slot)
+    if occ and any(s in free for s in domains[occ]):
+        return 1
+    return 2
+
+def astar_ejection(assignment, eff_domain, source, target):
+    inv  = {v: k for k, v in assignment.items()}
+    free = set(y for y in assignment.values()
+               if y not in assignment)   # recursos sin dueno
+    # recalcular correctamente
+    all_resources = set(assignment.values())
+    # free slots = los que no estan en Im(f)
+    # (en la practica se pasan como parametro)
+
+    s0 = (source, target)
+    h0 = heuristic(target, inv, eff_domain, free)
+    heap = [(h0, 0, s0, [s0])]
+    best = {}
+
+    while heap:
+        f, g, (node, slot), path = heapq.heappop(heap)
+
+        if slot not in all_resources:    # recurso libre
+            return path
+
+        if best.get((node, slot), float('inf')) <= g:
+            continue
+        best[(node, slot)] = g
+
+        evicted = inv.get(slot)
+        if evicted is None:
+            continue
+
+        visited = {st for _, st in path}
+        for nxt in eff_domain(evicted, visited):
+            gn = g + 1
+            hn = heuristic(nxt, inv, eff_domain, free)
+            heapq.heappush(heap, (gn + hn, gn, (evicted, nxt),
+                                  path + [(evicted, nxt)]))
+    return None
+\end{lstlisting}
+
+% =============================================================================
+\section{Comparación de Métodos}
+% =============================================================================
+
+\begin{table}[H]
+\centering
+\caption{Comparación de estrategias de búsqueda para ejection chains.}
+\label{tab:comparison}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Estrategia} &
+\textbf{¿Mín. eyectados?} &
+\textbf{Calidad solución} &
+\textbf{Memoria} &
+\textbf{Complejidad} \\
+\midrule
+BFS               & Garantizado  & Media        & $O(b^d)$    & $O(b^d)$          \\
+A* admisible      & Garantizado* & Alta         & $O(b^d)$    & $O(b^d)$ reducido \\
+DFS con límite    & No garantiza & Variable     & $O(d)$      & $O(b^d)$          \\
+Greedy local      & Subóptimo    & Alta (local) & $O(1)$      & $O(d)$            \\
+Beam Search       & Aproximado   & Alta         & $O(w)$      & $O(w \cdot d)$    \\
+\bottomrule
+\multicolumn{5}{l}{\small *Óptimo garantizado cuando la heurística es
+admisible.  $b$: factor de ramificación; $d$: profundidad; $w$: ancho del haz.}
+\end{tabular}
+\end{table}
+
+\begin{remark}
+  Para grafos con dominios grandes ($|\dom{x}| \gg 1$) y soluciones GRASP
+  densas, se recomienda \textbf{A*} con la heurística de la
+  Definición~\ref{def:heuristic} combinado con los tres niveles de poda del
+  dominio efectivo.  BFS es preferible cuando la heurística no aporta
+  discriminación suficiente.
+\end{remark}
+
+% =============================================================================
+\section{Procedimiento Completo}
+% =============================================================================
+
+El Algoritmo~\ref{alg:full} integra la construcción GRASP con la fase de
+mejora por ejection chains de longitud mínima.
+
+\begin{algorithm}[H]
+\caption{GRASP + Ejection Chains con Conjunto Eyectado Mínimo}
+\label{alg:full}
+\begin{algorithmic}[1]
+\Require Grafo bipartito $G$, función objetivo $f_{\text{obj}}$,
+         umbral $\theta$, profundidad máxima $k_{\max}$, iteraciones $I_{\max}$
+\Ensure Mejor solución $S^*$ encontrada
+\State $S^* \leftarrow \texttt{Ninguno}$
+\For{$i = 1, \ldots, I_{\max}$}
+  \State $S \leftarrow \texttt{GRASP\_Construir}(G,\, \alpha)$
+  \Comment{Fase constructiva voraz-aleatoria}
+  \State $S \leftarrow \texttt{BúsquedaLocal}(S)$
+  \Comment{Fase de búsqueda local estándar}
+  \ForEach{par $(x_0, y^*)$ candidato en $S$}
+    \State Calcular $\domk{0}{x_0}$ según~\eqref{eq:dom0}
+    \State Construir $\GE$ con dominio efectivo~\eqref{eq:filt3},
+           limitado a $k_{\max}$
+    \State $\pi \leftarrow \texttt{A*}(\GE,\; (x_0, y^*))$
+    \If{$\pi \neq \texttt{Ninguno}$}
+      \State $S' \leftarrow \texttt{AplicarCadena}(S,\, \pi)$
+      \If{$f_{\text{obj}}(S') > f_{\text{obj}}(S)$}
+        \State $S \leftarrow S'$
+      \EndIf
+    \EndIf
+  \EndFor
+  \If{$f_{\text{obj}}(S) > f_{\text{obj}}(S^*)$}
+    \State $S^* \leftarrow S$
+  \EndIf
+\EndFor
+\Return $S^*$
+\end{algorithmic}
+\end{algorithm}
+
+% =============================================================================
+\section{Ejemplo Ilustrativo}
+% =============================================================================
+
+\begin{example}
+  Sea $X = \{x_0, x_1, x_2\}$, $Y = \{a, b, c, d\}$,
+  con asignación $f(x_0) = a$, $f(x_1) = b$, $f(x_2) = c$
+  y dominio $\Nset{x_i} = Y$ para todo $i$.
+
+  Se desea mover $x_0 \to b$:
+
+  \medskip
+  \begin{center}
+  \begin{tabular}{lll}
+  \toprule
+  Paso & Acción & Estado \\
+  \midrule
+  0 & $\domk{0}{x_0} = \{b, c, d\}$ & $x_0$ quiere $b$ \\
+  1 & $b$ está ocupado por $x_1$; eyectar $x_1$ & cadena: $(x_0, b)$ \\
+  2 & $\domk{1}{x_1} \cap \domk{0}{x_0} = \{c, d\}$ & \\
+  3 & $c$ está ocupado por $x_2$; elegir $d$ (libre) & \\
+    & $x_1 \to d$ (libre $\checkmark$) & longitud $= 1$ \\
+  \midrule
+  \multicolumn{3}{l}{\textit{Reconstrucción:} $x_1 \to d$,\; $x_0 \to b$.} \\
+  \bottomrule
+  \end{tabular}
+  \end{center}
+
+  La cadena tiene longitud 1 (un solo nodo eyectado), que es el óptimo para
+  este caso.
+\end{example}
+
+% =============================================================================
+\section{Recomendaciones de Implementación}
+% =============================================================================
+
+\begin{enumerate}
+  \item \textbf{Estructura de datos.}  Mantener $f^{-1}$ como diccionario
+        inverso actualizable en $O(1)$ para calcular al eyectado en cada paso.
+
+  \item \textbf{Dominio efectivo como generador.}  Implementar
+        $\domk{k,\text{eff}}{x_k}$ como un generador Python (lazy evaluation)
+        para evitar materializar conjuntos grandes.
+
+  \item \textbf{Límite de profundidad $k_{\max}$.}  Establecer $k_{\max} \leq
+        |X|/4$ en la práctica; valores mayores rara vez aportan mejoras
+        adicionales frente al costo computacional.
+
+  \item \textbf{Ordenamiento de la cola.}  En BFS/A*, desempatar estados con
+        igual $f = g + h$ priorizando $-\Delta f_{\text{obj}}$, lo que favorece
+        cadenas simultáneamente cortas y de alta calidad.
+
+  \item \textbf{Caché de dominios.}  Si los dominios no cambian entre
+        iteraciones GRASP, almacenar $\domk{0}{x}$ para cada $x$ y
+        reutilizarlos.
+
+  \item \textbf{Paralelismo.}  Las búsquedas A* desde diferentes nodos
+        iniciales $(x_0, y^*)$ son independientes y pueden ejecutarse en
+        paralelo con \texttt{concurrent.futures}.
+\end{enumerate}
+
+% =============================================================================
+\section{Conclusiones}
+% =============================================================================
+
+Se ha presentado una formulación rigurosa para la determinación de dominios en
+ejection chains sobre grafos bipartitos construidos mediante GRASP, y se ha
+modelado el problema de la cadena de longitud mínima como un problema de camino
+más corto en el grafo de eyección $\GE$.
+
+Los principales aportes del documento son:
+
+\begin{itemize}
+  \item La condición $\domk{k}{x_k} \subseteq \domk{0}{x_0}$ como mecanismo
+        unificador del control de dominio.
+  \item Tres niveles de poda (estructural, de calidad y anti-ciclo) que reducen
+        el espacio de búsqueda sin comprometer la optimalidad.
+  \item BFS como garantía de cadena mínima con costo $O(b^d)$.
+  \item A* con heurística admisible como alternativa óptima con menor
+        exploración efectiva.
+  \item Un procedimiento completo GRASP + Ejection Chains (Algoritmo~3)
+        listo para implementar.
+\end{itemize}
+
+% =============================================================================
+% Referencias
+% =============================================================================
+\newpage
+\begin{thebibliography}{9}
+
+\bibitem{glover1991}
+  F.~Glover,
+  ``Ejection Chains, Reference Structures and Alternating Path Methods
+    for Traveling Salesman Problems,''
+  \textit{Discrete Applied Mathematics}, vol.~65, pp.~223--253, 1991.
+
+\bibitem{feo1995}
+  T.~A.~Feo y M.~G.~C.~Resende,
+  ``Greedy Randomized Adaptive Search Procedures,''
+  \textit{Journal of Global Optimization}, vol.~6, pp.~109--133, 1995.
+
+\bibitem{glover2000}
+  F.~Glover y M.~Laguna,
+  \textit{Tabu Search}.
+  Kluwer Academic Publishers, 2000.
+
+\bibitem{hart1968}
+  P.~E.~Hart, N.~J.~Nilsson y B.~Raphael,
+  ``A Formal Basis for the Heuristic Determination of Minimum Cost Paths,''
+  \textit{IEEE Transactions on Systems Science and Cybernetics},
+  vol.~SSC-4, no.~2, pp.~100--107, 1968.
+
+\bibitem{resende2016}
+  M.~G.~C.~Resende y C.~C.~Ribeiro,
+  \textit{Optimization by GRASP}.
+  Springer, 2016.
+
+\end{thebibliography}
+
+\end{document}

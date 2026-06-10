@@ -1,3 +1,36 @@
 .env
 frontend-react/node_modules/*
+frontend-react/.data/*
 js/react_build/*
+
+# Dependencias y builds regenerables
+scratch/
+**/node_modules/
+frontend-react/.vite/
+frontend-react/dist/
+frontend-react/coverage/
+frontend-react/logs/
+js/dist/
+js/.vite/
+js/.vite-temp/
+*.tsbuildinfo
+**/__pycache__/
+
+# Cache de agentes / tooling local
+**/.agents/
+**/.claude/
+skills-lock.json
+
+# Artefactos de depuración y derivados pesados (viajan por USB, no por git)
+frontend-react/solution/greedy/debug_grasp*.json
+frontend-react/solution/ml/files/df_hist.json
+frontend-react/solution/archivos_requeridos.json
+frontend-react/archivos_requeridos.json
+
+# Respaldos y temporales
+*.bak
+*.bak_*
+*.resolved
+*.log
+Thumbs.db
+desktop.ini

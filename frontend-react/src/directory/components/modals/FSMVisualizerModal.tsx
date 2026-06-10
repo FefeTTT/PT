@@ -219,7 +219,7 @@ export const FSMVisualizerModal: React.FC<Props> = ({ isOpen, onClose }) => {
                         {globalAssignmentIdx >= 0 && currentSnapshot && (
                             <div className="mt-4">
                                 <label className="form-label fw-bold">Consola de Salida / Contexto FSM (Snapshot Actual)</label>
-                                <pre className="bg-dark text-light p-3 rounded" style={{ maxHeight: '250px', overflowY: 'auto', fontSize: '13px' }}>
+                                <pre className="bg-dark text-light p-3 rounded" style={{ maxHeight: '500px', overflowY: 'auto', fontSize: '13px' }}>
                                     {JSON.stringify({
                                         profesorInfo: currentSnapshot.profesorInfo,
                                         grupoInfo: currentSnapshot.grupoInfo,

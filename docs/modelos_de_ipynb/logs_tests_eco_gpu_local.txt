@@ -1,0 +1,2416 @@
+=== Entorno pandas/GPU ===
+GPU_ACTIVA: True
+CUDF_PANDAS_RMM_MODE: async
+PANDAS_MODELO_BACKEND: pandas_cpu_para_loops
+pandas: 2.3.3
+GPU detectada: NVIDIA GeForce RTX 4070 Ti SUPER
+DATA_DIR: /data
+DF_HIST_PATH: /data/df_hist.json
+ECO_NOMBRE_PATH: /data/eco-nombre.json
+OUTPUT_DIR: /workspace/docs/modelos_de_ipynb
+
+=== Perfiles iniciales ===
+  eco                         nombre  q_horas_dia  q_ueas_bloque  q_ueas_semana  q_horas_intervalo  q_max_bloques_dia  q_total_gap_horas  q_max_gap_horas  peso_hist_reciente  n_trimestres                                                                                                                                                                                                                                                                                                                                     top_5_horarios                                                                                                                                                                                                                                                                                                                                                                                                            top_5_patrones_bloque
+10057 SANCHEZ VARGAS MARIA GUADALUPE     4.500000       2.621558       3.000000           1.835001           1.646216           4.846620         1.938648            6.569644             8                                                                                                                      M:11:30-13:00|J:11:30-13:00|V:11:30-13:00<br>M:10:00-11:30|J:10:00-11:30|V:10:00-11:30<br>M:13:00-14:30|J:13:00-14:30|V:13:00-14:30<br>L:11:30-13:00|M:11:30-13:00|J:11:30-13:00<br>L:13:00-14:30|M:13:00-14:30|J:13:00-14:30                                                                                                                                                                                                                         M:10:00-13:00#2|J:10:00-13:00#2|V:10:00-13:00#2<br>M:11:30-14:30#2|J:11:30-14:30#2|V:11:30-14:30#2<br>L:11:30-14:30#2|M:11:30-14:30#2|J:11:30-14:30#2<br>M:10:00-14:30#3|J:10:00-14:30#3|V:10:00-14:30#3
+10081 VICENTE VIDAL ARCOS ANA ISABEL     5.206573       2.000000       2.771103           3.000000           2.000000           6.469962         2.656654            3.562132             5                                                                                                                                                                                                                           L:07:00-10:00|Mi:07:00-10:00|V:07:00-10:00<br>L:10:00-13:00|Mi:10:00-13:00|V:10:00-13:00<br>Mi:07:00-08:30|V:07:00-08:30                                                                                                                                                                                                                                        L:07:00-13:00#2|Mi:07:00-13:00#2|V:07:00-13:00#2<br>L:07:00-10:00#1|Mi:07:00-10:00#1|V:07:00-10:00#1<br>L:10:00-13:00#1|Mi:07:00-08:30#1|Mi:10:00-13:00#1|V:07:00-08:30#1|V:10:00-13:00#1
+10341           RODRIGUEZ DIAZ JAIME     4.500000       2.000000       2.480363           2.366619           2.000000           8.279455         3.000000           12.915462            14                                                                                                                                                              L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30<br>L:14:30-16:00|Mi:14:30-16:00|V:14:30-16:00<br>M:16:00-18:15|J:16:00-18:15<br>L:16:00-17:30|V:16:00-17:30<br>M:13:45-16:00|J:13:45-16:00                                                                                                                                                                                    L:14:30-17:30#2|Mi:14:30-17:30#2|V:14:30-17:30#2<br>M:13:45-18:15#2|J:13:45-18:15#2<br>L:16:00-19:00#2|V:16:00-19:00#2<br>L:14:30-17:30#2|V:14:30-17:30#2<br>L:10:00-11:30#1|M:16:00-18:15#1|Mi:10:00-11:30#1|J:16:00-18:15#1|V:10:00-11:30#1
+10344      ARAGON LEZAMA JOSE ARTURO     5.712585       2.000000       3.000000           5.528048           2.000000           5.930490         3.000000           15.948340            12                                                                                                                                                             M:07:00-13:00<br>L:11:30-13:00|Mi:11:30-13:00|V:11:30-13:00<br>L:10:00-11:30|V:10:00-11:30<br>L:08:30-10:00|Mi:08:30-10:00|V:08:30-10:00<br>L:13:00-14:30|Mi:13:00-14:30|V:13:00-14:30                                                                                   L:11:30-13:00#1|M:07:00-13:00#1|Mi:11:30-13:00#1|V:11:30-13:00#1<br>L:07:00-08:30#1|L:10:00-11:30#1|M:07:00-13:00#1|V:07:00-08:30#1|V:10:00-11:30#1<br>L:08:30-11:30#1|M:07:00-13:00#1|V:08:30-11:30#1<br>L:08:30-10:00#1|M:07:00-13:00#1|Mi:08:30-10:00#1|V:08:30-10:00#1<br>L:08:30-11:30#2|M:13:00-16:00#1|Mi:08:30-11:30#2|V:08:30-11:30#2
+10345        HUERTA FLORES JOSE LUIS     3.084630       2.000000       3.000000           1.549551           2.000000           2.029768         1.046346           60.899931            30 L:16:00-17:30|M:16:00-17:30|Mi:16:00-17:30|J:16:00-17:30|V:16:00-17:30<br>L:14:30-16:00|M:14:30-16:00|Mi:14:30-16:00|V:14:30-16:00<br>L:14:30-16:00|M:14:30-16:00|Mi:14:30-16:00|J:14:30-16:00|V:14:30-16:00<br>L:13:00-14:30|M:13:00-14:30|Mi:13:00-14:30|J:13:00-14:30|V:13:00-14:30<br>L:16:00-17:30|M:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30 L:13:00-16:00#2|M:13:00-16:00#2|Mi:13:00-16:00#2|J:13:00-14:30#1|V:13:00-16:00#2<br>L:11:30-14:30#2|M:11:30-14:30#2|Mi:11:30-14:30#2|J:11:30-13:00#1|V:11:30-14:30#2<br>L:07:00-10:00#2|M:07:00-10:00#2|Mi:07:00-10:00#2|J:08:30-10:00#1|V:07:00-10:00#2<br>L:13:00-16:00#2|M:13:00-16:00#2|Mi:13:00-16:00#2|J:13:00-16:00#2|V:13:00-16:00#2<br>L:14:30-17:30#1|M:14:30-17:30#1|Mi:14:30-17:30#1|J:14:30-17:30#1|V:14:30-17:30#1
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 1/100 (  1.0%)
+Transcurrido: 33s
+ETA: 55m 01s
+Loss actual: 0.756088
+Convergencia: 0.000605567
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 2/100 (  2.0%)
+Transcurrido: 49s
+ETA: 40m 35s
+Loss actual: 0.756088
+Convergencia: 0.000597968
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 3/100 (  3.0%)
+Transcurrido: 1m 06s
+ETA: 36m 03s
+Loss actual: 0.736888
+Convergencia: 0.000806169
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 4/100 (  4.0%)
+Transcurrido: 1m 24s
+ETA: 33m 57s
+Loss actual: 0.598768
+Convergencia: 0.00109804
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 5/100 (  5.0%)
+Transcurrido: 1m 41s
+ETA: 32m 14s
+Loss actual: 0.598768
+Convergencia: 0.00259362
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 6/100 (  6.0%)
+Transcurrido: 1m 59s
+ETA: 31m 11s
+Loss actual: 0.598768
+Convergencia: 0.00310991
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 7/100 (  7.0%)
+Transcurrido: 2m 13s
+ETA: 29m 39s
+Loss actual: 0.598768
+Convergencia: 0.00368062
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 8/100 (  8.0%)
+Transcurrido: 2m 32s
+ETA: 29m 18s
+Loss actual: 0.598768
+Convergencia: 0.00445917
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 9/100 (  9.0%)
+Transcurrido: 2m 49s
+ETA: 28m 31s
+Loss actual: 0.598768
+Convergencia: 0.00487297
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 10/100 ( 10.0%)
+Transcurrido: 3m 06s
+ETA: 27m 59s
+Loss actual: 0.598768
+Convergencia: 0.00514412
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 11/100 ( 11.0%)
+Transcurrido: 3m 23s
+ETA: 27m 23s
+Loss actual: 0.598768
+Convergencia: 0.00546155
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 12/100 ( 12.0%)
+Transcurrido: 3m 39s
+ETA: 26m 46s
+Loss actual: 0.598768
+Convergencia: 0.00584971
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 13/100 ( 13.0%)
+Transcurrido: 3m 55s
+ETA: 26m 18s
+Loss actual: 0.598768
+Convergencia: 0.00683908
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 14/100 ( 14.0%)
+Transcurrido: 4m 13s
+ETA: 25m 54s
+Loss actual: 0.598768
+Convergencia: 0.00702882
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 15/100 ( 15.0%)
+Transcurrido: 4m 30s
+ETA: 25m 35s
+Loss actual: 0.588462
+Convergencia: 0.00742817
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 16/100 ( 16.0%)
+Transcurrido: 4m 50s
+ETA: 25m 26s
+Loss actual: 0.588462
+Convergencia: 0.00802232
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 17/100 ( 17.0%)
+Transcurrido: 5m 08s
+ETA: 25m 05s
+Loss actual: 0.588462
+Convergencia: 0.00823034
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 18/100 ( 18.0%)
+Transcurrido: 5m 24s
+ETA: 24m 37s
+Loss actual: 0.588462
+Convergencia: 0.00848
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 19/100 ( 19.0%)
+Transcurrido: 5m 38s
+ETA: 24m 03s
+Loss actual: 0.514020
+Convergencia: 0.00845592
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 20/100 ( 20.0%)
+Transcurrido: 5m 53s
+ETA: 23m 34s
+Loss actual: 0.514020
+Convergencia: 0.00879087
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 21/100 ( 21.0%)
+Transcurrido: 6m 09s
+ETA: 23m 09s
+Loss actual: 0.514020
+Convergencia: 0.00888126
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 22/100 ( 22.0%)
+Transcurrido: 6m 25s
+ETA: 22m 47s
+Loss actual: 0.502748
+Convergencia: 0.00840225
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 23/100 ( 23.0%)
+Transcurrido: 6m 40s
+ETA: 22m 21s
+Loss actual: 0.502748
+Convergencia: 0.00849459
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 24/100 ( 24.0%)
+Transcurrido: 6m 55s
+ETA: 21m 57s
+Loss actual: 0.502748
+Convergencia: 0.00855092
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 25/100 ( 25.0%)
+Transcurrido: 7m 11s
+ETA: 21m 34s
+Loss actual: 0.502748
+Convergencia: 0.00889843
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 26/100 ( 26.0%)
+Transcurrido: 7m 27s
+ETA: 21m 14s
+Loss actual: 0.497597
+Convergencia: 0.00860304
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 27/100 ( 27.0%)
+Transcurrido: 7m 42s
+ETA: 20m 51s
+Loss actual: 0.497597
+Convergencia: 0.00841595
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 28/100 ( 28.0%)
+Transcurrido: 7m 59s
+ETA: 20m 32s
+Loss actual: 0.480160
+Convergencia: 0.00855263
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 29/100 ( 29.0%)
+Transcurrido: 8m 14s
+ETA: 20m 11s
+Loss actual: 0.480160
+Convergencia: 0.00873131
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 30/100 ( 30.0%)
+Transcurrido: 8m 31s
+ETA: 19m 53s
+Loss actual: 0.480160
+Convergencia: 0.0087436
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 31/100 ( 31.0%)
+Transcurrido: 8m 47s
+ETA: 19m 34s
+Loss actual: 0.480160
+Convergencia: 0.00888296
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 32/100 ( 32.0%)
+Transcurrido: 9m 04s
+ETA: 19m 16s
+Loss actual: 0.480156
+Convergencia: 0.0089525
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 33/100 ( 33.0%)
+Transcurrido: 9m 22s
+ETA: 19m 01s
+Loss actual: 0.475300
+Convergencia: 0.00898069
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 34/100 ( 34.0%)
+Transcurrido: 9m 37s
+ETA: 18m 41s
+Loss actual: 0.475300
+Convergencia: 0.0092339
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 35/100 ( 35.0%)
+Transcurrido: 9m 53s
+ETA: 18m 22s
+Loss actual: 0.475300
+Convergencia: 0.00958481
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 36/100 ( 36.0%)
+Transcurrido: 10m 09s
+ETA: 18m 03s
+Loss actual: 0.475300
+Convergencia: 0.00962693
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 37/100 ( 37.0%)
+Transcurrido: 10m 26s
+ETA: 17m 46s
+Loss actual: 0.475300
+Convergencia: 0.0100105
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 38/100 ( 38.0%)
+Transcurrido: 10m 41s
+ETA: 17m 26s
+Loss actual: 0.475300
+Convergencia: 0.0102134
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 39/100 ( 39.0%)
+Transcurrido: 10m 55s
+ETA: 17m 04s
+Loss actual: 0.466223
+Convergencia: 0.00995947
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 40/100 ( 40.0%)
+Transcurrido: 11m 09s
+ETA: 16m 44s
+Loss actual: 0.466223
+Convergencia: 0.0101332
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 41/100 ( 41.0%)
+Transcurrido: 11m 23s
+ETA: 16m 23s
+Loss actual: 0.466223
+Convergencia: 0.0103964
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 42/100 ( 42.0%)
+Transcurrido: 11m 37s
+ETA: 16m 03s
+Loss actual: 0.466223
+Convergencia: 0.0106561
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 43/100 ( 43.0%)
+Transcurrido: 11m 51s
+ETA: 15m 43s
+Loss actual: 0.453303
+Convergencia: 0.0106689
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 44/100 ( 44.0%)
+Transcurrido: 12m 06s
+ETA: 15m 24s
+Loss actual: 0.453303
+Convergencia: 0.0108785
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 45/100 ( 45.0%)
+Transcurrido: 12m 21s
+ETA: 15m 05s
+Loss actual: 0.453303
+Convergencia: 0.0114906
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 46/100 ( 46.0%)
+Transcurrido: 12m 36s
+ETA: 14m 47s
+Loss actual: 0.453303
+Convergencia: 0.0120114
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 47/100 ( 47.0%)
+Transcurrido: 12m 50s
+ETA: 14m 29s
+Loss actual: 0.453303
+Convergencia: 0.0123441
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 48/100 ( 48.0%)
+Transcurrido: 13m 05s
+ETA: 14m 11s
+Loss actual: 0.453303
+Convergencia: 0.012455
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 49/100 ( 49.0%)
+Transcurrido: 13m 22s
+ETA: 13m 55s
+Loss actual: 0.452727
+Convergencia: 0.0126162
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 50/100 ( 50.0%)
+Transcurrido: 13m 36s
+ETA: 13m 36s
+Loss actual: 0.441734
+Convergencia: 0.0127579
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 51/100 ( 51.0%)
+Transcurrido: 13m 50s
+ETA: 13m 17s
+Loss actual: 0.441734
+Convergencia: 0.0129215
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 52/100 ( 52.0%)
+Transcurrido: 14m 05s
+ETA: 13m 00s
+Loss actual: 0.441734
+Convergencia: 0.0132945
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 53/100 ( 53.0%)
+Transcurrido: 14m 19s
+ETA: 12m 42s
+Loss actual: 0.436875
+Convergencia: 0.014039
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 54/100 ( 54.0%)
+Transcurrido: 14m 35s
+ETA: 12m 25s
+Loss actual: 0.436875
+Convergencia: 0.0146305
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 55/100 ( 55.0%)
+Transcurrido: 14m 51s
+ETA: 12m 09s
+Loss actual: 0.436875
+Convergencia: 0.0147758
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 56/100 ( 56.0%)
+Transcurrido: 15m 10s
+ETA: 11m 55s
+Loss actual: 0.436875
+Convergencia: 0.0150415
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 57/100 ( 57.0%)
+Transcurrido: 15m 32s
+ETA: 11m 43s
+Loss actual: 0.430596
+Convergencia: 0.0149129
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 58/100 ( 58.0%)
+Transcurrido: 15m 50s
+ETA: 11m 28s
+Loss actual: 0.430596
+Convergencia: 0.0147999
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 59/100 ( 59.0%)
+Transcurrido: 16m 06s
+ETA: 11m 11s
+Loss actual: 0.430596
+Convergencia: 0.0152923
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 60/100 ( 60.0%)
+Transcurrido: 16m 23s
+ETA: 10m 55s
+Loss actual: 0.430596
+Convergencia: 0.0153636
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 61/100 ( 61.0%)
+Transcurrido: 16m 41s
+ETA: 10m 40s
+Loss actual: 0.430596
+Convergencia: 0.0158788
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 62/100 ( 62.0%)
+Transcurrido: 16m 59s
+ETA: 10m 25s
+Loss actual: 0.430596
+Convergencia: 0.0164812
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 63/100 ( 63.0%)
+Transcurrido: 17m 17s
+ETA: 10m 09s
+Loss actual: 0.430596
+Convergencia: 0.0167485
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 64/100 ( 64.0%)
+Transcurrido: 17m 32s
+ETA: 9m 52s
+Loss actual: 0.430596
+Convergencia: 0.0168829
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 65/100 ( 65.0%)
+Transcurrido: 17m 49s
+ETA: 9m 35s
+Loss actual: 0.430596
+Convergencia: 0.0170818
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 66/100 ( 66.0%)
+Transcurrido: 18m 04s
+ETA: 9m 18s
+Loss actual: 0.430596
+Convergencia: 0.0173728
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 67/100 ( 67.0%)
+Transcurrido: 18m 18s
+ETA: 9m 01s
+Loss actual: 0.430596
+Convergencia: 0.0178607
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 68/100 ( 68.0%)
+Transcurrido: 18m 35s
+ETA: 8m 45s
+Loss actual: 0.430596
+Convergencia: 0.0180401
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 69/100 ( 69.0%)
+Transcurrido: 18m 54s
+ETA: 8m 29s
+Loss actual: 0.430596
+Convergencia: 0.0185492
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 70/100 ( 70.0%)
+Transcurrido: 19m 14s
+ETA: 8m 14s
+Loss actual: 0.430596
+Convergencia: 0.0194912
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 71/100 ( 71.0%)
+Transcurrido: 19m 34s
+ETA: 7m 59s
+Loss actual: 0.430596
+Convergencia: 0.019828
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 72/100 ( 72.0%)
+Transcurrido: 19m 54s
+ETA: 7m 44s
+Loss actual: 0.427553
+Convergencia: 0.0198438
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 73/100 ( 73.0%)
+Transcurrido: 20m 12s
+ETA: 7m 28s
+Loss actual: 0.427553
+Convergencia: 0.0202534
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 74/100 ( 74.0%)
+Transcurrido: 20m 31s
+ETA: 7m 12s
+Loss actual: 0.420477
+Convergencia: 0.0205554
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 75/100 ( 75.0%)
+Transcurrido: 20m 48s
+ETA: 6m 56s
+Loss actual: 0.420477
+Convergencia: 0.0206371
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 76/100 ( 76.0%)
+Transcurrido: 21m 07s
+ETA: 6m 40s
+Loss actual: 0.420477
+Convergencia: 0.0209449
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 77/100 ( 77.0%)
+Transcurrido: 21m 24s
+ETA: 6m 23s
+Loss actual: 0.420477
+Convergencia: 0.0212681
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 78/100 ( 78.0%)
+Transcurrido: 21m 42s
+ETA: 6m 07s
+Loss actual: 0.420477
+Convergencia: 0.0215527
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 79/100 ( 79.0%)
+Transcurrido: 22m 01s
+ETA: 5m 51s
+Loss actual: 0.417150
+Convergencia: 0.0219824
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 80/100 ( 80.0%)
+Transcurrido: 22m 20s
+ETA: 5m 35s
+Loss actual: 0.417150
+Convergencia: 0.022215
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 81/100 ( 81.0%)
+Transcurrido: 22m 39s
+ETA: 5m 18s
+Loss actual: 0.417150
+Convergencia: 0.0218624
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 82/100 ( 82.0%)
+Transcurrido: 22m 58s
+ETA: 5m 02s
+Loss actual: 0.417150
+Convergencia: 0.0219507
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 83/100 ( 83.0%)
+Transcurrido: 23m 16s
+ETA: 4m 46s
+Loss actual: 0.411919
+Convergencia: 0.0223588
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 84/100 ( 84.0%)
+Transcurrido: 23m 34s
+ETA: 4m 29s
+Loss actual: 0.411919
+Convergencia: 0.0227382
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 85/100 ( 85.0%)
+Transcurrido: 23m 53s
+ETA: 4m 12s
+Loss actual: 0.411919
+Convergencia: 0.0239389
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 86/100 ( 86.0%)
+Transcurrido: 24m 12s
+ETA: 3m 56s
+Loss actual: 0.411919
+Convergencia: 0.0245158
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 87/100 ( 87.0%)
+Transcurrido: 24m 30s
+ETA: 3m 39s
+Loss actual: 0.411919
+Convergencia: 0.0250064
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 88/100 ( 88.0%)
+Transcurrido: 24m 48s
+ETA: 3m 23s
+Loss actual: 0.411919
+Convergencia: 0.025822
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 89/100 ( 89.0%)
+Transcurrido: 25m 07s
+ETA: 3m 06s
+Loss actual: 0.411919
+Convergencia: 0.0270077
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 90/100 ( 90.0%)
+Transcurrido: 25m 24s
+ETA: 2m 49s
+Loss actual: 0.411919
+Convergencia: 0.0271601
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 91/100 ( 91.0%)
+Transcurrido: 25m 43s
+ETA: 2m 32s
+Loss actual: 0.411919
+Convergencia: 0.028028
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 92/100 ( 92.0%)
+Transcurrido: 26m 00s
+ETA: 2m 15s
+Loss actual: 0.411919
+Convergencia: 0.0281841
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 93/100 ( 93.0%)
+Transcurrido: 26m 16s
+ETA: 1m 58s
+Loss actual: 0.411919
+Convergencia: 0.029088
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 94/100 ( 94.0%)
+Transcurrido: 26m 31s
+ETA: 1m 41s
+Loss actual: 0.411919
+Convergencia: 0.0295481
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 95/100 ( 95.0%)
+Transcurrido: 26m 47s
+ETA: 1m 24s
+Loss actual: 0.411919
+Convergencia: 0.0301295
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 96/100 ( 96.0%)
+Transcurrido: 27m 10s
+ETA: 1m 07s
+Loss actual: 0.411919
+Convergencia: 0.0309284
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 97/100 ( 97.0%)
+Transcurrido: 27m 29s
+ETA: 51s
+Loss actual: 0.411919
+Convergencia: 0.0317041
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 98/100 ( 98.0%)
+Transcurrido: 27m 46s
+ETA: 34s
+Loss actual: 0.411919
+Convergencia: 0.0320679
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 99/100 ( 99.0%)
+Transcurrido: 28m 04s
+ETA: 17s
+Loss actual: 0.411840
+Convergencia: 0.0319549
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 100/100 (100.0%)
+Transcurrido: 28m 20s
+ETA: 0s
+Loss actual: 0.411840
+Convergencia: 0.0326969
+[2K[2KFine tuning: semanal / differential_evolution
+Progreso: 100/100 (100.0%)
+Transcurrido: 28m 20s
+ETA: 0s
+Loss actual: 0.411840
+Etapa completada.
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 1/350 (  0.3%)
+Transcurrido: 3s
+ETA: 17m 42s
+Loss actual: 0.410668
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 2/350 (  0.6%)
+Transcurrido: 3s
+ETA: 11m 31s
+Loss actual: 0.409651
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 3/350 (  0.9%)
+Transcurrido: 4s
+ETA: 9m 31s
+Loss actual: 0.409528
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 4/350 (  1.1%)
+Transcurrido: 6s
+ETA: 8m 42s
+Loss actual: 0.409303
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 5/350 (  1.4%)
+Transcurrido: 7s
+ETA: 8m 04s
+Loss actual: 0.408523
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 6/350 (  1.7%)
+Transcurrido: 7s
+ETA: 7m 34s
+Loss actual: 0.407644
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 7/350 (  2.0%)
+Transcurrido: 9s
+ETA: 7m 23s
+Loss actual: 0.404870
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 8/350 (  2.3%)
+Transcurrido: 9s
+ETA: 7m 06s
+Loss actual: 0.404242
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 9/350 (  2.6%)
+Transcurrido: 10s
+ETA: 6m 46s
+Loss actual: 0.403930
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 10/350 (  2.9%)
+Transcurrido: 11s
+ETA: 6m 31s
+Loss actual: 0.403614
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 11/350 (  3.1%)
+Transcurrido: 12s
+ETA: 6m 17s
+Loss actual: 0.403209
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 12/350 (  3.4%)
+Transcurrido: 12s
+ETA: 6m 05s
+Loss actual: 0.402728
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 13/350 (  3.7%)
+Transcurrido: 13s
+ETA: 5m 57s
+Loss actual: 0.401857
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 14/350 (  4.0%)
+Transcurrido: 14s
+ETA: 5m 49s
+Loss actual: 0.400293
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 15/350 (  4.3%)
+Transcurrido: 15s
+ETA: 5m 42s
+Loss actual: 0.400244
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 16/350 (  4.6%)
+Transcurrido: 16s
+ETA: 5m 38s
+Loss actual: 0.399620
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 17/350 (  4.9%)
+Transcurrido: 17s
+ETA: 5m 34s
+Loss actual: 0.399224
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 18/350 (  5.1%)
+Transcurrido: 18s
+ETA: 5m 32s
+Loss actual: 0.398761
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 19/350 (  5.4%)
+Transcurrido: 19s
+ETA: 5m 31s
+Loss actual: 0.398347
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 20/350 (  5.7%)
+Transcurrido: 19s
+ETA: 5m 29s
+Loss actual: 0.396678
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 21/350 (  6.0%)
+Transcurrido: 20s
+ETA: 5m 28s
+Loss actual: 0.395648
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 22/350 (  6.3%)
+Transcurrido: 21s
+ETA: 5m 26s
+Loss actual: 0.395576
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 23/350 (  6.6%)
+Transcurrido: 22s
+ETA: 5m 25s
+Loss actual: 0.395502
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 24/350 (  6.9%)
+Transcurrido: 24s
+ETA: 5m 35s
+Loss actual: 0.395479
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 25/350 (  7.1%)
+Transcurrido: 25s
+ETA: 5m 33s
+Loss actual: 0.395402
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 26/350 (  7.4%)
+Transcurrido: 27s
+ETA: 5m 41s
+Loss actual: 0.395368
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 27/350 (  7.7%)
+Transcurrido: 28s
+ETA: 5m 38s
+Loss actual: 0.395323
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 28/350 (  8.0%)
+Transcurrido: 29s
+ETA: 5m 36s
+Loss actual: 0.395300
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 29/350 (  8.3%)
+Transcurrido: 30s
+ETA: 5m 33s
+Loss actual: 0.395259
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 30/350 (  8.6%)
+Transcurrido: 31s
+ETA: 5m 32s
+Loss actual: 0.395214
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 31/350 (  8.9%)
+Transcurrido: 32s
+ETA: 5m 30s
+Loss actual: 0.395133
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 32/350 (  9.1%)
+Transcurrido: 34s
+ETA: 5m 45s
+Loss actual: 0.395128
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 33/350 (  9.4%)
+Transcurrido: 35s
+ETA: 5m 43s
+Loss actual: 0.395099
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 34/350 (  9.7%)
+Transcurrido: 36s
+ETA: 5m 41s
+Loss actual: 0.394958
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 35/350 ( 10.0%)
+Transcurrido: 37s
+ETA: 5m 39s
+Loss actual: 0.394567
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 36/350 ( 10.3%)
+Transcurrido: 39s
+ETA: 5m 45s
+Loss actual: 0.394443
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 37/350 ( 10.6%)
+Transcurrido: 41s
+ETA: 5m 51s
+Loss actual: 0.394199
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 38/350 ( 10.9%)
+Transcurrido: 42s
+ETA: 5m 48s
+Loss actual: 0.392947
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 39/350 ( 11.1%)
+Transcurrido: 44s
+ETA: 5m 53s
+Loss actual: 0.392428
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 40/350 ( 11.4%)
+Transcurrido: 45s
+ETA: 5m 51s
+Loss actual: 0.392315
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 41/350 ( 11.7%)
+Transcurrido: 46s
+ETA: 5m 49s
+Loss actual: 0.392208
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 42/350 ( 12.0%)
+Transcurrido: 47s
+ETA: 5m 46s
+Loss actual: 0.392070
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 43/350 ( 12.3%)
+Transcurrido: 48s
+ETA: 5m 43s
+Loss actual: 0.391881
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 44/350 ( 12.6%)
+Transcurrido: 49s
+ETA: 5m 41s
+Loss actual: 0.391692
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 45/350 ( 12.9%)
+Transcurrido: 49s
+ETA: 5m 38s
+Loss actual: 0.391569
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 46/350 ( 13.1%)
+Transcurrido: 50s
+ETA: 5m 36s
+Loss actual: 0.391532
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 47/350 ( 13.4%)
+Transcurrido: 51s
+ETA: 5m 35s
+Loss actual: 0.391527
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 48/350 ( 13.7%)
+Transcurrido: 53s
+ETA: 5m 33s
+Loss actual: 0.391520
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 49/350 ( 14.0%)
+Transcurrido: 54s
+ETA: 5m 37s
+Loss actual: 0.391472
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 50/350 ( 14.3%)
+Transcurrido: 55s
+ETA: 5m 35s
+Loss actual: 0.391170
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 51/350 ( 14.6%)
+Transcurrido: 56s
+ETA: 5m 33s
+Loss actual: 0.391001
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 52/350 ( 14.9%)
+Transcurrido: 58s
+ETA: 5m 36s
+Loss actual: 0.390736
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 53/350 ( 15.1%)
+Transcurrido: 1m 00s
+ETA: 5m 39s
+Loss actual: 0.390693
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 54/350 ( 15.4%)
+Transcurrido: 1m 02s
+ETA: 5m 43s
+Loss actual: 0.390651
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 55/350 ( 15.7%)
+Transcurrido: 1m 04s
+ETA: 5m 46s
+Loss actual: 0.390594
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 56/350 ( 16.0%)
+Transcurrido: 1m 05s
+ETA: 5m 43s
+Loss actual: 0.390567
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 57/350 ( 16.3%)
+Transcurrido: 1m 06s
+ETA: 5m 41s
+Loss actual: 0.390558
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 58/350 ( 16.6%)
+Transcurrido: 1m 07s
+ETA: 5m 39s
+Loss actual: 0.390530
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 59/350 ( 16.9%)
+Transcurrido: 1m 09s
+ETA: 5m 41s
+Loss actual: 0.390528
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 60/350 ( 17.1%)
+Transcurrido: 1m 14s
+ETA: 6m 00s
+Loss actual: 0.390524
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 61/350 ( 17.4%)
+Transcurrido: 1m 18s
+ETA: 6m 11s
+Loss actual: 0.390524
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 62/350 ( 17.7%)
+Transcurrido: 1m 22s
+ETA: 6m 21s
+Loss actual: 0.390523
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 63/350 ( 18.0%)
+Transcurrido: 1m 23s
+ETA: 6m 19s
+Loss actual: 0.390520
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 64/350 ( 18.3%)
+Transcurrido: 1m 25s
+ETA: 6m 21s
+Loss actual: 0.390518
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 65/350 ( 18.6%)
+Transcurrido: 1m 26s
+ETA: 6m 18s
+Loss actual: 0.390516
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 66/350 ( 18.9%)
+Transcurrido: 1m 27s
+ETA: 6m 15s
+Loss actual: 0.390511
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 67/350 ( 19.1%)
+Transcurrido: 1m 28s
+ETA: 6m 12s
+Loss actual: 0.390507
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 68/350 ( 19.4%)
+Transcurrido: 1m 28s
+ETA: 6m 08s
+Loss actual: 0.390504
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 69/350 ( 19.7%)
+Transcurrido: 1m 29s
+ETA: 6m 04s
+Loss actual: 0.390504
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 70/350 ( 20.0%)
+Transcurrido: 1m 30s
+ETA: 6m 00s
+Loss actual: 0.390502
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 71/350 ( 20.3%)
+Transcurrido: 1m 33s
+ETA: 6m 06s
+Loss actual: 0.390502
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 72/350 ( 20.6%)
+Transcurrido: 1m 34s
+ETA: 6m 03s
+Loss actual: 0.390500
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 73/350 ( 20.9%)
+Transcurrido: 1m 36s
+ETA: 6m 06s
+Loss actual: 0.390499
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 74/350 ( 21.1%)
+Transcurrido: 1m 37s
+ETA: 6m 03s
+Loss actual: 0.390498
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 75/350 ( 21.4%)
+Transcurrido: 1m 38s
+ETA: 6m 02s
+Loss actual: 0.390470
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 76/350 ( 21.7%)
+Transcurrido: 1m 40s
+ETA: 6m 03s
+Loss actual: 0.390429
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 77/350 ( 22.0%)
+Transcurrido: 1m 41s
+ETA: 6m 00s
+Loss actual: 0.390328
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 78/350 ( 22.3%)
+Transcurrido: 1m 44s
+ETA: 6m 03s
+Loss actual: 0.390240
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 79/350 ( 22.6%)
+Transcurrido: 1m 46s
+ETA: 6m 04s
+Loss actual: 0.390223
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 80/350 ( 22.9%)
+Transcurrido: 1m 47s
+ETA: 6m 04s
+Loss actual: 0.390197
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 81/350 ( 23.1%)
+Transcurrido: 1m 49s
+ETA: 6m 04s
+Loss actual: 0.390179
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 82/350 ( 23.4%)
+Transcurrido: 1m 51s
+ETA: 6m 04s
+Loss actual: 0.390173
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 83/350 ( 23.7%)
+Transcurrido: 1m 56s
+ETA: 6m 14s
+Loss actual: 0.390173
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 84/350 ( 24.0%)
+Transcurrido: 1m 58s
+ETA: 6m 13s
+Loss actual: 0.390168
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 85/350 ( 24.3%)
+Transcurrido: 1m 58s
+ETA: 6m 10s
+Loss actual: 0.390167
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 86/350 ( 24.6%)
+Transcurrido: 1m 59s
+ETA: 6m 07s
+Loss actual: 0.390155
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 87/350 ( 24.9%)
+Transcurrido: 2m 02s
+ETA: 6m 09s
+Loss actual: 0.390151
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 88/350 ( 25.1%)
+Transcurrido: 2m 07s
+ETA: 6m 18s
+Loss actual: 0.390147
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 89/350 ( 25.4%)
+Transcurrido: 2m 13s
+ETA: 6m 32s
+Loss actual: 0.390147
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 90/350 ( 25.7%)
+Transcurrido: 2m 39s
+ETA: 7m 40s
+Loss actual: 0.390146
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 91/350 ( 26.0%)
+Transcurrido: 2m 43s
+ETA: 7m 46s
+Loss actual: 0.390146
+[2K[2KFine tuning: semanal / L-BFGS-B
+Progreso: 91/350 ( 26.0%)
+Transcurrido: 2m 43s
+ETA: 7m 46s
+Loss actual: 0.390146
+Etapa completada.
+Mejores parametros encontrados:
+                              metodo  ...  habit_max_weight
+0  differential_evolution + L-BFGS-B  ...          0.593595
+
+[1 rows x 23 columns]
+Comparacion contra targets:
+<pandas.io.formats.style.Styler object at 0x7b3616720050>
+MAE semanal: 0.17403022743470087
+RMSE semanal: 0.267850418301584
+Max abs error semanal: 0.6408892749083266
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 1/35 (  2.9%)
+Transcurrido: 24s
+ETA: 13m 58s
+Loss actual: 0.255198
+Convergencia: 0.00299362
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 2/35 (  5.7%)
+Transcurrido: 37s
+ETA: 10m 10s
+Loss actual: 0.236307
+Convergencia: 0.0023106
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 3/35 (  8.6%)
+Transcurrido: 49s
+ETA: 8m 51s
+Loss actual: 0.158598
+Convergencia: 0.00224483
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 4/35 ( 11.4%)
+Transcurrido: 1m 03s
+ETA: 8m 08s
+Loss actual: 0.084338
+Convergencia: 0.00221524
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 5/35 ( 14.3%)
+Transcurrido: 1m 16s
+ETA: 7m 36s
+Loss actual: 0.084338
+Convergencia: 0.00212018
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 6/35 ( 17.1%)
+Transcurrido: 1m 28s
+ETA: 7m 06s
+Loss actual: 0.084338
+Convergencia: 0.00192935
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 7/35 ( 20.0%)
+Transcurrido: 1m 40s
+ETA: 6m 41s
+Loss actual: 0.084338
+Convergencia: 0.00182888
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 8/35 ( 22.9%)
+Transcurrido: 1m 53s
+ETA: 6m 23s
+Loss actual: 0.079273
+Convergencia: 0.00189361
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 9/35 ( 25.7%)
+Transcurrido: 2m 05s
+ETA: 6m 03s
+Loss actual: 0.061309
+Convergencia: 0.00181381
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 10/35 ( 28.6%)
+Transcurrido: 2m 18s
+ETA: 5m 46s
+Loss actual: 0.061309
+Convergencia: 0.00166629
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 11/35 ( 31.4%)
+Transcurrido: 2m 30s
+ETA: 5m 29s
+Loss actual: 0.061309
+Convergencia: 0.0016958
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 12/35 ( 34.3%)
+Transcurrido: 2m 42s
+ETA: 5m 12s
+Loss actual: 0.061309
+Convergencia: 0.00182537
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 13/35 ( 37.1%)
+Transcurrido: 2m 56s
+ETA: 4m 58s
+Loss actual: 0.061309
+Convergencia: 0.0020951
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 14/35 ( 40.0%)
+Transcurrido: 3m 08s
+ETA: 4m 43s
+Loss actual: 0.054666
+Convergencia: 0.00211458
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 15/35 ( 42.9%)
+Transcurrido: 3m 21s
+ETA: 4m 28s
+Loss actual: 0.040143
+Convergencia: 0.00207214
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 16/35 ( 45.7%)
+Transcurrido: 3m 33s
+ETA: 4m 13s
+Loss actual: 0.040143
+Convergencia: 0.00203018
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 17/35 ( 48.6%)
+Transcurrido: 3m 46s
+ETA: 3m 59s
+Loss actual: 0.040143
+Convergencia: 0.00266322
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 18/35 ( 51.4%)
+Transcurrido: 3m 58s
+ETA: 3m 45s
+Loss actual: 0.040143
+Convergencia: 0.00314153
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 19/35 ( 54.3%)
+Transcurrido: 4m 11s
+ETA: 3m 31s
+Loss actual: 0.040143
+Convergencia: 0.00389311
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 20/35 ( 57.1%)
+Transcurrido: 4m 23s
+ETA: 3m 17s
+Loss actual: 0.040143
+Convergencia: 0.00398858
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 21/35 ( 60.0%)
+Transcurrido: 4m 35s
+ETA: 3m 03s
+Loss actual: 0.040143
+Convergencia: 0.00458069
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 22/35 ( 62.9%)
+Transcurrido: 4m 47s
+ETA: 2m 50s
+Loss actual: 0.040143
+Convergencia: 0.00462743
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 23/35 ( 65.7%)
+Transcurrido: 4m 59s
+ETA: 2m 36s
+Loss actual: 0.040143
+Convergencia: 0.00472489
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 24/35 ( 68.6%)
+Transcurrido: 5m 12s
+ETA: 2m 23s
+Loss actual: 0.040143
+Convergencia: 0.00494543
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 25/35 ( 71.4%)
+Transcurrido: 5m 25s
+ETA: 2m 10s
+Loss actual: 0.036814
+Convergencia: 0.00500756
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 26/35 ( 74.3%)
+Transcurrido: 5m 37s
+ETA: 1m 56s
+Loss actual: 0.036814
+Convergencia: 0.00487365
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 27/35 ( 77.1%)
+Transcurrido: 5m 49s
+ETA: 1m 43s
+Loss actual: 0.033945
+Convergencia: 0.00444493
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 28/35 ( 80.0%)
+Transcurrido: 6m 02s
+ETA: 1m 30s
+Loss actual: 0.033945
+Convergencia: 0.00459778
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 29/35 ( 82.9%)
+Transcurrido: 6m 16s
+ETA: 1m 17s
+Loss actual: 0.033470
+Convergencia: 0.00450863
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 30/35 ( 85.7%)
+Transcurrido: 6m 29s
+ETA: 1m 04s
+Loss actual: 0.033470
+Convergencia: 0.0046309
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 31/35 ( 88.6%)
+Transcurrido: 6m 43s
+ETA: 52s
+Loss actual: 0.031949
+Convergencia: 0.00451237
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 32/35 ( 91.4%)
+Transcurrido: 6m 57s
+ETA: 39s
+Loss actual: 0.031949
+Convergencia: 0.00448156
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 33/35 ( 94.3%)
+Transcurrido: 7m 10s
+ETA: 26s
+Loss actual: 0.030239
+Convergencia: 0.00473338
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 34/35 ( 97.1%)
+Transcurrido: 7m 25s
+ETA: 13s
+Loss actual: 0.030239
+Convergencia: 0.00506245
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 35/35 (100.0%)
+Transcurrido: 7m 39s
+ETA: 0s
+Loss actual: 0.029378
+Convergencia: 0.0051505
+[2K[2KFine tuning: bloques / differential_evolution
+Progreso: 35/35 (100.0%)
+Transcurrido: 7m 39s
+ETA: 0s
+Loss actual: 0.029378
+Etapa completada.
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 1/250 (  0.4%)
+Transcurrido: 4s
+ETA: 17m 50s
+Loss actual: 0.027514
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 2/250 (  0.8%)
+Transcurrido: 6s
+ETA: 12m 27s
+Loss actual: 0.024549
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 3/250 (  1.2%)
+Transcurrido: 9s
+ETA: 12m 26s
+Loss actual: 0.023415
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 4/250 (  1.6%)
+Transcurrido: 10s
+ETA: 10m 48s
+Loss actual: 0.021982
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 5/250 (  2.0%)
+Transcurrido: 13s
+ETA: 10m 51s
+Loss actual: 0.021661
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 6/250 (  2.4%)
+Transcurrido: 16s
+ETA: 10m 52s
+Loss actual: 0.021399
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 7/250 (  2.8%)
+Transcurrido: 18s
+ETA: 10m 52s
+Loss actual: 0.021263
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 8/250 (  3.2%)
+Transcurrido: 21s
+ETA: 10m 55s
+Loss actual: 0.021177
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 9/250 (  3.6%)
+Transcurrido: 24s
+ETA: 10m 53s
+Loss actual: 0.021122
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 10/250 (  4.0%)
+Transcurrido: 27s
+ETA: 11m 03s
+Loss actual: 0.021094
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 11/250 (  4.4%)
+Transcurrido: 30s
+ETA: 11m 06s
+Loss actual: 0.021072
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 12/250 (  4.8%)
+Transcurrido: 33s
+ETA: 11m 08s
+Loss actual: 0.021060
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 13/250 (  5.2%)
+Transcurrido: 36s
+ETA: 11m 07s
+Loss actual: 0.021057
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 14/250 (  5.6%)
+Transcurrido: 39s
+ETA: 11m 07s
+Loss actual: 0.021053
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 15/250 (  6.0%)
+Transcurrido: 42s
+ETA: 11m 11s
+Loss actual: 0.021052
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 16/250 (  6.4%)
+Transcurrido: 45s
+ETA: 11m 10s
+Loss actual: 0.021051
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 17/250 (  6.8%)
+Transcurrido: 48s
+ETA: 11m 07s
+Loss actual: 0.021051
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 18/250 (  7.2%)
+Transcurrido: 51s
+ETA: 11m 04s
+Loss actual: 0.021050
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 19/250 (  7.6%)
+Transcurrido: 54s
+ETA: 11m 00s
+Loss actual: 0.021050
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 20/250 (  8.0%)
+Transcurrido: 57s
+ETA: 10m 56s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 21/250 (  8.4%)
+Transcurrido: 59s
+ETA: 10m 54s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 22/250 (  8.8%)
+Transcurrido: 1m 02s
+ETA: 10m 50s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 23/250 (  9.2%)
+Transcurrido: 1m 05s
+ETA: 10m 47s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 24/250 (  9.6%)
+Transcurrido: 1m 08s
+ETA: 10m 44s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 25/250 ( 10.0%)
+Transcurrido: 1m 11s
+ETA: 10m 41s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 26/250 ( 10.4%)
+Transcurrido: 1m 14s
+ETA: 10m 38s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 27/250 ( 10.8%)
+Transcurrido: 1m 16s
+ETA: 10m 34s
+Loss actual: 0.021049
+[2K[2KFine tuning: bloques / L-BFGS-B
+Progreso: 27/250 ( 10.8%)
+Transcurrido: 1m 16s
+ETA: 10m 34s
+Loss actual: 0.021049
+Etapa completada.
+Mejores parametros de bloques historicos:
+                              metodo  ...  exponente_rareza_bloques
+0  differential_evolution + L-BFGS-B  ...                    2.9354
+
+[1 rows x 14 columns]
+Comparacion contra targets de bloques:
+<pandas.io.formats.style.Styler object at 0x7b3616cc0e10>
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 1/450 (  0.2%)
+Transcurrido: 12s
+ETA: 1h 29m 49s
+Loss actual: 0.211552
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 2/450 (  0.4%)
+Transcurrido: 16s
+ETA: 59m 58s
+Loss actual: 0.211220
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 3/450 (  0.7%)
+Transcurrido: 20s
+ETA: 50m 14s
+Loss actual: 0.211216
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 4/450 (  0.9%)
+Transcurrido: 32s
+ETA: 1h 00m 55s
+Loss actual: 0.211122
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 5/450 (  1.1%)
+Transcurrido: 36s
+ETA: 54m 38s
+Loss actual: 0.211094
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 6/450 (  1.3%)
+Transcurrido: 40s
+ETA: 50m 21s
+Loss actual: 0.210992
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 7/450 (  1.6%)
+Transcurrido: 44s
+ETA: 47m 15s
+Loss actual: 0.210749
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 8/450 (  1.8%)
+Transcurrido: 48s
+ETA: 44m 57s
+Loss actual: 0.210534
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 9/450 (  2.0%)
+Transcurrido: 52s
+ETA: 43m 11s
+Loss actual: 0.210406
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 10/450 (  2.2%)
+Transcurrido: 56s
+ETA: 41m 40s
+Loss actual: 0.210174
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 11/450 (  2.4%)
+Transcurrido: 1m 00s
+ETA: 40m 28s
+Loss actual: 0.209960
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 12/450 (  2.7%)
+Transcurrido: 1m 04s
+ETA: 39m 28s
+Loss actual: 0.209753
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 13/450 (  2.9%)
+Transcurrido: 1m 08s
+ETA: 38m 36s
+Loss actual: 0.209669
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 14/450 (  3.1%)
+Transcurrido: 1m 12s
+ETA: 37m 47s
+Loss actual: 0.209509
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 15/450 (  3.3%)
+Transcurrido: 1m 16s
+ETA: 37m 09s
+Loss actual: 0.209391
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 16/450 (  3.6%)
+Transcurrido: 1m 21s
+ETA: 36m 37s
+Loss actual: 0.209366
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 17/450 (  3.8%)
+Transcurrido: 1m 24s
+ETA: 36m 03s
+Loss actual: 0.209322
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 18/450 (  4.0%)
+Transcurrido: 1m 32s
+ETA: 37m 10s
+Loss actual: 0.209316
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 19/450 (  4.2%)
+Transcurrido: 1m 37s
+ETA: 36m 51s
+Loss actual: 0.209301
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 20/450 (  4.4%)
+Transcurrido: 1m 45s
+ETA: 37m 47s
+Loss actual: 0.209266
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 21/450 (  4.7%)
+Transcurrido: 1m 49s
+ETA: 37m 15s
+Loss actual: 0.209258
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 22/450 (  4.9%)
+Transcurrido: 1m 57s
+ETA: 38m 05s
+Loss actual: 0.209251
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 23/450 (  5.1%)
+Transcurrido: 2m 17s
+ETA: 42m 28s
+Loss actual: 0.209240
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 24/450 (  5.3%)
+Transcurrido: 2m 21s
+ETA: 41m 49s
+Loss actual: 0.209215
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 25/450 (  5.6%)
+Transcurrido: 2m 25s
+ETA: 41m 11s
+Loss actual: 0.209214
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 26/450 (  5.8%)
+Transcurrido: 2m 29s
+ETA: 40m 37s
+Loss actual: 0.209211
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 27/450 (  6.0%)
+Transcurrido: 3m 05s
+ETA: 48m 28s
+Loss actual: 0.209200
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 28/450 (  6.2%)
+Transcurrido: 3m 44s
+ETA: 56m 27s
+Loss actual: 0.209199
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 29/450 (  6.4%)
+Transcurrido: 3m 49s
+ETA: 55m 32s
+Loss actual: 0.209194
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 30/450 (  6.7%)
+Transcurrido: 3m 53s
+ETA: 54m 30s
+Loss actual: 0.209191
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 31/450 (  6.9%)
+Transcurrido: 3m 57s
+ETA: 53m 31s
+Loss actual: 0.209186
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 32/450 (  7.1%)
+Transcurrido: 4m 05s
+ETA: 53m 26s
+Loss actual: 0.209186
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 33/450 (  7.3%)
+Transcurrido: 4m 09s
+ETA: 52m 31s
+Loss actual: 0.209182
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 34/450 (  7.6%)
+Transcurrido: 4m 13s
+ETA: 51m 40s
+Loss actual: 0.209180
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 35/450 (  7.8%)
+Transcurrido: 4m 21s
+ETA: 51m 38s
+Loss actual: 0.209169
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 36/450 (  8.0%)
+Transcurrido: 4m 25s
+ETA: 50m 51s
+Loss actual: 0.209156
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 37/450 (  8.2%)
+Transcurrido: 4m 29s
+ETA: 50m 06s
+Loss actual: 0.209097
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 38/450 (  8.4%)
+Transcurrido: 4m 37s
+ETA: 50m 04s
+Loss actual: 0.209066
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 39/450 (  8.7%)
+Transcurrido: 4m 40s
+ETA: 49m 21s
+Loss actual: 0.209053
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 40/450 (  8.9%)
+Transcurrido: 4m 45s
+ETA: 48m 42s
+Loss actual: 0.209052
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 41/450 (  9.1%)
+Transcurrido: 4m 49s
+ETA: 48m 03s
+Loss actual: 0.209034
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 42/450 (  9.3%)
+Transcurrido: 4m 57s
+ETA: 48m 14s
+Loss actual: 0.209027
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 43/450 (  9.6%)
+Transcurrido: 5m 01s
+ETA: 47m 37s
+Loss actual: 0.209012
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 44/450 (  9.8%)
+Transcurrido: 5m 05s
+ETA: 47m 03s
+Loss actual: 0.209012
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 45/450 ( 10.0%)
+Transcurrido: 5m 09s
+ETA: 46m 29s
+Loss actual: 0.208994
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 46/450 ( 10.2%)
+Transcurrido: 5m 13s
+ETA: 45m 57s
+Loss actual: 0.208990
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 47/450 ( 10.4%)
+Transcurrido: 5m 18s
+ETA: 45m 28s
+Loss actual: 0.208979
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 48/450 ( 10.7%)
+Transcurrido: 5m 22s
+ETA: 45m 01s
+Loss actual: 0.208941
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 49/450 ( 10.9%)
+Transcurrido: 5m 30s
+ETA: 45m 06s
+Loss actual: 0.208934
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 50/450 ( 11.1%)
+Transcurrido: 5m 38s
+ETA: 45m 10s
+Loss actual: 0.208927
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 51/450 ( 11.3%)
+Transcurrido: 5m 42s
+ETA: 44m 42s
+Loss actual: 0.208921
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 52/450 ( 11.6%)
+Transcurrido: 5m 46s
+ETA: 44m 15s
+Loss actual: 0.208916
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 53/450 ( 11.8%)
+Transcurrido: 5m 54s
+ETA: 44m 17s
+Loss actual: 0.208916
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 54/450 ( 12.0%)
+Transcurrido: 5m 59s
+ETA: 43m 54s
+Loss actual: 0.208913
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 55/450 ( 12.2%)
+Transcurrido: 6m 03s
+ETA: 43m 29s
+Loss actual: 0.208909
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 56/450 ( 12.4%)
+Transcurrido: 6m 07s
+ETA: 43m 04s
+Loss actual: 0.208904
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 57/450 ( 12.7%)
+Transcurrido: 6m 11s
+ETA: 42m 40s
+Loss actual: 0.208881
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 58/450 ( 12.9%)
+Transcurrido: 6m 15s
+ETA: 42m 17s
+Loss actual: 0.208781
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 59/450 ( 13.1%)
+Transcurrido: 6m 19s
+ETA: 41m 53s
+Loss actual: 0.208672
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 60/450 ( 13.3%)
+Transcurrido: 6m 27s
+ETA: 41m 57s
+Loss actual: 0.208622
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 61/450 ( 13.6%)
+Transcurrido: 6m 31s
+ETA: 41m 34s
+Loss actual: 0.208567
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 62/450 ( 13.8%)
+Transcurrido: 6m 35s
+ETA: 41m 12s
+Loss actual: 0.208490
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 63/450 ( 14.0%)
+Transcurrido: 6m 39s
+ETA: 40m 51s
+Loss actual: 0.208439
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 64/450 ( 14.2%)
+Transcurrido: 6m 43s
+ETA: 40m 31s
+Loss actual: 0.208421
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 65/450 ( 14.4%)
+Transcurrido: 6m 47s
+ETA: 40m 13s
+Loss actual: 0.208409
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 66/450 ( 14.7%)
+Transcurrido: 6m 51s
+ETA: 39m 54s
+Loss actual: 0.208395
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 67/450 ( 14.9%)
+Transcurrido: 6m 55s
+ETA: 39m 35s
+Loss actual: 0.208372
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 68/450 ( 15.1%)
+Transcurrido: 6m 59s
+ETA: 39m 16s
+Loss actual: 0.208366
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 69/450 ( 15.3%)
+Transcurrido: 7m 03s
+ETA: 38m 59s
+Loss actual: 0.208355
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 70/450 ( 15.6%)
+Transcurrido: 7m 08s
+ETA: 38m 44s
+Loss actual: 0.208352
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 71/450 ( 15.8%)
+Transcurrido: 7m 12s
+ETA: 38m 26s
+Loss actual: 0.208346
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 72/450 ( 16.0%)
+Transcurrido: 7m 20s
+ETA: 38m 30s
+Loss actual: 0.208343
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 73/450 ( 16.2%)
+Transcurrido: 7m 27s
+ETA: 38m 32s
+Loss actual: 0.208341
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 74/450 ( 16.4%)
+Transcurrido: 7m 31s
+ETA: 38m 16s
+Loss actual: 0.208340
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 75/450 ( 16.7%)
+Transcurrido: 7m 35s
+ETA: 37m 58s
+Loss actual: 0.208337
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 76/450 ( 16.9%)
+Transcurrido: 7m 39s
+ETA: 37m 42s
+Loss actual: 0.208330
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 77/450 ( 17.1%)
+Transcurrido: 7m 43s
+ETA: 37m 26s
+Loss actual: 0.208321
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 78/450 ( 17.3%)
+Transcurrido: 7m 47s
+ETA: 37m 10s
+Loss actual: 0.208309
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 79/450 ( 17.6%)
+Transcurrido: 7m 51s
+ETA: 36m 55s
+Loss actual: 0.208305
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 80/450 ( 17.8%)
+Transcurrido: 7m 55s
+ETA: 36m 40s
+Loss actual: 0.208303
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 81/450 ( 18.0%)
+Transcurrido: 7m 59s
+ETA: 36m 24s
+Loss actual: 0.208298
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 82/450 ( 18.2%)
+Transcurrido: 8m 03s
+ETA: 36m 10s
+Loss actual: 0.208292
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 83/450 ( 18.4%)
+Transcurrido: 8m 07s
+ETA: 35m 56s
+Loss actual: 0.208282
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 84/450 ( 18.7%)
+Transcurrido: 8m 12s
+ETA: 35m 44s
+Loss actual: 0.208273
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 85/450 ( 18.9%)
+Transcurrido: 8m 16s
+ETA: 35m 30s
+Loss actual: 0.208266
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 86/450 ( 19.1%)
+Transcurrido: 8m 24s
+ETA: 35m 34s
+Loss actual: 0.208261
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 87/450 ( 19.3%)
+Transcurrido: 8m 28s
+ETA: 35m 20s
+Loss actual: 0.208261
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 88/450 ( 19.6%)
+Transcurrido: 8m 32s
+ETA: 35m 07s
+Loss actual: 0.208258
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 89/450 ( 19.8%)
+Transcurrido: 8m 36s
+ETA: 34m 53s
+Loss actual: 0.208257
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 90/450 ( 20.0%)
+Transcurrido: 8m 43s
+ETA: 34m 55s
+Loss actual: 0.208257
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 91/450 ( 20.2%)
+Transcurrido: 8m 52s
+ETA: 35m 01s
+Loss actual: 0.208256
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 92/450 ( 20.4%)
+Transcurrido: 9m 00s
+ETA: 35m 04s
+Loss actual: 0.208256
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 93/450 ( 20.7%)
+Transcurrido: 9m 04s
+ETA: 34m 51s
+Loss actual: 0.208256
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 94/450 ( 20.9%)
+Transcurrido: 9m 09s
+ETA: 34m 40s
+Loss actual: 0.208255
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 95/450 ( 21.1%)
+Transcurrido: 9m 18s
+ETA: 34m 45s
+Loss actual: 0.208255
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 96/450 ( 21.3%)
+Transcurrido: 9m 22s
+ETA: 34m 33s
+Loss actual: 0.208255
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 97/450 ( 21.6%)
+Transcurrido: 9m 30s
+ETA: 34m 36s
+Loss actual: 0.208255
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 98/450 ( 21.8%)
+Transcurrido: 9m 35s
+ETA: 34m 25s
+Loss actual: 0.208255
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 99/450 ( 22.0%)
+Transcurrido: 9m 43s
+ETA: 34m 27s
+Loss actual: 0.208254
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 100/450 ( 22.2%)
+Transcurrido: 9m 47s
+ETA: 34m 15s
+Loss actual: 0.208254
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 101/450 ( 22.4%)
+Transcurrido: 9m 55s
+ETA: 34m 17s
+Loss actual: 0.208247
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 102/450 ( 22.7%)
+Transcurrido: 9m 59s
+ETA: 34m 04s
+Loss actual: 0.208245
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 103/450 ( 22.9%)
+Transcurrido: 10m 11s
+ETA: 34m 18s
+Loss actual: 0.208245
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 104/450 ( 23.1%)
+Transcurrido: 10m 14s
+ETA: 34m 05s
+Loss actual: 0.208243
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 105/450 ( 23.3%)
+Transcurrido: 10m 19s
+ETA: 33m 54s
+Loss actual: 0.208243
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 106/450 ( 23.6%)
+Transcurrido: 10m 23s
+ETA: 33m 44s
+Loss actual: 0.208242
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 107/450 ( 23.8%)
+Transcurrido: 10m 27s
+ETA: 33m 33s
+Loss actual: 0.208238
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 108/450 ( 24.0%)
+Transcurrido: 10m 40s
+ETA: 33m 46s
+Loss actual: 0.208234
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 109/450 ( 24.2%)
+Transcurrido: 10m 55s
+ETA: 34m 11s
+Loss actual: 0.208234
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 110/450 ( 24.4%)
+Transcurrido: 10m 59s
+ETA: 33m 59s
+Loss actual: 0.208232
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 111/450 ( 24.7%)
+Transcurrido: 11m 03s
+ETA: 33m 47s
+Loss actual: 0.208223
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 112/450 ( 24.9%)
+Transcurrido: 11m 07s
+ETA: 33m 35s
+Loss actual: 0.208196
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 113/450 ( 25.1%)
+Transcurrido: 11m 11s
+ETA: 33m 23s
+Loss actual: 0.208187
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 114/450 ( 25.3%)
+Transcurrido: 11m 19s
+ETA: 33m 23s
+Loss actual: 0.208181
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 115/450 ( 25.6%)
+Transcurrido: 11m 24s
+ETA: 33m 12s
+Loss actual: 0.208143
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 116/450 ( 25.8%)
+Transcurrido: 11m 33s
+ETA: 33m 16s
+Loss actual: 0.208107
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 117/450 ( 26.0%)
+Transcurrido: 11m 41s
+ETA: 33m 15s
+Loss actual: 0.208093
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 118/450 ( 26.2%)
+Transcurrido: 12m 24s
+ETA: 34m 54s
+Loss actual: 0.208083
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 119/450 ( 26.4%)
+Transcurrido: 12m 37s
+ETA: 35m 06s
+Loss actual: 0.208081
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 120/450 ( 26.7%)
+Transcurrido: 13m 12s
+ETA: 36m 19s
+Loss actual: 0.208076
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 121/450 ( 26.9%)
+Transcurrido: 13m 24s
+ETA: 36m 27s
+Loss actual: 0.208075
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 122/450 ( 27.1%)
+Transcurrido: 13m 32s
+ETA: 36m 24s
+Loss actual: 0.208061
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 123/450 ( 27.3%)
+Transcurrido: 13m 40s
+ETA: 36m 22s
+Loss actual: 0.208043
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 124/450 ( 27.6%)
+Transcurrido: 13m 45s
+ETA: 36m 09s
+Loss actual: 0.208032
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 125/450 ( 27.8%)
+Transcurrido: 13m 49s
+ETA: 35m 55s
+Loss actual: 0.208007
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 126/450 ( 28.0%)
+Transcurrido: 13m 56s
+ETA: 35m 51s
+Loss actual: 0.207994
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 127/450 ( 28.2%)
+Transcurrido: 14m 00s
+ETA: 35m 38s
+Loss actual: 0.207987
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 128/450 ( 28.4%)
+Transcurrido: 14m 05s
+ETA: 35m 26s
+Loss actual: 0.207987
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 129/450 ( 28.7%)
+Transcurrido: 14m 09s
+ETA: 35m 14s
+Loss actual: 0.207979
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 130/450 ( 28.9%)
+Transcurrido: 14m 14s
+ETA: 35m 02s
+Loss actual: 0.207974
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 131/450 ( 29.1%)
+Transcurrido: 14m 22s
+ETA: 35m 00s
+Loss actual: 0.207973
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 132/450 ( 29.3%)
+Transcurrido: 14m 35s
+ETA: 35m 08s
+Loss actual: 0.207973
+[2K[2KFine tuning: integrado / L-BFGS-B
+Progreso: 132/450 ( 29.3%)
+Transcurrido: 14m 35s
+ETA: 35m 08s
+Loss actual: 0.207973
+Etapa completada.
+Metricas finales integradas:
+   rmse_modelo_general  mae_modelo_general  ...  rmse_bloques  peso_targets_bloques
+0             0.186267            0.085492  ...      0.000017                   8.0
+
+[1 rows x 7 columns]
+                                        metodo  ...  exponente_rareza_bloques
+0  L-BFGS-B desde parametros semanales+bloques  ...                   3.46145
+
+[1 rows x 46 columns]
+Comparacion final contra targets semanales:
+<pandas.io.formats.style.Styler object at 0x7b3616cc0e10>
+Comparacion final contra targets de bloques:
+<pandas.io.formats.style.Styler object at 0x7b361670f950>
+     eco  W  recent_value  max_value      prob     rareza   penalty
+0  14416  2           3.0        3.0  0.705628   0.002019 -0.001448
+1  14416  3           3.0        3.0  0.218296   0.286601 -0.197363
+2  14416  4           3.0        3.0  0.003957   1.842158 -1.026392
+3  14416  5           3.0        3.0  0.000392   4.862651 -1.880577
+0  28650  2           3.0        3.0  0.708364   0.001925 -0.001381
+1  28650  3           3.0        3.0  0.195469   0.331671 -0.226948
+2  28650  4           3.0        3.0  0.002465   1.943354 -1.068565
+3  28650  5           3.0        3.0  0.000244   5.050842 -1.913137
+0   4377  2           3.0        4.0  0.740421   0.001066 -0.000765
+1   4377  3           3.0        4.0  0.334157   0.126986 -0.089452
+2   4377  4           3.0        4.0  0.167185   0.503089 -0.336045
+3   4377  5           3.0        4.0  0.074688   2.465121 -1.267598
+0  37492  2           3.0        3.0  0.715282   0.001705 -0.001222
+1  37492  3           3.0        3.0  0.183522   0.357429 -0.243686
+2  37492  4           3.0        3.0  0.001783   1.989582 -1.087427
+3  37492  5           3.0        3.0  0.000177   5.136784 -1.927432
+0  19834  2           2.0        2.0  0.723098   0.001480 -0.001061
+1  19834  3           2.0        2.0  0.027054   1.346636 -0.801245
+2  19834  4           2.0        2.0  0.000281   4.092168 -1.727319
+3  19834  5           2.0        2.0  0.000028  10.334548 -2.000000
+0  41339  2           2.0        3.0  0.684403   0.002874 -0.002061
+1  41339  3           2.0        3.0  0.167472   0.502398 -0.335616
+2  41339  4           2.0        3.0  0.000574   3.243946 -1.514401
+3  41339  5           2.0        3.0  0.000057   8.436671 -2.000000
+=== 1 UEA ===
+{'bonus_bloques_historicos': 0.0,
+ 'eco': '28650',
+ 'factor_horas_bloque': 0.933972346442905,
+ 'features': {'B_ueas_en_bloque': 1,
+              'L_horas_consecutivas': 1.5,
+              'W_ueas_semana': 1,
+              'firma_bloques': 'L:14:30-16:00#1|Mi:14:30-16:00#1|V:14:30-16:00#1',
+              'max_bloques_dia': 1,
+              'max_gap_horas': 0.0,
+              'max_horas_intervalo': 1.5,
+              'n_bloques_semana': 3,
+              'total_gap_horas': 0.0},
+ 'historico_bloques': {'alpha_local_fragmentacion_dia': 0.039147163436198264,
+                       'alpha_local_horas_consecutivas': 0.039147163436198264,
+                       'alpha_local_huecos_entre_bloques': 0.039147163436198264,
+                       'alpha_local_ueas_en_bloque': 0.039147163436198264,
+                       'confianza_local_bloques': 0.17665079456789592,
+                       'cost_bloques_historicos': 0.050983020825427716,
+                       'cost_suavizado_bloques_historicos': 0.050983020825427716,
+                       'firma_bloques': 'L:14:30-16:00#1|Mi:14:30-16:00#1|V:14:30-16:00#1',
+                       'piso_rareza_bloques_historicos': 0.0,
+                       'rareza_bloques_historicos': 0.05177890688454244,
+                       'rareza_fragmentacion_dia': 5.223755920992111e-05,
+                       'rareza_horas_consecutivas': 0.06287700948396716,
+                       'rareza_huecos_entre_bloques': 4.438805072770078e-05,
+                       'rareza_patron_bloques': 0.9493236501080392,
+                       'rareza_ueas_en_bloque': 0.0,
+                       'respaldo_bloques_historicos': 0.6904078899133534,
+                       'signal_bloques_historicos': 0.05232858888360922,
+                       'support_fragmentacion_dia': 0.9420649870908321,
+                       'support_global_fragmentacion_dia': 0.9397045929360475,
+                       'support_global_horas_consecutivas': 0.5320150618203258,
+                       'support_global_huecos_entre_bloques': 0.9424752938278405,
+                       'support_global_patron_bloques': 0.015519436822768332,
+                       'support_global_ueas_en_bloque': 1.0,
+                       'support_horas_consecutivas': 0.5503353446809246,
+                       'support_huecos_entre_bloques': 0.9447272229019813,
+                       'support_local_fragmentacion_dia': 1.0,
+                       'support_local_horas_consecutivas': 1.0,
+                       'support_local_huecos_entre_bloques': 1.0,
+                       'support_local_patron_bloques': 0.0,
+                       'support_local_ueas_en_bloque': 1.0,
+                       'support_patron_bloques': 0.014911894893029666,
+                       'support_ueas_en_bloque': 1.0,
+                       'valor_fragmentacion_dia': 1.0,
+                       'valor_horas_consecutivas': 1.5,
+                       'valor_huecos_entre_bloques': 0.0,
+                       'valor_ueas_en_bloque': 1.0},
+ 'lambda_ueas_semana': 1.0,
+ 'nombre': 'AGUILAR ZAVOZNIK ALEJANDRO',
+ 'penalty_bloques_historicos': -0.050983020825427716,
+ 'penalty_diaria': -0.0,
+ 'penalty_semanal': -0.0,
+ 'penalty_total': -0.03823726561907079,
+ 'penalty_total_sin_bonus': -0.03823726561907079,
+ 'perfil': {'n_trimestres': 31,
+            'q_horas_dia': 3.1031948354239804,
+            'q_horas_intervalo': 1.5728294242156666,
+            'q_max_bloques_dia': 2.0,
+            'q_max_gap_horas': 1.8278073693617383,
+            'q_total_gap_horas': 5.155614738723477,
+            'q_ueas_bloque': 2.0,
+            'q_ueas_semana': 3.0},
+ 'prob_hist_ueas_totales_geq_W': 1.0,
+ 'rareza_bloques_historicos': 0.05177890688454244,
+ 'rareza_ueas_totales': 0.0,
+ 'respaldo_bloques_historicos': 0.6904078899133534,
+ 'score_laboratorio_bloque': 0.0,
+ 'top_5_horarios': ['L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30',
+                    'L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00',
+                    'L:14:30-16:00|Mi:14:30-16:00|V:14:30-16:00',
+                    'M:16:00-17:30|J:16:00-17:30',
+                    'M:14:30-16:00|J:14:30-16:00'],
+ 'top_5_patrones_bloque': ['L:16:00-19:00#2|Mi:16:00-19:00#2|V:16:00-19:00#2',
+                           'L:14:30-17:30#2|M:13:00-14:30#1|Mi:14:30-17:30#2|J:13:00-14:30#1|V:14:30-17:30#2',
+                           'L:16:00-17:30#1|Mi:16:00-17:30#1|V:16:00-17:30#1',
+                           'L:17:30-19:00#1|M:16:00-17:30#1|Mi:17:30-19:00#1|J:16:00-17:30#1|V:17:30-19:00#1',
+                           'L:16:00-19:00#2|V:16:00-19:00#2']}
+=== 2 UEAs ===
+{'bonus_bloques_historicos': 0.0779856276748645,
+ 'eco': '28650',
+ 'factor_horas_bloque': 0.933972346442905,
+ 'features': {'B_ueas_en_bloque': 2,
+              'L_horas_consecutivas': 3.0,
+              'W_ueas_semana': 2,
+              'firma_bloques': 'L:14:30-17:30#2|Mi:14:30-17:30#2|V:14:30-17:30#2',
+              'max_bloques_dia': 1,
+              'max_gap_horas': 0.0,
+              'max_horas_intervalo': 1.5,
+              'n_bloques_semana': 3,
+              'total_gap_horas': 0.0},
+ 'historico_bloques': {'alpha_local_fragmentacion_dia': 0.10760093815263184,
+                       'alpha_local_horas_consecutivas': 0.10760093815263184,
+                       'alpha_local_huecos_entre_bloques': 0.10760093815263184,
+                       'alpha_local_ueas_en_bloque': 0.10760093815263184,
+                       'confianza_local_bloques': 0.17665079456789592,
+                       'cost_bloques_historicos': 0.03552574525466912,
+                       'cost_suavizado_bloques_historicos': 0.03552574525466912,
+                       'firma_bloques': 'L:14:30-17:30#2|Mi:14:30-17:30#2|V:14:30-17:30#2',
+                       'piso_rareza_bloques_historicos': 0.0,
+                       'rareza_bloques_historicos': 0.03579217213245592,
+                       'rareza_fragmentacion_dia': 0.0038818643328941862,
+                       'rareza_horas_consecutivas': 0.014732445365864062,
+                       'rareza_huecos_entre_bloques': 0.0033387678179564,
+                       'rareza_patron_bloques': 0.9621747118558176,
+                       'rareza_ueas_en_bloque': 0.0731067241404787,
+                       'respaldo_bloques_historicos': 0.5704045911456928,
+                       'signal_bloques_historicos': 0.036172139843488924,
+                       'support_fragmentacion_dia': 0.7988672992954003,
+                       'support_global_fragmentacion_dia': 0.774615741652359,
+                       'support_global_horas_consecutivas': 0.7093741799846901,
+                       'support_global_huecos_entre_bloques': 0.7842185421202165,
+                       'support_global_patron_bloques': 0.012413508611724765,
+                       'support_global_ueas_en_bloque': 0.5233825010561569,
+                       'support_horas_consecutivas': 0.7043203854427824,
+                       'support_huecos_entre_bloques': 0.8074368294240238,
+                       'support_local_fragmentacion_dia': 1.0,
+                       'support_local_horas_consecutivas': 0.6624062387318088,
+                       'support_local_huecos_entre_bloques': 1.0,
+                       'support_local_patron_bloques': 0.0,
+                       'support_local_ueas_en_bloque': 0.5878627666549658,
+                       'support_patron_bloques': 0.011077803439337406,
+                       'support_ueas_en_bloque': 0.5303206381269197,
+                       'valor_fragmentacion_dia': 1.0,
+                       'valor_horas_consecutivas': 3.0,
+                       'valor_huecos_entre_bloques': 0.0,
+                       'valor_ueas_en_bloque': 2.0},
+ 'lambda_ueas_semana': 0.9892756010811615,
+ 'nombre': 'AGUILAR ZAVOZNIK ALEJANDRO',
+ 'penalty_bloques_historicos': -0.03552574525466912,
+ 'penalty_diaria': -0.0,
+ 'penalty_semanal': -0.0005522948209051304,
+ 'penalty_total': 0.049975389256550325,
+ 'penalty_total_sin_bonus': -0.028010238418314175,
+ 'perfil': {'n_trimestres': 31,
+            'q_horas_dia': 3.1031948354239804,
+            'q_horas_intervalo': 1.5728294242156666,
+            'q_max_bloques_dia': 2.0,
+            'q_max_gap_horas': 1.8278073693617383,
+            'q_total_gap_horas': 5.155614738723477,
+            'q_ueas_bloque': 2.0,
+            'q_ueas_semana': 3.0},
+ 'prob_hist_ueas_totales_geq_W': 0.708363809469715,
+ 'rareza_bloques_historicos': 0.03579217213245592,
+ 'rareza_ueas_totales': 0.001925350303195223,
+ 'respaldo_bloques_historicos': 0.5704045911456928,
+ 'score_laboratorio_bloque': 0.0,
+ 'top_5_horarios': ['L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30',
+                    'L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00',
+                    'L:14:30-16:00|Mi:14:30-16:00|V:14:30-16:00',
+                    'M:16:00-17:30|J:16:00-17:30',
+                    'M:14:30-16:00|J:14:30-16:00'],
+ 'top_5_patrones_bloque': ['L:16:00-19:00#2|Mi:16:00-19:00#2|V:16:00-19:00#2',
+                           'L:14:30-17:30#2|M:13:00-14:30#1|Mi:14:30-17:30#2|J:13:00-14:30#1|V:14:30-17:30#2',
+                           'L:16:00-17:30#1|Mi:16:00-17:30#1|V:16:00-17:30#1',
+                           'L:17:30-19:00#1|M:16:00-17:30#1|Mi:17:30-19:00#1|J:16:00-17:30#1|V:17:30-19:00#1',
+                           'L:16:00-19:00#2|V:16:00-19:00#2']}
+=== 3 UEAs ===
+{'bonus_bloques_historicos': 0.0,
+ 'eco': '28650',
+ 'factor_horas_bloque': 0.933972346442905,
+ 'features': {'B_ueas_en_bloque': 3,
+              'L_horas_consecutivas': 4.5,
+              'W_ueas_semana': 3,
+              'firma_bloques': 'L:14:30-19:00#3|Mi:14:30-19:00#3|V:14:30-19:00#3',
+              'max_bloques_dia': 1,
+              'max_gap_horas': 0.0,
+              'max_horas_intervalo': 1.5,
+              'n_bloques_semana': 3,
+              'total_gap_horas': 0.0},
+ 'historico_bloques': {'alpha_local_fragmentacion_dia': 0.05054379946144476,
+                       'alpha_local_horas_consecutivas': 0.05054379946144476,
+                       'alpha_local_huecos_entre_bloques': 0.05054379946144476,
+                       'alpha_local_ueas_en_bloque': 0.05054379946144476,
+                       'confianza_local_bloques': 0.17665079456789592,
+                       'cost_bloques_historicos': 0.2327075285490294,
+                       'cost_suavizado_bloques_historicos': 0.2095698110410189,
+                       'firma_bloques': 'L:14:30-19:00#3|Mi:14:30-19:00#3|V:14:30-19:00#3',
+                       'piso_rareza_bloques_historicos': 0.2327075285490294,
+                       'rareza_bloques_historicos': 0.2327075285490294,
+                       'rareza_fragmentacion_dia': 0.0676096967771873,
+                       'rareza_horas_consecutivas': 0.3101000701756897,
+                       'rareza_huecos_entre_bloques': 0.0590191259171808,
+                       'rareza_patron_bloques': 0.9827960756368789,
+                       'rareza_ueas_en_bloque': 0.42976083450286895,
+                       'respaldo_bloques_historicos': 0.32155612431266434,
+                       'signal_bloques_historicos': 0.23517793874474768,
+                       'support_fragmentacion_dia': 0.5408084064322208,
+                       'support_global_fragmentacion_dia': 0.5272686617581258,
+                       'support_global_horas_consecutivas': 0.2945547174191973,
+                       'support_global_huecos_entre_bloques': 0.5458874372753454,
+                       'support_global_patron_bloques': 0.005267071545997492,
+                       'support_global_ueas_en_bloque': 0.22031118846998088,
+                       'support_horas_consecutivas': 0.28698811100514515,
+                       'support_huecos_entre_bloques': 0.5584861182934804,
+                       'support_local_fragmentacion_dia': 0.795150079822536,
+                       'support_local_horas_consecutivas': 0.1448507676830077,
+                       'support_local_huecos_entre_bloques': 0.795150079822536,
+                       'support_local_patron_bloques': 0.0,
+                       'support_local_ueas_en_bloque': 0.1448507676830077,
+                       'support_patron_bloques': 0.005000853738027513,
+                       'support_ueas_en_bloque': 0.21649713209444787,
+                       'valor_fragmentacion_dia': 1.0,
+                       'valor_horas_consecutivas': 4.5,
+                       'valor_huecos_entre_bloques': 0.0,
+                       'valor_ueas_en_bloque': 3.0},
+ 'lambda_ueas_semana': 1.7761040411672022,
+ 'nombre': 'AGUILAR ZAVOZNIK ALEJANDRO',
+ 'penalty_bloques_historicos': -0.2327075285490294,
+ 'penalty_diaria': -0.7207158668042375,
+ 'penalty_semanal': -0.0907793379395182,
+ 'penalty_total': -0.7800016816798618,
+ 'penalty_total_sin_bonus': -0.7800016816798618,
+ 'perfil': {'n_trimestres': 31,
+            'q_horas_dia': 3.1031948354239804,
+            'q_horas_intervalo': 1.5728294242156666,
+            'q_max_bloques_dia': 2.0,
+            'q_max_gap_horas': 1.8278073693617383,
+            'q_total_gap_horas': 5.155614738723477,
+            'q_ueas_bloque': 2.0,
+            'q_ueas_semana': 3.0},
+ 'prob_hist_ueas_totales_geq_W': 0.19546896062909563,
+ 'rareza_bloques_historicos': 0.2327075285490294,
+ 'rareza_ueas_totales': 0.33167085948588254,
+ 'respaldo_bloques_historicos': 0.32155612431266434,
+ 'score_laboratorio_bloque': 0.0,
+ 'top_5_horarios': ['L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30',
+                    'L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00',
+                    'L:14:30-16:00|Mi:14:30-16:00|V:14:30-16:00',
+                    'M:16:00-17:30|J:16:00-17:30',
+                    'M:14:30-16:00|J:14:30-16:00'],
+ 'top_5_patrones_bloque': ['L:16:00-19:00#2|Mi:16:00-19:00#2|V:16:00-19:00#2',
+                           'L:14:30-17:30#2|M:13:00-14:30#1|Mi:14:30-17:30#2|J:13:00-14:30#1|V:14:30-17:30#2',
+                           'L:16:00-17:30#1|Mi:16:00-17:30#1|V:16:00-17:30#1',
+                           'L:17:30-19:00#1|M:16:00-17:30#1|Mi:17:30-19:00#1|J:16:00-17:30#1|V:17:30-19:00#1',
+                           'L:16:00-19:00#2|V:16:00-19:00#2']}
+     caso  ...  respaldo_bloques_historicos
+0   1 UEA  ...                     0.690408
+1  2 UEAs  ...                     0.570405
+2  3 UEAs  ...                     0.321556
+
+[3 rows x 19 columns]
+                     caso  ...                                      firma_bloques
+0  3 UEAs bloque continuo  ...   L:14:30-19:00#3|Mi:14:30-19:00#3|V:14:30-19:00#3
+1        3 UEAs con hueco  ...  L:11:30-13:00#1|L:14:30-17:30#2|Mi:11:30-13:00...
+
+[2 rows x 15 columns]
+
+Modelo guardado en: /workspace/docs/modelos_de_ipynb/modelo_penalizacion_carga_historica_gpu_local.joblib
+Resumen parametros: /workspace/docs/modelos_de_ipynb/resumen_parametros_integrados.csv
+Resumen RMSE: /workspace/docs/modelos_de_ipynb/resumen_rmse_modelo_general.csv
+Perfiles: /workspace/docs/modelos_de_ipynb/perfiles_carga_historica_gpu_local.csv

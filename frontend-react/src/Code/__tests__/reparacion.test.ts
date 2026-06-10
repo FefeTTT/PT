@@ -4,6 +4,7 @@ import { SemanaLaboral } from '../models/SemanaLaboral';
 import { EjectionChain } from '../greedy/EjectionChain';
 import { FuncionObjetivoZ } from '../objective/FuncionObjetivoZ';
 import { CriterioAceptacion } from '../objective/Tolerancia';
+import { PerfilCargaConsecutivaMemoria } from '../ml/PerfilCargaConsecutiva';
 import { datasetB, crearProfesor, crearGrupo, franja, horarioDB } from './helpers/fixtures';
 import { crearGrafoConAsignaciones, crearFSMConReglas, snapshotGrafo } from './helpers/helpers';
 
@@ -109,5 +110,31 @@ describe('Fase 2 Reparación — EjectionChain', () => {
         grafo2.asignarMutable(1, 101);
 
         expect(grafo1.hashEstado()).toBe(grafo2.hashEstado());
+    });
+
+    it('optimizacion acepta swap que reduce penalizacion historica consecutiva', () => {
+        const profesores = [
+            crearProfesor({ numeroEconomico: 1, idArea: 10 }),
+            crearProfesor({ numeroEconomico: 2, idArea: 10 }),
+        ];
+        const grupo = crearGrupo({
+            idUeaGrupo: 600,
+            idArea: 10,
+            horarios: [franja(1, 8, 12.5)]
+        });
+        const grafo = crearGrafoConAsignaciones(
+            profesores,
+            [grupo],
+            [{ numEco: 1, idGrupo: 600 }]
+        );
+        const fsm = crearFSMConReglas(grafo);
+        const provider = new PerfilCargaConsecutivaMemoria({ '1': 3, '2': 6 });
+        const funcionZ = new FuncionObjetivoZ([], undefined, provider);
+        const ec = new EjectionChain(1, 1, new CriterioAceptacion());
+
+        const resultado = ec.mejorar(grafo, fsm, funcionZ, []);
+
+        expect(grafo.asignacionesInversas.get(600)).toBe(2);
+        expect(resultado.mejoras).toBe(1);
     });
 });

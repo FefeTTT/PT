@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Preview KDE Surface — testAsinacionKDE.ts</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; background: #0d1117; color: #c9d1d9; }
+  h1 { font-size: 16px; margin: 0 0 12px; color: #58a6ff; }
+  h2 { font-size: 13px; margin: 16px 0 6px; color: #ffa657; }
+  .toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; padding: 8px 12px; background: #161b22; border-radius: 6px; border: 1px solid #30363d; }
+  .toolbar label { font-size: 12px; }
+  select, button { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+  button:hover { background: #30363d; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .plot { background: #161b22; border-radius: 6px; border: 1px solid #30363d; min-height: 380px; }
+  #status { font-size: 11px; color: #8b949e; }
+  .legend { font-size: 11px; color: #8b949e; margin-top: 12px; }
+  pre { background: #161b22; padding: 8px; border-radius: 6px; font-size: 11px; overflow-x: auto; border: 1px solid #30363d; }
+</style>
+</head>
+<body>
+<h1>Verificación visual KDE — testAsinacionKDE.ts</h1>
+<div class="toolbar">
+  <label>Métrica Z:
+    <select id="metric">
+      <option value="score">score</option>
+      <option value="kde_ij">kde_ij</option>
+      <option value="kde_ih">kde_ih</option>
+      <option value="kde_plan">kde_plan</option>
+    </select>
+  </label>
+  <label>Colorscale:
+    <select id="colorscale">
+      <option value="Viridis">Viridis</option>
+      <option value="Plasma">Plasma</option>
+      <option value="Cividis">Cividis</option>
+      <option value="YlGnBu">YlGnBu</option>
+    </select>
+  </label>
+  <label>Tipo:
+    <select id="plotType">
+      <option value="surface">Surface 3D</option>
+      <option value="heatmap">Heatmap 2D</option>
+    </select>
+  </label>
+  <button id="reload">Recargar JSON</button>
+  <span id="status">Cargando…</span>
+</div>
+
+<div id="container"></div>
+
+<div class="legend">
+  <p>Datos: <code>kde_surface_points.json</code> generado por <code>testAsinacionKDE.ts --render-only --mode=kde_ij</code>.
+     ECOs target: 19834, 28650, 14416. Patrones: <strong>l_mi_v</strong> = L-Mi-V, <strong>m_j</strong> = M-J, <strong>l_m_mi_v</strong> = L-M-Mi-V.</p>
+  <p>Ejes: X = hora ∈ [7, 21.5], Y = ueaClave (ordenada), Z/color = métrica seleccionada.</p>
+</div>
+
+<h2>Sample numérico (primeros 5 puntos por ECO)</h2>
+<pre id="sample">…</pre>
+
+<script>
+const FILE = 'kde_surface_points.json';
+let DATA = null;
+
+function $(id) { return document.getElementById(id); }
+
+async function loadData() {
+  $('status').textContent = 'Cargando ' + FILE + '…';
+  try {
+    const resp = await fetch(FILE + '?t=' + Date.now());
+    DATA = await resp.json();
+    $('status').textContent = `OK — ${DATA.length} ECOs cargados (${DATA.reduce((a, d) => a + d.l_mi_v.length + d.m_j.length + d.l_m_mi_v.length, 0)} puntos totales).`;
+    render();
+    fillSample();
+  } catch (err) {
+    $('status').textContent = 'ERROR: ' + err.message;
+    console.error(err);
+  }
+}
+
+function buildSurface(points, metric, colorscale, plotType) {
+  if (!points.length) return null;
+  const ueaSet = [...new Set(points.map(p => p.uea))].sort((a, b) => a - b);
+  const horaSet = [...new Set(points.map(p => p.hora))].sort((a, b) => a - b);
+  const index = new Map(points.map(p => [`${p.uea}|${p.hora}`, p[metric]]));
+  const z = ueaSet.map(u => horaSet.map(h => index.get(`${u}|${h}`) ?? 0));
+  const common = {
+    x: horaSet,
+    y: ueaSet.map(String),
+    z,
+    colorscale,
+    showscale: true,
+  };
+  return plotType === 'heatmap'
+    ? { ...common, type: 'heatmap' }
+    : { ...common, type: 'surface', contours: { z: { show: true, usecolormap: true, project: { z: true } } } };
+}
+
+function render() {
+  if (!DATA) return;
+  const metric = $('metric').value;
+  const colorscale = $('colorscale').value;
+  const plotType = $('plotType').value;
+
+  const container = $('container');
+  container.innerHTML = '';
+
+  const patterns = [
+    { key: 'l_mi_v', label: 'L-Mi-V' },
+    { key: 'm_j', label: 'M-J' },
+    { key: 'l_m_mi_v', label: 'L-M-Mi-V' },
+  ];
+
+  for (const eco of DATA) {
+    const sectionTitle = document.createElement('h2');
+    sectionTitle.textContent = `ECO ${eco.eco}`;
+    container.appendChild(sectionTitle);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    container.appendChild(grid);
+
+    patterns.forEach(({ key, label }) => {
+      const div = document.createElement('div');
+      div.className = 'plot';
+      div.id = `plot-${eco.eco}-${key}`;
+      grid.appendChild(div);
+      const trace = buildSurface(eco[key], metric, colorscale, plotType);
+      if (!trace) {
+        div.innerHTML = `<p style="padding:12px;color:#f85149">Sin datos para ${label}</p>`;
+        return;
+      }
+      const layout = {
+        title: { text: `${eco.eco} · ${label} · ${metric}`, font: { color: '#c9d1d9', size: 12 } },
+        paper_bgcolor: '#161b22',
+        plot_bgcolor: '#161b22',
+        font: { color: '#c9d1d9', size: 10 },
+        margin: { l: 50, r: 10, t: 36, b: 30 },
+        scene: plotType === 'surface' ? {
+          xaxis: { title: 'hora', color: '#c9d1d9' },
+          yaxis: { title: 'uea', color: '#c9d1d9' },
+          zaxis: { title: metric, color: '#c9d1d9' },
+          camera: { eye: { x: 1.5, y: -1.5, z: 1.1 } },
+        } : undefined,
+        xaxis: plotType === 'heatmap' ? { title: 'hora', color: '#c9d1d9' } : undefined,
+        yaxis: plotType === 'heatmap' ? { title: 'uea', color: '#c9d1d9' } : undefined,
+      };
+      Plotly.newPlot(div, [trace], layout, { displaylogo: false, responsive: true });
+    });
+  }
+}
+
+function fillSample() {
+  const samples = DATA.map(d => ({
+    eco: d.eco,
+    l_mi_v_head: d.l_mi_v.slice(0, 3),
+    m_j_head: d.m_j.slice(0, 3),
+    l_m_mi_v_head: d.l_m_mi_v.slice(0, 3),
+  }));
+  $('sample').textContent = JSON.stringify(samples, null, 2);
+}
+
+$('metric').addEventListener('change', render);
+$('colorscale').addEventListener('change', render);
+$('plotType').addEventListener('change', render);
+$('reload').addEventListener('click', loadData);
+
+loadData();
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+/*
+ * taller.css — Tokens de la dirección visual "Taller" (papel/tinta/verde).
+ *
+ * Portado de `TimetablingUI/timetabling/mockData.js → window.TT.palettes.taller`.
+ * Es la ÚNICA fuente de verdad del look del frontend /timetabling: los CSS Modules
+ * y los estilos en línea consumen estas variables vía `var(--tt-*)`.
+ *
+ * Se definen en :root (inofensivo para las apps hermanas que comparten main.tsx,
+ * pues no referencian `--tt-*`). Las fuentes se cargan vía <link> en index.html
+ * (Google Fonts) con fallbacks robustos por si no hay red.
+ */
+
+:root {
+    /* Superficies */
+    --tt-bg: #ece5d6;
+    --tt-panel: #f6f1e4;
+    --tt-panel2: #fbf7ec;
+
+    /* Tinta / texto */
+    --tt-ink: #221d16;
+    --tt-sub: #6b6253;
+
+    /* Líneas */
+    --tt-line: #d3c8b2;
+    --tt-line-soft: #e2d9c5;
+
+    /* Acentos */
+    --tt-accent: #356b52;       /* verde acción */
+    --tt-accent2: #b1603a;      /* terracota */
+    --tt-danger: #9e4434;
+    --tt-warn: #b8842f;
+
+    /* Tintes de estado de fila */
+    --tt-lock-tint: rgba(53, 107, 82, 0.13);
+    --tt-con-tint: rgba(158, 68, 52, 0.12);
+
+    /* Semáforo de scores (tiers) */
+    --tt-good: #3f7d5e;
+    --tt-mid: #b8842f;
+    --tt-bad: #a8463a;
+
+    /* Texto sobre tinta (botones oscuros / cabeceras) */
+    --tt-on-ink: #f6f1e4;
+    --tt-on-ink-soft: #e9e1ce;
+
+    /* Forma */
+    --tt-radius: 7px;
+    --tt-radius-sm: 5px;
+    --tt-shadow: 3px 3px 0 var(--tt-ink);
+    --tt-shadow-soft: 2px 2px 0 var(--tt-line);
+    --tt-border: 1.5px solid var(--tt-ink);
+    --tt-border-line: 1.5px solid var(--tt-line);
+    --tt-border-soft: 1px solid var(--tt-line-soft);
+
+    /* Tipografía */
+    --tt-font: 'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --tt-mono: 'JetBrains Mono', 'Consolas', 'SFMono-Regular', ui-monospace, monospace;
+}
+
+/* Animaciones de los átomos compartidos (Spinner, Dot con pulse). */
+@keyframes tt-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes tt-pulse {
+    0% { box-shadow: 0 0 0 0 currentColor; opacity: 0.55; }
+    70% { box-shadow: 0 0 0 4px transparent; opacity: 1; }
+    100% { box-shadow: 0 0 0 0 transparent; opacity: 0.55; }
+}

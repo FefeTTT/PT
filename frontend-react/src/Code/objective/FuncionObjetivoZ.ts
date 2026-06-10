@@ -1,75 +1,114 @@
 import { GrafoBipartito } from '../models/GrafoBipartito';
-import { IModeloML, ModeloMLUniforme } from '../ml/IModeloML';
+import { IModeloML, ModeloMLUniforme, scoreNormalizado } from '../ml/IModeloML';
+import {
+    IPerfilCargaConsecutivaProvider,
+    PESO_PENALIZACION_CONSECUTIVA,
+    PerfilCargaConsecutivaConstante
+} from '../ml/PerfilCargaConsecutiva';
 import { ISoftConstraint } from './SoftConstraints';
+import { calcularPromedioPenalizacionCargaConsecutivaGrafo } from './CargaConsecutivaHistorica';
 
-export interface ConstraintPonderada { //SoftConstraint
+export interface ConstraintPonderada {
     constraint: ISoftConstraint;
     lambda: number;
 }
 
-export interface ResultadoZ {
-    /** Valor total de Z (recompensa − penalización). */
-    Z: number;
-    /** Componente de recompensa: Σ w_ig · x_ig */
-    recompensa: number;
-    /** Componente de penalización total: Σ λ_k · f_k(X) */
-    penalizacionTotal: number;
-    /** Desglose por restricción suave. */
-    desglose: { nombre: string; violacion: number; lambda: number; penalizacion: number }[];
+export interface PesosObjetivoZ {
+    pesoCobertura: number;
+    pesoScoreML: number;
+    pesoPenalizacionConsecutiva: number;
 }
 
+export interface ResultadoZ {
+    Z: number;
+    asignados: number;
+    cobertura: number;
+    avgScoreML: number;
+    scoreML: number;
+    viabilidadTotal: number;
+    penalizacionCargaConsecutiva: number;
+    valorPenalizacionCargaConsecutiva: number;
+    desglose: { nombre: string; scoreViabilidad: number; lambda: number; valorAportado: number }[];
+}
+
+export const PESO_COBERTURA_DEFAULT = 10;
+export const PESO_SCORE_ML_DEFAULT = 1;
+
+const PESOS_DEFAULT: PesosObjetivoZ = {
+    pesoCobertura: PESO_COBERTURA_DEFAULT,
+    pesoScoreML: PESO_SCORE_ML_DEFAULT,
+    pesoPenalizacionConsecutiva: PESO_PENALIZACION_CONSECUTIVA
+};
+
 /**
- * Función Objetivo Z para el GRASP.
+ * Funcion objetivo con soft constraints positivas y penalizacion historica
+ * externa de carga consecutiva.
  *
- *   Z = Σ(i∈P, g∈G) w_ig · x_ig  −  Σ(k∈K) λ_k · f_k(X)
- * - El componente de recompensa usa scores del modelo xgbOOST
+ * Z = pesoCobertura * asignados + pesoScoreML * avg(s_ig)
+ *     + sum(lambda_k * V_k) - pesoPenalizacionConsecutiva * avg(P_consec)
  */
 export class FuncionObjetivoZ {
-    private _modelo: IModeloML;
-    private _constraints: ConstraintPonderada[];
+    private readonly _modelo: IModeloML;
+    private readonly _constraints: ConstraintPonderada[];
+    private readonly _perfilCargaProvider: IPerfilCargaConsecutivaProvider;
+    private readonly _pesos: PesosObjetivoZ;
 
     constructor(
         constraints: ConstraintPonderada[] = [],
-        modelo?: IModeloML
+        modelo?: IModeloML,
+        perfilCargaProvider?: IPerfilCargaConsecutivaProvider,
+        pesos?: Partial<PesosObjetivoZ>
     ) {
         this._modelo = modelo ?? new ModeloMLUniforme();
         this._constraints = constraints;
+        this._perfilCargaProvider = perfilCargaProvider ?? new PerfilCargaConsecutivaConstante();
+        this._pesos = { ...PESOS_DEFAULT, ...pesos };
     }
 
-    /**
-     * Evalúa la función objetivo Z sobre el grafo completo.
-     * @param grafo  Estado actual de asignaciones.
-     * @returns Resultado con Z, recompensa, penalización y desglose.
-     */
     public evaluarGrafo(grafo: GrafoBipartito): ResultadoZ {
-        // ── Componente de recompensa: Σ w_ig · x_ig ──
-        let recompensa = 0;
+        let sumaScoreML = 0;
+
         for (const [idGrupo, numEco] of grafo.asignacionesInversas) {
-            const w = this._modelo.score(numEco, idGrupo);
-            recompensa += w; // x_ig = 1 para todas las asignaciones en el mapa
+            sumaScoreML += scoreNormalizado(this._modelo, numEco, idGrupo);
         }
 
-        // ── Componente de penalización: Σ λ_k · f_k(X) ──
-        let penalizacionTotal = 0;
+        const asignados = grafo.asignacionesInversas.size;
+        const avgScoreML = asignados > 0 ? sumaScoreML / asignados : 0;
+        const cobertura = this._pesos.pesoCobertura * asignados;
+        const scoreML = this._pesos.pesoScoreML * avgScoreML;
+
+        let viabilidadTotal = 0;
         const desglose: ResultadoZ['desglose'] = [];
 
         for (const cp of this._constraints) {
-            const violacion = cp.constraint.evaluar(grafo, this._modelo);
-            const penalizacion = cp.lambda * violacion;
-            penalizacionTotal += penalizacion;
+            const scoreViabilidad = Math.max(0, Math.min(1, cp.constraint.evaluar(grafo, this._modelo)));
+            const valorAportado = cp.lambda * scoreViabilidad;
+            viabilidadTotal += valorAportado;
 
             desglose.push({
                 nombre: cp.constraint.nombre,
-                violacion,
+                scoreViabilidad,
                 lambda: cp.lambda,
-                penalizacion
+                valorAportado
             });
         }
 
+        const penalizacionCargaConsecutiva = calcularPromedioPenalizacionCargaConsecutivaGrafo(
+            grafo,
+            this._perfilCargaProvider
+        );
+        const valorPenalizacionCargaConsecutiva =
+            this._pesos.pesoPenalizacionConsecutiva * penalizacionCargaConsecutiva;
+
         return {
-            Z: recompensa - penalizacionTotal,
-            recompensa,
-            penalizacionTotal,
+            Z: cobertura + scoreML + viabilidadTotal - valorPenalizacionCargaConsecutiva,
+            asignados,
+            cobertura,
+            avgScoreML,
+            scoreML,
+            viabilidadTotal,
+            penalizacionCargaConsecutiva,
+            valorPenalizacionCargaConsecutiva,
             desglose
         };
     }

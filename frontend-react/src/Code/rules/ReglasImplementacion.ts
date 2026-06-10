@@ -3,7 +3,23 @@ import { ProfesorDTO, GrupoDTO } from '../types/FrontendTypes';
 import { GrafoBipartito } from '../models/GrafoBipartito';
 import { SemanaLaboral } from '../models/SemanaLaboral';
 
-export class ReglaArea extends ReglaBase {// Match área profesor y área UEA
+function hayTraslapeHorario(grupoA: GrupoDTO, grupoB: GrupoDTO): boolean {
+    for (const franjaA of grupoA.horarios) {
+        for (const franjaB of grupoB.horarios) {
+            if (
+                franjaA.dia === franjaB.dia
+                && franjaA.horaInicio < franjaB.horaFin
+                && franjaB.horaInicio < franjaA.horaFin
+            ) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+export class ReglaArea extends ReglaBase {
     constructor() {
         super('REGLA_AREA');
     }
@@ -12,23 +28,27 @@ export class ReglaArea extends ReglaBase {// Match área profesor y área UEA
         if (profesor.idArea === grupo.idArea) {
             return {
                 resultadoExitoso: true,
-                motivo: 'El área del profesor coincide de manera exacta con el área de la UEA.'
+                motivo: 'El area del profesor coincide de manera exacta con el area de la UEA.'
             };
         }
+
         return {
             resultadoExitoso: false,
-            motivo: `El área de la UEA: ${grupo.idArea} no coincide con el área del profesor: ${profesor.idArea}.`
+            motivo: `El area de la UEA: ${grupo.idArea} no coincide con el area del profesor: ${profesor.idArea}.`
         };
     }
 }
 
-export class ReglaHorario extends ReglaBase { // Comprueba que el horario laboral del profesor englobe el horario del grupo
+export class ReglaHorarioLaboral extends ReglaBase {
     constructor() {
-        super('REGLA_HORARIOS_COMPATIBLES');
+        super('REGLA_HORARIO_LABORAL');
     }
 
     evaluar(profesor: ProfesorDTO, grupo: GrupoDTO, _grafo: GrafoBipartito): EvaluacionRegla {
-        const semanaProfesor = new SemanaLaboral(profesor.horariosContratacion);
+        const semanaProfesor = SemanaLaboral.obtenerOCrear(
+            profesor.numeroEconomico,
+            profesor.horariosContratacion
+        );
 
         for (const franjaGrupo of grupo.horarios) {
             const val = semanaProfesor.intentarAsignarFranja(franjaGrupo);
@@ -36,16 +56,17 @@ export class ReglaHorario extends ReglaBase { // Comprueba que el horario labora
                 if (val.esHoraMuerta) {
                     return {
                         resultadoExitoso: false,
-                        motivo: `Restricción de Horario: La clase solicitada (Día ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}) cae en un HUECO NO LABORABLE (Hora muerta) en el horario del profesor.`
-                    };
-                } else {
-                    return {
-                        resultadoExitoso: false,
-                        motivo: `Restricción de Horario: El profesor no tiene disponibilidad programada para cubrir la clase del Día ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}.`
+                        motivo: `Restriccion de Horario: La clase solicitada (Dia ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}) cae en un hueco no laborable en el horario del profesor.`
                     };
                 }
+
+                return {
+                    resultadoExitoso: false,
+                    motivo: `Restriccion de Horario: El profesor no tiene disponibilidad programada para cubrir la clase del Dia ${franjaGrupo.dia} de ${franjaGrupo.horaInicio} a ${franjaGrupo.horaFin}.`
+                };
             }
         }
+
         return {
             resultadoExitoso: true,
             motivo: 'El horario laboral del profesor cubre completamente el horario requerido para el grupo.'
@@ -53,6 +74,41 @@ export class ReglaHorario extends ReglaBase { // Comprueba que el horario labora
     }
 }
 
+export class ReglaTraslapeUEA extends ReglaBase {
+    constructor() {
+        super('REGLA_TRASLAPE_UEA');
+    }
+
+    evaluar(profesor: ProfesorDTO, grupo: GrupoDTO, grafo: GrafoBipartito): EvaluacionRegla {
+        const gruposAsignados = grafo.adyacencias.get(profesor.numeroEconomico);
+
+        if (!gruposAsignados || gruposAsignados.length === 0) {
+            return {
+                resultadoExitoso: true,
+                motivo: 'El profesor no tiene UEAs asignadas con traslape horario.'
+            };
+        }
+
+        for (const idGrupoAsignado of gruposAsignados) {
+            const grupoAsignado = grafo.grupos.get(idGrupoAsignado);
+            if (!grupoAsignado) {
+                continue;
+            }
+
+            if (hayTraslapeHorario(grupoAsignado, grupo)) {
+                return {
+                    resultadoExitoso: false,
+                    motivo: `La UEA ${grupo.ueaClave} (${grupo.idUeaGrupo}) se traslapa con la UEA ya asignada ${grupoAsignado.ueaClave} (${grupoAsignado.idUeaGrupo}).`
+                };
+            }
+        }
+
+        return {
+            resultadoExitoso: true,
+            motivo: 'La UEA no se traslapa con otras asignaciones del profesor.'
+        };
+    }
+}
 
 export class ReglaMaxN_Horas extends ReglaBase {
     private _limiteHorasSemanales: number;
@@ -65,16 +121,11 @@ export class ReglaMaxN_Horas extends ReglaBase {
     protected _getDuracionGrupo(grupo: GrupoDTO): number {
         let sumatoria = 0;
         for (const f of grupo.horarios) {
-            sumatoria += (f.horaFin - f.horaInicio);
+            sumatoria += f.horaFin - f.horaInicio;
         }
         return sumatoria;
     }
 
-    /**
-     * Suma el acumulado de todos los grupos actuales en el grafo.
-     * @param numeroEconomico Identificador del Profesor.
-     * @param grafo Estado inmutable de validación actual.
-     */
     protected _getHorasFrenteAGrupoActuales(numeroEconomico: number, grafo: GrafoBipartito): number {
         const listaClavesUeaAsignadas = grafo.adyacencias.get(numeroEconomico) || [];
         let horasAcumuladas = 0;
@@ -92,19 +143,18 @@ export class ReglaMaxN_Horas extends ReglaBase {
     evaluar(profesor: ProfesorDTO, grupo: GrupoDTO, grafo: GrafoBipartito): EvaluacionRegla {
         const horasOcupadas = this._getHorasFrenteAGrupoActuales(profesor.numeroEconomico, grafo);
         const horasQuePideEsteGrupo = this._getDuracionGrupo(grupo);
-
         const totalProyectado = horasOcupadas + horasQuePideEsteGrupo;
 
         if (totalProyectado <= this._limiteHorasSemanales) {
             return {
                 resultadoExitoso: true,
-                motivo: `La asignación es válida. Carga proyectada: ${totalProyectado} hrs (Límite: ${this._limiteHorasSemanales} hrs).`
+                motivo: `La asignacion es valida. Carga proyectada: ${totalProyectado} hrs (Limite: ${this._limiteHorasSemanales} hrs).`
             };
         }
 
         return {
             resultadoExitoso: false,
-            motivo: `Asignarlo superaría su máxima carga. Carga actual (${horasOcupadas}h) + Grupo a asignar (${horasQuePideEsteGrupo}h) = ${totalProyectado}h (Límite: ${this._limiteHorasSemanales}h).`
+            motivo: `Asignarlo superaria su maxima carga. Carga actual (${horasOcupadas}h) + Grupo a asignar (${horasQuePideEsteGrupo}h) = ${totalProyectado}h (Limite: ${this._limiteHorasSemanales}h).`
         };
     }
 }
@@ -121,9 +171,10 @@ export class ReglaGrupoTieneProgramacion extends ReglaBase {
                 motivo: 'El grupo no cuenta con programacion_uea_grupo asignada.'
             };
         }
+
         return {
             resultadoExitoso: true,
-            motivo: 'Regla superada (Validación de Integridad). El grupo cuenta con horarios programados en BD siempre.'
+            motivo: 'Regla superada. El grupo cuenta con horarios programados en BD.'
         };
     }
 }

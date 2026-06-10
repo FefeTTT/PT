@@ -3,63 +3,58 @@ import { GrafoBipartito } from '../models/GrafoBipartito';
 import { FSMAsignador, EstadoAsignacion } from '../fsm/FSMAsignador';
 import { ReglasPipeline } from '../rules/ReglasPipeline';
 import { SemanaLaboral } from '../models/SemanaLaboral';
-import { AsignacionInput, ResultadoGreedy, MetricasGreedy, EstrategiaOrdenamiento } from './GreedyTypes';
+import {
+    AsignacionInput,
+    CandidatoProfesor,
+    ResultadoGreedy,
+    MetricasGreedy,
+    EstrategiaOrdenamiento
+} from './GreedyTypes';
 import { EstrategiaMCV } from './EstrategiaMCV';
-import { IModeloML, ModeloMLUniforme } from '../ml/IModeloML';
+import { IModeloML, ModeloMLUniforme, scoreNormalizado } from '../ml/IModeloML';
+import {
+    IPerfilCargaConsecutivaProvider,
+    PESO_PENALIZACION_CONSECUTIVA,
+    PerfilCargaConsecutivaConstante
+} from '../ml/PerfilCargaConsecutiva';
 import { FuncionObjetivoZ, ConstraintPonderada } from '../objective/FuncionObjetivoZ';
-import { PenalizacionHuecos, PenalizacionCargaConsecutiva } from '../objective/SoftConstraints';
+import { ViabilidadHuecos } from '../objective/SoftConstraints';
+import { calcularPenalizacionCargaConsecutivaCandidato } from '../objective/CargaConsecutivaHistorica';
 import { EjectionChain } from './EjectionChain';
 
-/**
- * GreedyOrchestrator — GRASP (Greedy Randomized Adaptive Search Procedure).
- *
- * Clase pura (sin dependencias React/DOM).
- * Recibe catálogos crudos de profesores y grupos, genera combinaciones,
- * las valida con FSMAsignador, y produce un AsignacionInput[] con los
- * emparejamientos exitosos.
- *
- * Fases del GRASP:
- * 1. Fase Constructiva: Greedy con RCL probabilístico (o MCV determinista).
- * 2. Evaluación: Función objetivo Z (recompensa ML − penalización suave).
- * 3. Búsqueda Local: Ejection Chains (KHE14) para mejora iterativa.
- *
- * Diseñada para instanciar tanto en el hilo principal como en un Web Worker.
- */
 export class GreedyOrchestrator {
-    private _estrategia: EstrategiaOrdenamiento;
-    private _limiteHorasSemanales: number;
-    private _modelo: IModeloML;
-    private _funcionZ: FuncionObjetivoZ;
-    private _ejectionChain: EjectionChain;
+    private readonly _estrategia: EstrategiaOrdenamiento;
+    private readonly _limiteHorasSemanales: number;
+    private readonly _modelo: IModeloML;
+    private readonly _perfilCargaProvider: IPerfilCargaConsecutivaProvider;
+    private readonly _funcionZ: FuncionObjetivoZ;
+    private readonly _ejectionChain: EjectionChain;
 
     constructor(
         estrategia: EstrategiaOrdenamiento = new EstrategiaMCV(),
         limiteHorasSemanales: number = 24,
         modelo?: IModeloML,
         constraintsPersonalizados?: ConstraintPonderada[],
-        ejectionChain?: EjectionChain
+        ejectionChain?: EjectionChain,
+        perfilCargaProvider?: IPerfilCargaConsecutivaProvider
     ) {
         this._estrategia = estrategia;
         this._limiteHorasSemanales = limiteHorasSemanales;
         this._modelo = modelo ?? new ModeloMLUniforme();
+        this._perfilCargaProvider = perfilCargaProvider ?? new PerfilCargaConsecutivaConstante();
 
-        // Constraints por defecto si no se proporcionan
         const constraints = constraintsPersonalizados ?? [
-            { constraint: new PenalizacionHuecos(), lambda: 2.0 },
-            { constraint: new PenalizacionCargaConsecutiva(3), lambda: 1.5 }
+            { constraint: new ViabilidadHuecos(), lambda: 2.0 }
         ];
 
-        this._funcionZ = new FuncionObjetivoZ(constraints, this._modelo);
+        this._funcionZ = new FuncionObjetivoZ(
+            constraints,
+            this._modelo,
+            this._perfilCargaProvider
+        );
         this._ejectionChain = ejectionChain ?? new EjectionChain();
     }
 
-    /**
-     * Ejecuta el algoritmo GRASP sobre los catálogos proporcionados.
-     *
-     * @param profesores Lista completa de profesores disponibles.
-     * @param grupos Lista completa de grupos a asignar.
-     * @returns ResultadoGreedy con asignaciones exitosas, métricas y scoreZ.
-     */
     public ejecutar(profesores: ProfesorDTO[], grupos: GrupoDTO[]): ResultadoGreedy {
         const inicio = performance.now();
 
@@ -84,39 +79,42 @@ export class GreedyOrchestrator {
             if (profesoresDelArea.length === 0) continue;
 
             const gruposOrdenados = this._estrategia.ordenarGrupos(gruposDelArea);
-            const profesoresOrdenados = this._estrategia.ordenarProfesores(profesoresDelArea);
 
             for (const grupo of gruposOrdenados) {
                 if (gruposAsignados.has(grupo.idUeaGrupo)) continue;
 
-                for (const profesor of profesoresOrdenados) {
-                    totalEvaluaciones++;
+                const resultadoCandidatos = this._construirCandidatosFactibles(
+                    profesoresDelArea,
+                    grupo,
+                    grafo,
+                    fsm
+                );
 
-                    const resultado = fsm.procesarAsignacion(
-                        profesor.numeroEconomico,
-                        grupo.idUeaGrupo
-                    );
+                totalEvaluaciones += resultadoCandidatos.evaluaciones;
+                totalRechazados += resultadoCandidatos.rechazados;
 
-                    if (resultado.estado === EstadoAsignacion.ASIGNACION_OK) {
-                        grafo.asignarMutable(profesor.numeroEconomico, grupo.idUeaGrupo);
-                        gruposAsignados.add(grupo.idUeaGrupo);
-                        break;
-                    } else {
-                        totalRechazados++;
-                    }
-                }
+                const elegido = this._estrategia.seleccionarProfesorParaGrupo(
+                    resultadoCandidatos.candidatos,
+                    grupo
+                );
+
+                if (!elegido) continue;
+
+                grafo.asignarMutable(elegido.profesor.numeroEconomico, grupo.idUeaGrupo);
+                fsm.actualizarGrafo(grafo);
+                gruposAsignados.add(grupo.idUeaGrupo);
             }
         }
 
         fsm.actualizarGrafo(grafo);
 
-        // Computar huérfanos pre-búsqueda local para Fase 1 de reparación
         const todosLosGrupoIds = grupos.map(g => g.idUeaGrupo);
         const huerfanosPreRepair = todosLosGrupoIds.filter(id => !grafo.asignacionesInversas.has(id));
 
         const resultadoMejora = this._ejectionChain.mejorar(grafo, fsm, this._funcionZ, huerfanosPreRepair);
         const resultadoZ = this._funcionZ.evaluarGrafo(grafo);
         const asignaciones: AsignacionInput[] = [];
+
         for (const [idGrupo, numEco] of grafo.asignacionesInversas) {
             asignaciones.push({
                 numeroEconomico: numEco,
@@ -124,9 +122,7 @@ export class GreedyOrchestrator {
             });
         }
 
-        // Re-computar grupos sin asignar después de la fase de mejora
         const gruposSinAsignar = todosLosGrupoIds.filter(id => !grafo.asignacionesInversas.has(id));
-
         const fin = performance.now();
 
         const metricas: MetricasGreedy = {
@@ -141,6 +137,51 @@ export class GreedyOrchestrator {
         };
 
         return { asignaciones, metricas };
+    }
+
+    private _construirCandidatosFactibles(
+        profesores: ProfesorDTO[],
+        grupo: GrupoDTO,
+        grafo: GrafoBipartito,
+        fsm: FSMAsignador
+    ): { candidatos: CandidatoProfesor[]; evaluaciones: number; rechazados: number } {
+        const candidatos: CandidatoProfesor[] = [];
+        let evaluaciones = 0;
+        let rechazados = 0;
+
+        fsm.actualizarGrafo(grafo);
+
+        for (const profesor of profesores) {
+            evaluaciones++;
+
+            const resultado = fsm.procesarAsignacion(
+                profesor.numeroEconomico,
+                grupo.idUeaGrupo
+            );
+
+            if (resultado.estado !== EstadoAsignacion.ASIGNACION_OK) {
+                rechazados++;
+                continue;
+            }
+
+            const scoreML = scoreNormalizado(this._modelo, profesor.numeroEconomico, grupo.idUeaGrupo);
+            const penalizacionConsecutiva = calcularPenalizacionCargaConsecutivaCandidato(
+                grafo,
+                profesor.numeroEconomico,
+                grupo.idUeaGrupo,
+                this._perfilCargaProvider
+            );
+
+            candidatos.push({
+                profesor,
+                grupo,
+                scoreML,
+                penalizacionConsecutiva,
+                scoreRCL: scoreML - PESO_PENALIZACION_CONSECUTIVA * penalizacionConsecutiva
+            });
+        }
+
+        return { candidatos, evaluaciones, rechazados };
     }
 
     private _agruparPorArea(grupos: GrupoDTO[]): Map<number, GrupoDTO[]> {

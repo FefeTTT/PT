@@ -1,0 +1,2 @@
+rmse_modelo_general,mae_modelo_general,rmse_modelo_general_sin_ponderar,mae_modelo_general_sin_ponderar,rmse_semanal,rmse_bloques,peso_targets_bloques
+0.186266672,0.085491842,0.248355562,0.151974814,0.263420853,1.664295092e-05,8.0

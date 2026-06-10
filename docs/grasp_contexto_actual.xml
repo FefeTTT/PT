@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraspContextoActual fecha="2026-04-06" alcance="frontend-react/solution" lenguaje="es">
+  <Resumen>
+    <Descripcion>
+      El motor actual resuelve timetabling profesor-grupo sobre un grafo bipartito,
+      valida cada intento con un FSM de restricciones duras, repara grupos huerfanos
+      con ejection chain y despues intenta una optimizacion local sobre la funcion Z.
+    </Descripcion>
+    <EstadoEfectivo>
+      En la configuracion por defecto el comportamiento real es mas cercano a
+      MCV + reparacion que a un GRASP plenamente probabilistico, porque
+      GreedyOrchestrator usa EstrategiaMCV por defecto y la capa metaheuristica
+      basada en soft constraints todavia no cuenta con pesos calibrados. Por esa
+      razon existe intencionalmente una funcion mockup/provisional mientras se
+      define el esquema de pesos.
+    </EstadoEfectivo>
+  </Resumen>
+
+  <Entrypoints>
+    <Componente ruta="frontend-react/solution/EngineFacade.ts" clase="EngineFacade">
+      <Operacion nombre="buildGrafoForArea" detalle="Consulta getCandidatosPorArea(areaId) y solo registra profesores y grupos en GrafoBipartito." />
+      <Operacion nombre="runFSM" detalle="Crea ReglasPipeline y ejecuta GraphFSMAsignador paso a paso para un par profesor-grupo." />
+      <Operacion nombre="runGreedy" detalle="Instancia GreedyOrchestrator con estrategia opcional y limite de horas." />
+    </Componente>
+  </Entrypoints>
+
+  <ModeloDominio>
+    <Componente ruta="frontend-react/solution/types/AssignmentTypes.ts" clase="ProfesorDTO" detalle="numeroEconomico, idArea, horariosContratacion" />
+    <Componente ruta="frontend-react/solution/types/AssignmentTypes.ts" clase="GrupoDTO" detalle="idUeaGrupo, idGrupo, claveGrupo, idArea, ueaClave, horarios" />
+    <Componente ruta="frontend-react/solution/models/GrafoBipartito.ts" clase="GrafoBipartito" detalle="profesores, grupos, adyacencias y asignacionesInversas" />
+    <Componente ruta="frontend-react/solution/models/SemanaLaboral.ts" clase="SemanaLaboral" detalle="cache por profesor y fusion de bloques de horario" />
+  </ModeloDominio>
+
+  <Fases>
+    <Fase orden="1" nombre="Entrada y preparacion">
+      <Paso orden="1.1">GreedyOrchestrator invalida el cache de SemanaLaboral.</Paso>
+      <Paso orden="1.2">Construye un GrafoBipartito y registra todos los profesores y grupos recibidos.</Paso>
+      <Paso orden="1.3">Crea ReglasPipeline y FSMAsignador.</Paso>
+      <Paso orden="1.4">Agrupa grupos y profesores por idArea.</Paso>
+    </Fase>
+
+    <Fase orden="2" nombre="Fase constructiva">
+      <Paso orden="2.1">Ordena areas segun la estrategia activa.</Paso>
+      <Paso orden="2.2">Por cada area ordena grupos y profesores.</Paso>
+      <Paso orden="2.3">Para cada grupo intenta asignarlo al primer profesor que pase el FSM.</Paso>
+      <Paso orden="2.4">Si el FSM aprueba, usa asignarMutable y marca el grupo como asignado.</Paso>
+      <Paso orden="2.5">Si el FSM rechaza, incrementa totalRechazados y prueba con el siguiente profesor.</Paso>
+    </Fase>
+
+    <Fase orden="3" nombre="Reparacion de huerfanos">
+      <Paso orden="3.1">Calcula grupos sin asignar tras la fase constructiva.</Paso>
+      <Paso orden="3.2">Para cada huerfano intenta una cadena de eyeccion dentro de la misma area.</Paso>
+      <Paso orden="3.3">Si la cadena falla, revierte el grafo al estado previo.</Paso>
+      <Paso orden="3.4">Si no hay cadena valida, intenta una asignacion directa del huerfano.</Paso>
+    </Fase>
+
+    <Fase orden="4" nombre="Optimizacion local">
+      <Paso orden="4.1">Evalua Z inicial sobre el grafo reparado.</Paso>
+      <Paso orden="4.2">Mientras no se agoten maxIteraciones ni maxIteracionesSinMejora, selecciona una asignacion aleatoria.</Paso>
+      <Paso orden="4.3">Prueba swaps con profesores de la misma area, siempre revalidando con FSM.</Paso>
+      <Paso orden="4.4">Acepta el swap solo si clasificarDelta lo considera MEJORA_SIGNIFICATIVA.</Paso>
+      <Paso orden="4.5">Si no mejora, revierte el swap y acumula telemetria.</Paso>
+    </Fase>
+
+    <Fase orden="5" nombre="Salida">
+      <Paso orden="5.1">Reevalua Z final.</Paso>
+      <Paso orden="5.2">Extrae AsignacionInput[] desde asignacionesInversas.</Paso>
+      <Paso orden="5.3">Calcula metricas: evaluaciones, asignados, rechazados, gruposSinAsignar, scoreZ, mejorasLocales y reparaciones.</Paso>
+    </Fase>
+  </Fases>
+
+  <RestriccionesDuras pipeline="ReglasPipeline.crear">
+    <Regla orden="1" nombre="REGLA_GRUPO_TIENE_PROGRAMACION" ruta="frontend-react/solution/rules/ReglasImplementacion.ts">
+      <Descripcion>El grupo debe tener al menos una franja horaria en BD.</Descripcion>
+    </Regla>
+    <Regla orden="2" nombre="REGLA_AREA" ruta="frontend-react/solution/rules/ReglasImplementacion.ts">
+      <Descripcion>El idArea del profesor debe coincidir exactamente con el idArea del grupo.</Descripcion>
+    </Regla>
+    <Regla orden="3" nombre="REGLA_HORARIO_LABORAL" ruta="frontend-react/solution/rules/ReglasImplementacion.ts">
+      <Descripcion>SemanaLaboral fusiona el horario de contratacion del profesor y verifica que cada franja del grupo quede cubierta; distingue entre no disponibilidad y hora muerta.</Descripcion>
+    </Regla>
+    <Regla orden="4" nombre="REGLA_TRASLAPE_UEA" ruta="frontend-react/solution/rules/ReglasImplementacion.ts">
+      <Descripcion>Evita traslapes entre el grupo candidato y los grupos ya asignados al mismo profesor.</Descripcion>
+    </Regla>
+    <Regla orden="5" nombre="REGLA_MAXIMO_N_HORAS_LABORALES" ruta="frontend-react/solution/rules/ReglasImplementacion.ts">
+      <Descripcion>Impide que la suma de horas actuales mas la duracion del grupo supere el limite semanal.</Descripcion>
+    </Regla>
+  </RestriccionesDuras>
+
+  <FuncionObjetivo>
+    <Formula>Z = recompensa - penalizacionTotal</Formula>
+    <Recompensa detalle="Suma score(numEco, idGrupo) para cada asignacion del grafo." />
+    <Constraint nombre="PENALIZACION_HUECOS" lambda="2.0" detalle="Penaliza huecos entre clases del mismo profesor." />
+    <Constraint nombre="PENALIZACION_CARGA_CONSECUTIVA" lambda="1.5" detalle="Penaliza bloques consecutivos que exceden el umbral permitido." />
+  </FuncionObjetivo>
+
+  <ComportamientoActual>
+    <Hallazgo clave="estrategia_por_defecto">
+      GreedyOrchestrator usa EstrategiaMCV por defecto. La aleatorizacion solo existe si el llamador inyecta EstrategiaRCL.
+    </Hallazgo>
+    <Hallazgo clave="decision_temporal_intencional">
+      La ausencia de una RCL/metaheuristica efectiva en la configuracion por defecto
+      responde a que aun no existen pesos calibrados para las soft constraints; el
+      comportamiento provisional actual es intencional y no accidental.
+    </Hallazgo>
+    <Hallazgo clave="rcl_sin_contexto_de_grupo">
+      EstrategiaRCL ordena profesores con score(p.numeroEconomico, 0), por lo que no usa el id del grupo candidato.
+    </Hallazgo>
+    <Hallazgo clave="modelo_uniforme">
+      ModeloMLUniforme retorna 1.0 para cualquier par profesor-grupo cuando no se inyecta otro modelo.
+    </Hallazgo>
+    <Hallazgo clave="soft_constraints_dormidas_con_modelo_uniforme">
+      Las penalizaciones usan (1 - wPromedio); con ModeloMLUniforme el factor vale 0 y las penalizaciones se anulan.
+    </Hallazgo>
+    <Hallazgo clave="optimizacion_local_poco_efectiva_por_defecto">
+      Si Z solo cambia por numero de asignaciones, un swap entre profesores conserva la misma Z y normalmente sera rechazado como ruido numerico.
+    </Hallazgo>
+    <Hallazgo clave="ui_diagnostica_separada_del_motor_real">
+      GRASPTestModal usa una formula soft provisional local y no reutiliza FuncionObjetivoZ ni EjectionChain; esto sirve como mockup intencional mientras no se definan los pesos de soft constraints.
+    </Hallazgo>
+  </ComportamientoActual>
+
+  <Evidencia>
+    <Prueba ruta="frontend-react/solution/__tests__/entrada.test.ts" cubre="cache de SemanaLaboral y operaciones basicas de GrafoBipartito" />
+    <Prueba ruta="frontend-react/solution/__tests__/constructiva.test.ts" cubre="orden real del FSM y comportamiento base de EstrategiaRCL" />
+    <Prueba ruta="frontend-react/solution/__tests__/reparacion.test.ts" cubre="reparacion de huerfanos y rollback del grafo" />
+    <Prueba ruta="frontend-react/solution/__tests__/optimizacion.test.ts" cubre="clasificacion numerica del delta Z" />
+    <Prueba ruta="frontend-react/solution/__tests__/resultado.test.ts" cubre="coherencia de salida y metricas del orquestador" />
+  </Evidencia>
+
+  <MockupsYPendientes>
+    <Nota>Busqueda literal de TODO/FIXME/XXX en frontend-react/solution: sin coincidencias.</Nota>
+    <Hallazgo tipo="mockup_ui" ruta="frontend-react/solution/components/TestFSMHookModal.tsx" evidencia="El texto del modal habla explicitamente de Profesor Mock y Grupo Mock." />
+    <Hallazgo tipo="ui_provisional" ruta="frontend-react/solution/components/GRASPTestModal.tsx" evidencia="El modal muestra badge PROVISIONAL y una formula soft local separada del motor real." />
+    <Hallazgo tipo="stub_ml" ruta="frontend-react/solution/ml/IModeloML.ts" evidencia="El modelo por defecto es ModeloMLUniforme; el comentario indica que XGBoost aun no esta integrado." />
+    <Hallazgo tipo="pendiente_explicito" ruta="frontend-react/solution/greedy/EstrategiaMCV.ts" evidencia="El comentario indica que el ordenamiento especial de profesores queda para futuras iteraciones." />
+    <Hallazgo tipo="mockup_intencional" ruta="frontend-react/solution/components/GRASPTestModal.tsx" evidencia="La formula soft provisional debe entenderse como una aproximacion intencional mientras faltan pesos calibrados para soft constraints." />
+  </MockupsYPendientes>
+</GraspContextoActual>

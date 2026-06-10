@@ -1,0 +1,68 @@
+# Configuración de parámetros del modelo de Penalización de Carga Histórica
+# 
+# Este archivo define los defaults. Se puede sobreescribir cualquier valor
+# pasándolo como kwargs al constructor del modelo.
+
+# ── Decaimiento temporal ──
+half_life_trimestres: 4.0           # Trimestres para reducir peso a la mitad
+q_tolerancia: 0.90                  # Cuantil de tolerancia (Q90 global)
+shrinkage_weight: 3.0               # Peso del shrinkage bayesiano empírico
+
+# ── Cotas de saturación ──
+horas_cap: 6.0                      # Horas máximas consideradas para exceso
+ueas_bloque_cap: 4.0                # UEA máximas en un bloque para exceso
+ueas_semana_cap: 6.0                # UEA máximas por semana para exceso
+
+# ── Escalado global de penalización ──
+lambda_semanal: 2.0                 # Factor de escala para señal semanal
+lambda_diaria: 2.0                  # Factor de escala para señal diaria
+lambda_bloques_historicos: 0.90     # Factor de escala para bloques históricos
+
+# ── Pesos de componentes de exceso ──
+peso_exceso_horas_dia: 1.5          # Peso de horas en penalización diaria
+peso_exceso_ueas_bloque: 1.2        # Peso de UEA/bloque en penalización diaria
+peso_exceso_ueas_semana: 1.5        # Peso de UEA/semana en penalización semanal
+
+# ── Multiplicadores por cardinalidad de UEA ──
+lambda_ueas: [1.0, 1.0, 1.0, 1.0, 1.0]  # Para W=2,3,4,5,6+ UEA
+
+# ── Factor horas-bloque (laboratorio vs normal) ──
+lambda_horas_bloque_normal: 1.0       # Penalización para bloques normales
+lambda_horas_bloque_laboratorio: 0.35 # Penalización reducida para laboratorio
+umbral_horas_laboratorio: 2.25        # Horas a partir de las cuales se considera lab
+cap_horas_laboratorio: 3.0            # Horas saturación de score de laboratorio
+
+# ── Pesos de rareza de bloques históricos ──
+peso_rareza_horas_bloque_hist: 1.60         # Peso de rareza de horas en bloque
+peso_rareza_ueas_bloque_hist: 0.90           # Peso de rareza de UEA en bloque
+peso_rareza_fragmentacion_bloques: 0.80       # Peso de rareza de fragmentación
+peso_rareza_huecos_bloques: 0.55              # Peso de rareza de huecos
+peso_rareza_patron_bloques: 0.35              # Peso de rareza de patrón
+exponente_rareza_bloques: 1.40               # Exponente para curva de rareza
+
+# ── Bonus por patrón respaldado ──
+premio_respaldo_bloques: 0.12         # Bonus cuando UEA bajas y patrón conocido
+premio_cap_bloques: 0.12              # Bonus adicional cuando rareza es baja
+umbral_respaldo_bonus_bloques: 0.50   # Umbral de rareza para bonus
+umbral_cost_bonus_bloques: 0.25       # Umbral de coste para bonus
+max_ueas_bonus_bloques: 2.0           # Máximo de UEA para aplicar bonus de respaldo
+
+# ── Extrapolación individual ──
+individual_alpha_min: 0.05            # Floor mínimo de rareza en extrapolación
+individual_decay_power: 1.0           # Decaimiento sigmoide gap/(gap+decay) para extrapolación
+individual_floor_strength: 0.0        # (reservado)
+individual_recent_decay: 1.0          # (reservado)
+individual_extra_gap_max: 1.0         # Gap=1 recibe bonus de "recién fuera de rango"
+individual_extra_gap_recent: 0.20     # Magnitud del bonus (reduce rareza en gap=1 un 20%)
+individual_extra_stale: 0.0           # Factor de obsolescencia
+
+# ── Hábito individual ──
+individual_habit_strength: 0.0        # Fuerza del factor de hábito
+individual_habit_power: 1.0           # Exponente de dispersión para hábito
+habit_recent_weight: 0.80             # Peso de trimestres recientes en hábito
+habit_q_weight: 0.40                  # Peso de cuantiles extremos en hábito
+habit_max_weight: 0.15                # Peso máximo del factor de hábito
+
+# ── Otros ──
+penalizacion_base: 0.0                # Penalización base aditiva
+exponente_rareza_ueas_totales: 2.0    # Exponente para curva de rareza de UEA

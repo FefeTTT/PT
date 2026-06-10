@@ -1,0 +1,619 @@
+{
+    "4828": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "6864": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "11101": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "10:00",
+                "fin": "14:00",
+                "centro": 12.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "*",
+            "10:00-14:00"
+        ]
+    },
+    "657": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "11294": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "10:00",
+                "fin": "14:00",
+                "centro": 12.0,
+                "es_inferido": false
+            },
+            {
+                "dia": "L-V",
+                "inicio": "16:00",
+                "fin": "21:00",
+                "centro": 18.5,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "10:00-14:00",
+            "16:00-21:00"
+        ]
+    },
+    "2346": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "10996": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "07:00",
+                "fin": "11:00",
+                "centro": 9.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "*",
+            "07:00-11:00"
+        ]
+    },
+    "4684": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "14721": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "10:00",
+                "fin": "14:00",
+                "centro": 12.0,
+                "es_inferido": false
+            },
+            {
+                "dia": "L-V",
+                "inicio": "16:00",
+                "fin": "20:00",
+                "centro": 18.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "10:00-14:00",
+            "16:00-20:00"
+        ]
+    },
+    "11650": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:00",
+                "fin": "22:00",
+                "centro": 14.5,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "11:30-19:30",
+            "10:00-18:00"
+        ]
+    },
+    "2470": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "1313": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "4329": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "3845": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "27034": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "14:00",
+                "fin": "18:00",
+                "centro": 16.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "*",
+            "14:00-18:00"
+        ]
+    },
+    "310": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "24351": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "14:00",
+                "fin": "18:00",
+                "centro": 16.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "**",
+            "14:00-18:00"
+        ]
+    },
+    "13168": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "18:00",
+                "fin": "22:00",
+                "centro": 20.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "*",
+            "18:00-22:00"
+        ]
+    },
+    "14177": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "10:00",
+                "fin": "14:00",
+                "centro": 12.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "*",
+            "10:00-14:00"
+        ]
+    },
+    "940": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "10906": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "4037": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "1895": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "11582": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "14416": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "10:00",
+                "fin": "14:00",
+                "centro": 12.0,
+                "es_inferido": false
+            },
+            {
+                "dia": "L-V",
+                "inicio": "16:00",
+                "fin": "20:00",
+                "centro": 18.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "10:00-14:00",
+            "16:00-20:00"
+        ]
+    },
+    "4606": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "12035": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "07:00",
+                "fin": "11:00",
+                "centro": 9.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "**",
+            "07:00-11:00"
+        ]
+    },
+    "4038": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "07:00",
+                "fin": "11:00",
+                "centro": 9.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "**",
+            "07:00-11:00"
+        ]
+    },
+    "14717": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "16:00",
+                "fin": "20:00",
+                "centro": 18.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "**",
+            "16:00-20:00"
+        ]
+    },
+    "16283": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "09:00",
+                "fin": "13:00",
+                "centro": 11.0,
+                "es_inferido": false
+            },
+            {
+                "dia": "L-V",
+                "inicio": "15:00",
+                "fin": "19:00",
+                "centro": 17.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "09:00-13:00",
+            "15:00-19:00"
+        ]
+    },
+    "10382": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "22644": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            },
+            {
+                "dia": "L-V",
+                "inicio": "10:00",
+                "fin": "18:00",
+                "centro": 14.0,
+                "es_inferido": false
+            }
+        ],
+        "horario_original": [
+            "*",
+            "10:00-18:00"
+        ]
+    },
+    "1312": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "1360": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "14877": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "14:40",
+                "fin": "20:16",
+                "centro": 17.47108249672632,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    },
+    "3641": {
+        "inferido": [
+            {
+                "dia": "L-V",
+                "inicio": "07:35",
+                "fin": "14:04",
+                "centro": 10.824614666043905,
+                "es_inferido": true
+            }
+        ],
+        "horario_original": [
+            "**"
+        ]
+    }
+}

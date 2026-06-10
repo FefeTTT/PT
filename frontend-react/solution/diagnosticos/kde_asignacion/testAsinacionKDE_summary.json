@@ -1,0 +1,239 @@
+{
+  "mode": "kde_ij",
+  "seed": 20260526,
+  "k": 48,
+  "alpha": 0.25,
+  "totalAsignaciones": 266,
+  "totalGrupos": 291,
+  "gruposSinAsignar": 25,
+  "scoreZ": 136.03813249478108,
+  "tiempoMs": 38700,
+  "ecos": [
+    {
+      "eco": 19834,
+      "totalUeas": 2,
+      "manana": 0,
+      "medioDia": 0,
+      "tarde": 2,
+      "asignaciones": [
+        {
+          "uea": 1112017,
+          "grupo": "CCB82",
+          "horario": "L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00",
+          "turno": "tarde",
+          "score": 0.62259377,
+          "kde_ij": 0.65474896,
+          "kde_ih": 0.42822186,
+          "kde_ih_raw": 0.42822186,
+          "kde_plan": 0.81184661,
+          "zBase": 0.62259377,
+          "projectedPlanCount": 2,
+          "dayCoverage": 1
+        },
+        {
+          "uea": 1112017,
+          "grupo": "CCB81",
+          "horario": "L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30",
+          "turno": "tarde",
+          "score": 0.5887116,
+          "kde_ij": 0.65474896,
+          "kde_ih": 0.33141566,
+          "kde_ih_raw": 0.33141566,
+          "kde_plan": 0.81184661,
+          "zBase": 0.5887116,
+          "projectedPlanCount": 2,
+          "dayCoverage": 1
+        }
+      ],
+      "contradicciones": []
+    },
+    {
+      "eco": 28650,
+      "totalUeas": 2,
+      "manana": 0,
+      "medioDia": 0,
+      "tarde": 2,
+      "asignaciones": [
+        {
+          "uea": 1112030,
+          "grupo": "CTG85",
+          "horario": "L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30",
+          "turno": "tarde",
+          "score": 0.62438919,
+          "kde_ij": 0.8040956,
+          "kde_ih": 0.4340133,
+          "kde_ih_raw": 0.4340133,
+          "kde_plan": 0.63683692,
+          "zBase": 0.62438919,
+          "projectedPlanCount": 2,
+          "dayCoverage": 1
+        },
+        {
+          "uea": 1112030,
+          "grupo": "CTG84",
+          "horario": "L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00",
+          "turno": "tarde",
+          "score": 0.60176797,
+          "kde_ij": 0.8040956,
+          "kde_ih": 0.36938125,
+          "kde_ih_raw": 0.36938125,
+          "kde_plan": 0.63683692,
+          "zBase": 0.60176797,
+          "projectedPlanCount": 2,
+          "dayCoverage": 1
+        }
+      ],
+      "contradicciones": []
+    },
+    {
+      "eco": 14416,
+      "totalUeas": 2,
+      "manana": 2,
+      "medioDia": 0,
+      "tarde": 0,
+      "asignaciones": [
+        {
+          "uea": 1111093,
+          "grupo": "CTG04",
+          "horario": "M:07:00-10:00",
+          "turno": "manana",
+          "score": 0.34592707,
+          "kde_ij": 0.62855995,
+          "kde_ih": 0.10278228,
+          "kde_ih_raw": 0.10278228,
+          "kde_plan": 0.29985763,
+          "zBase": 0.34592707,
+          "projectedPlanCount": 2,
+          "dayCoverage": 1
+        },
+        {
+          "uea": 1112030,
+          "grupo": "CTG03",
+          "horario": "L:07:00-08:30|Mi:07:00-08:30|V:07:00-08:30",
+          "turno": "manana",
+          "score": 0.38263457,
+          "kde_ij": 0.55460118,
+          "kde_ih": 0.28161962,
+          "kde_ih_raw": 0.28161962,
+          "kde_plan": 0.29985763,
+          "zBase": 0.38263457,
+          "projectedPlanCount": 2,
+          "dayCoverage": 1
+        }
+      ],
+      "contradicciones": []
+    }
+  ],
+  "supervisado26P_holdout": [
+    {
+      "eco": 19834,
+      "asignaciones": [
+        {
+          "clave": "1112033",
+          "grupo": "CCB81",
+          "l": "17:30",
+          "m": "",
+          "mi": "17:30",
+          "j": "",
+          "v": "17:30"
+        },
+        {
+          "clave": "1112034",
+          "grupo": "CCB81",
+          "l": "16:00",
+          "m": "",
+          "mi": "16:00",
+          "j": "",
+          "v": "16:00"
+        },
+        {
+          "clave": "1112034",
+          "grupo": "CCB82",
+          "l": "14:30",
+          "m": "",
+          "mi": "14:30",
+          "j": "",
+          "v": "14:30"
+        }
+      ]
+    },
+    {
+      "eco": 28650,
+      "asignaciones": [
+        {
+          "clave": "1112017",
+          "grupo": "CCB81",
+          "l": "16:00",
+          "m": "",
+          "mi": "16:00",
+          "j": "",
+          "v": "16:00"
+        },
+        {
+          "clave": "1112030",
+          "grupo": "CTG82",
+          "l": "17:30",
+          "m": "",
+          "mi": "17:30",
+          "j": "",
+          "v": "17:30"
+        }
+      ]
+    },
+    {
+      "eco": 14416,
+      "asignaciones": [
+        {
+          "clave": "1111087",
+          "grupo": "CCB02",
+          "l": "10:00",
+          "m": "",
+          "mi": "",
+          "j": "",
+          "v": ""
+        },
+        {
+          "clave": "1111092",
+          "grupo": "CTG08",
+          "l": "7:00",
+          "m": "",
+          "mi": "",
+          "j": "",
+          "v": ""
+        },
+        {
+          "clave": "1112016",
+          "grupo": "CCB01",
+          "l": "",
+          "m": "8:30",
+          "mi": "",
+          "j": "8:30",
+          "v": ""
+        },
+        {
+          "clave": "1113085",
+          "grupo": "CAT18",
+          "l": "",
+          "m": "15:00",
+          "mi": "",
+          "j": "",
+          "v": ""
+        },
+        {
+          "clave": "1113087",
+          "grupo": "CTG01",
+          "l": "",
+          "m": "",
+          "mi": "10:00",
+          "j": "",
+          "v": ""
+        }
+      ]
+    }
+  ],
+  "files": {
+    "surfaceFile": "C:\\Users\\jafet\\OneDrive\\Escritorio\\Uni\\CB\\PT\\frontend-react\\solution\\diagnosticos\\kde_asignacion\\kde_surface_points.json",
+    "fase1File": "C:\\Users\\jafet\\OneDrive\\Escritorio\\Uni\\CB\\PT\\frontend-react\\solution\\greedy\\debug_grasp_kde_fase1.json",
+    "ejectionFile": "C:\\Users\\jafet\\OneDrive\\Escritorio\\Uni\\CB\\PT\\frontend-react\\solution\\greedy\\debug_grasp_kde_ejection.json"
+  }
+}

@@ -1,0 +1,269 @@
+/* ──────────────────────────────────────────────────────
+   EcoUeasScheduleTable – Weekly schedule grid for ECO UEAs
+   Design: brutalist-warm palette matching KdeMode/SolutionLockTable
+   ────────────────────────────────────────────────────── */
+
+.container {
+    margin-top: 24px;
+}
+
+/* ─── Header bar ─── */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #182023 0%, #1f3028 100%);
+    border-radius: 8px 8px 0 0;
+    border: 2px solid #182023;
+    border-bottom: none;
+}
+
+.title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #f8f4ea;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.titleIcon {
+    font-size: 16px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 8px;
+    background: linear-gradient(135deg, #c77928, #e8a849);
+    color: #182023;
+    font-size: 12px;
+    font-weight: 900;
+    border-radius: 13px;
+    box-shadow: 0 2px 6px rgba(199, 121, 40, 0.4);
+}
+
+/* ─── Empty state ─── */
+.empty {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: #7a8185;
+    background: #f2ede0;
+    border: 2px solid #182023;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    font-style: italic;
+}
+
+/* ─── Table wrapper ─── */
+.tableWrap {
+    overflow-x: auto;
+    border: 2px solid #182023;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 4px 4px 0 rgba(24, 32, 35, 0.15);
+}
+
+/* ─── Table core ─── */
+.scheduleTable {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    min-width: 720px;
+}
+
+/* ─── Table header ─── */
+.thSticky {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #223028;
+    color: #f8f4ea;
+    padding: 10px 10px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 3px solid #c77928;
+    white-space: nowrap;
+}
+
+.thDay {
+    min-width: 100px;
+}
+
+/* Show full name on wider screens, abbreviation on narrow */
+.dayFull {
+    display: inline;
+}
+.dayShort {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .dayFull { display: none; }
+    .dayShort { display: inline; }
+    .thDay { min-width: 60px; }
+}
+
+.thNumeric {
+    text-align: center;
+    min-width: 60px;
+}
+
+/* ─── Table rows ─── */
+.row {
+    transition: background-color 0.15s ease;
+}
+
+.row:nth-child(even) {
+    background: rgba(31, 77, 58, 0.04);
+}
+
+.row:hover {
+    background: rgba(199, 121, 40, 0.08);
+}
+
+/* ─── Cell styles ─── */
+.cellUea {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e0dcd0;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ueaCode {
+    display: inline-block;
+    padding: 3px 8px;
+    background: linear-gradient(135deg, #1f4d3a, #2a6b50);
+    color: #f8f4ea;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    box-shadow: 0 1px 3px rgba(31, 77, 58, 0.3);
+}
+
+.cellGrupo {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e0dcd0;
+    font-weight: 700;
+    color: #182023;
+    text-align: center;
+    font-size: 12px;
+}
+
+/* ─── Day cells ─── */
+.cellDay {
+    padding: 6px 6px;
+    border-bottom: 1px solid #e0dcd0;
+    text-align: center;
+    vertical-align: middle;
+    border-left: 1px solid #eae6da;
+}
+
+.cellDayActive {
+    background: rgba(31, 77, 58, 0.06);
+}
+
+.cellDayEmpty {
+    background: transparent;
+}
+
+.timeChip {
+    display: inline-block;
+    padding: 4px 8px;
+    background: linear-gradient(135deg, #1f4d3a, #2a6b50);
+    color: #f8f4ea;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: pre-line;
+    line-height: 1.4;
+    box-shadow:
+        0 1px 3px rgba(31, 77, 58, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.timeChip:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 3px 8px rgba(31, 77, 58, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.noClass {
+    color: #c0b9a8;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+/* ─── Turno cell ─── */
+.cellTurno {
+    padding: 6px 8px;
+    border-bottom: 1px solid #e0dcd0;
+    text-align: center;
+}
+
+.turnoBadge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.turno_manana {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    color: #78350f;
+    box-shadow: 0 1px 4px rgba(245, 158, 11, 0.35);
+}
+
+.turno_medioDia {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    color: #eff6ff;
+    box-shadow: 0 1px 4px rgba(59, 130, 246, 0.35);
+}
+
+.turno_tarde {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: #f5f3ff;
+    box-shadow: 0 1px 4px rgba(124, 58, 237, 0.35);
+}
+
+/* ─── Numeric cells ─── */
+.cellNumeric {
+    padding: 6px 8px;
+    border-bottom: 1px solid #e0dcd0;
+    text-align: center;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 11px;
+    color: #425257;
+    font-weight: 600;
+}
+
+.paseBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #182023;
+    color: #f8f4ea;
+    font-size: 10px;
+    font-weight: 900;
+}

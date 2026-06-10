@@ -6,7 +6,15 @@ export interface AsignacionInput {
     idUeaGrupo: number;
 }
 
-/** Métricas de la ejecución del Greedy. */
+export interface CandidatoProfesor {
+    profesor: ProfesorDTO;
+    grupo: GrupoDTO;
+    scoreML: number;
+    penalizacionConsecutiva: number;
+    scoreRCL: number;
+}
+
+/** Metricas de la ejecucion del Greedy. */
 export interface MetricasGreedy {
     totalEvaluaciones: number;
     totalAsignados: number;
@@ -18,23 +26,18 @@ export interface MetricasGreedy {
     reparaciones: number;
 }
 
-/** Resultado completo de una ejecución del Greedy. */
+/** Resultado completo de una ejecucion del Greedy. */
 export interface ResultadoGreedy {
     asignaciones: AsignacionInput[];
     metricas: MetricasGreedy;
 }
 
 /**
- * Strategy Pattern: Define cómo ordenar las áreas y los grupos antes de la iteración.
- * Permite inyectar distintas heurísticas sin modificar el Orquestador.
+ * Strategy Pattern: define como ordenar areas/grupos y como seleccionar
+ * profesor desde candidatos factibles del grupo actual.
  */
 export interface EstrategiaOrdenamiento {
-    /** Ordena las áreas por prioridad (las primeras se procesan primero). */
     ordenarAreas(areas: Map<number, GrupoDTO[]>): [number, GrupoDTO[]][];
-
-    /** Ordena los grupos dentro de un área por prioridad. */
     ordenarGrupos(grupos: GrupoDTO[]): GrupoDTO[];
-
-    /** Ordena los profesores dentro de un área por prioridad. */
-    ordenarProfesores(profesores: ProfesorDTO[]): ProfesorDTO[];
+    seleccionarProfesorParaGrupo(candidatos: CandidatoProfesor[], grupo: GrupoDTO): CandidatoProfesor | null;
 }

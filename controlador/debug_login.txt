@@ -28,5 +28,35 @@
         "usuario": "ayudante_cb$$",
         "pwd": "_CB...",
         "reason": "Contraseña inválida."
+    },
+    "20260326225614_0135695001774562174": {
+        "timestamp": "2026-03-26T22:56:14+01:00",
+        "usuario": "ayudante_cb$",
+        "pwd": "_CB...",
+        "reason": "Usuario no encontrado."
+    },
+    "20260326225628_0140109001774562188": {
+        "timestamp": "2026-03-26T22:56:28+01:00",
+        "usuario": "ayudante_cb$",
+        "pwd": "_CB...",
+        "reason": "Usuario no encontrado."
+    },
+    "20260327201859_0949014001774639139": {
+        "timestamp": "2026-03-27T20:18:59+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_cb...",
+        "reason": "Contraseña inválida."
+    },
+    "20260327201940_0884690001774639180": {
+        "timestamp": "2026-03-27T20:19:40+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_cb...",
+        "reason": "Contraseña inválida."
+    },
+    "20260327202035_0317991001774639235": {
+        "timestamp": "2026-03-27T20:20:35+01:00",
+        "usuario": "ayudante_cb$$",
+        "pwd": "_cb...",
+        "reason": "Contraseña inválida."
     }
 }

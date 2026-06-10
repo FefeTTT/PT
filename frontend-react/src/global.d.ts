@@ -11,5 +11,7 @@ declare global {
         unmountFuzzySearchInput: () => void;
         mountAdminApp: (containerId: string) => void;
         unmountAdminApp: () => void;
+        mountTimetablingApp: (containerId: string) => void;
+        unmountTimetablingApp: () => void;
     }
 }

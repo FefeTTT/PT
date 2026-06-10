@@ -1,0 +1,622 @@
+/* TimetablingApp.module.css — migrado al look "Taller" vía variables CSS (--tt-*).
+   Se conservan todos los nombres de clase (los consumen también los paneles Legacy,
+   que así heredan los tokens sin rediseñarse). Ver styles/taller.css. */
+
+.app {
+    min-height: 100vh;
+    background:
+        var(--tt-bg),
+        repeating-linear-gradient(90deg, rgba(34, 29, 22, 0.04) 0, rgba(34, 29, 22, 0.04) 1px, transparent 1px, transparent 28px);
+    background-color: var(--tt-bg);
+    color: var(--tt-ink);
+    font-family: var(--tt-font);
+}
+
+.shell {
+    width: min(1540px, calc(100vw - 32px));
+    margin: 0 auto;
+    padding: 24px 0 36px;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto;
+    gap: 18px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 3px solid var(--tt-ink);
+}
+
+.eyebrow {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--tt-accent2);
+}
+
+.title {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.subtitle {
+    margin: 8px 0 0;
+    max-width: 820px;
+    color: var(--tt-sub);
+    line-height: 1.5;
+}
+
+.toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.button,
+.secondaryButton,
+.dangerButton {
+    min-height: 38px;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    padding: 8px 12px;
+    font-family: var(--tt-font);
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.button {
+    background: var(--tt-accent);
+    color: var(--tt-on-ink);
+    box-shadow: var(--tt-shadow);
+}
+
+.secondaryButton {
+    background: var(--tt-panel);
+    color: var(--tt-ink);
+}
+
+.dangerButton {
+    background: var(--tt-danger);
+    color: #fff7ed;
+}
+
+.button:hover,
+.secondaryButton:hover,
+.dangerButton:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--tt-ink);
+}
+
+.button:disabled,
+.secondaryButton:disabled,
+.dangerButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+    box-shadow: none;
+}
+
+.sectionGrid {
+    display: grid;
+    grid-template-columns: minmax(340px, 0.85fr) minmax(420px, 1.15fr);
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.sectionGridSingle {
+    grid-template-columns: 1fr;
+}
+
+.wideGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.band {
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+    box-shadow: var(--tt-shadow);
+    overflow: hidden;
+}
+
+.bandHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+}
+
+.bandHeaderActions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.infoIconButton {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1.5px solid rgba(255, 255, 255, 0.52);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--tt-on-ink);
+    cursor: pointer;
+}
+
+.infoIconButton:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.infoIconBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--tt-accent2);
+    color: var(--tt-on-ink);
+    border: 1px solid var(--tt-on-ink);
+    font-family: var(--tt-mono);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 17px;
+}
+
+.bandHeader h2,
+.bandHeader h3 {
+    margin: 0;
+    font-size: 16px;
+    letter-spacing: 0;
+}
+
+.bandBody {
+    padding: 14px;
+}
+
+.fileGrid {
+    display: grid;
+    gap: 10px;
+}
+
+.fileRow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px;
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+}
+
+.fileTopLine {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.fileName {
+    font-weight: 800;
+}
+
+.fileHelp {
+    margin: 0;
+    color: var(--tt-sub);
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.statusPill,
+.statusOk,
+.statusWarn,
+.statusError,
+.statusIdle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 24px;
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-size: 12px;
+    font-weight: 800;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+}
+
+.statusOk {
+    background: rgba(63, 125, 94, 0.14);
+    color: var(--tt-good);
+}
+
+.statusWarn {
+    background: rgba(184, 132, 47, 0.16);
+    color: var(--tt-warn);
+}
+
+.statusError {
+    background: var(--tt-con-tint);
+    color: var(--tt-bad);
+}
+
+.statusIdle {
+    background: var(--tt-panel);
+    color: var(--tt-sub);
+}
+
+.input,
+.select {
+    width: 100%;
+    min-height: 38px;
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+    color: var(--tt-ink);
+    padding: 7px 9px;
+    font: inherit;
+    font-family: var(--tt-font);
+}
+
+.searchRow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.summaryStrip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 18px 0 0;
+}
+
+.metric {
+    border: var(--tt-border);
+    background: var(--tt-panel2);
+    border-radius: var(--tt-radius);
+    padding: 10px;
+    box-shadow: var(--tt-shadow-soft);
+}
+
+.metric strong {
+    display: block;
+    font-size: 22px;
+    font-family: var(--tt-mono);
+}
+
+.metric span {
+    color: var(--tt-sub);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.scrollList {
+    display: grid;
+    gap: 10px;
+    max-height: 560px;
+    overflow: auto;
+    padding-right: 4px;
+}
+
+.rowCard {
+    width: 100%;
+    text-align: left;
+    border: var(--tt-border-line);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+    color: var(--tt-ink);
+    padding: 12px;
+    cursor: pointer;
+}
+
+.rowCard:hover,
+.rowCardSelected {
+    border-color: var(--tt-ink);
+    box-shadow: var(--tt-shadow-soft);
+}
+
+.cardTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-weight: 800;
+}
+
+.cardMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--tt-panel);
+    color: var(--tt-sub);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.detailPane {
+    border-top: var(--tt-border-line);
+    margin-top: 10px;
+    padding-top: 10px;
+    display: grid;
+    gap: 8px;
+}
+
+.detailLine {
+    display: grid;
+    gap: 2px;
+    font-size: 13px;
+}
+
+.detailLine strong {
+    font-size: 12px;
+    color: var(--tt-accent2);
+    text-transform: uppercase;
+}
+
+.scoreList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.scoreBox {
+    border: var(--tt-border-soft);
+    border-radius: var(--tt-radius-sm);
+    padding: 8px;
+    background: var(--tt-panel2);
+}
+
+.scoreBox h4 {
+    margin: 0 0 6px;
+    font-size: 13px;
+}
+
+.scoreBox ol {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12px;
+}
+
+.empty {
+    padding: 18px;
+    border: 2px dashed var(--tt-line);
+    border-radius: var(--tt-radius);
+    color: var(--tt-sub);
+    background: var(--tt-panel2);
+}
+
+.progressTrack {
+    height: 12px;
+    border: var(--tt-border);
+    border-radius: 999px;
+    background: var(--tt-panel2);
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--tt-accent), var(--tt-accent2));
+}
+
+.stageGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.stageCell {
+    border: var(--tt-border-soft);
+    border-radius: var(--tt-radius-sm);
+    padding: 8px;
+    background: var(--tt-panel2);
+    font-size: 12px;
+}
+
+.splitViewport {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(34, 29, 22, 0.6);
+    display: grid;
+    place-items: center;
+    z-index: 2000;
+    padding: 18px;
+}
+
+.modal {
+    width: min(760px, calc(100vw - 28px));
+    max-height: calc(100vh - 48px);
+    overflow: auto;
+    border: 3px solid var(--tt-ink);
+    border-radius: var(--tt-radius);
+    background: var(--tt-panel2);
+    box-shadow: 8px 8px 0 rgba(34, 29, 22, 0.28);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    background: var(--tt-ink);
+    color: var(--tt-on-ink);
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.modalBody {
+    padding: 14px;
+    display: grid;
+    gap: 12px;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.notice {
+    border: 1.5px solid var(--tt-warn);
+    background: rgba(184, 132, 47, 0.16);
+    border-radius: var(--tt-radius);
+    padding: 10px;
+    color: var(--tt-ink);
+}
+
+/* ── Topbar Taller (chips de estado y dependencias) ── */
+.topMeta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.metaLabel {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--tt-sub);
+}
+
+.depChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 11px;
+    border-radius: var(--tt-radius-sm);
+    background: var(--tt-panel2);
+    border: var(--tt-border-line);
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--tt-ink);
+}
+
+.modeToggle {
+    display: inline-flex;
+    border: var(--tt-border);
+    border-radius: var(--tt-radius);
+    overflow: hidden;
+    box-shadow: var(--tt-shadow-soft);
+}
+
+.modeBtn {
+    padding: 8px 14px;
+    background: var(--tt-panel2);
+    color: var(--tt-sub);
+    border: none;
+    font-family: var(--tt-font);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.modeBtn + .modeBtn {
+    border-left: var(--tt-border);
+}
+
+.modeBtnActive {
+    background: var(--tt-accent);
+    color: var(--tt-on-ink);
+}
+
+.saveChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border-radius: var(--tt-radius-sm);
+    font-size: 11.5px;
+    font-weight: 800;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+}
+
+.saveChipBtn {
+    margin-left: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: var(--tt-radius-sm);
+    border: 1px solid currentColor;
+    background: var(--tt-panel2);
+    color: inherit;
+    font-family: var(--tt-font);
+    font-weight: 800;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+@media (max-width: 980px) {
+    .header,
+    .sectionGrid,
+    .wideGrid,
+    .splitViewport,
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .summaryStrip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 620px) {
+    .shell {
+        width: min(100vw - 18px, 1540px);
+        padding-top: 12px;
+    }
+
+    .toolbar,
+    .searchRow {
+        grid-template-columns: 1fr;
+    }
+
+    .summaryStrip,
+    .scoreList {
+        grid-template-columns: 1fr;
+    }
+}

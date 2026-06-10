@@ -1,0 +1,340 @@
+{
+  "ecos": {
+    "19834": {
+      "n_trimestres_raw": 25,
+      "hist_load_counts_raw": {
+        "2": 24,
+        "1": 1
+      },
+      "model_profile": {
+        "histograma_ueas": {
+          "2": 18,
+          "1": 1
+        },
+        "frontier_ueas": 2,
+        "cv_ueas": 0.11466596451673743,
+        "wmean_ueas": 1.9491294454676178,
+        "wstd_ueas": 0.21973334115229376,
+        "n_trimestres": 19
+      },
+      "load_curve": [
+        -0.0,
+        -0.8947097,
+        -1.80599056,
+        -2.70905732
+      ],
+      "kernel_peak_w": 2.0,
+      "final_unique_ueas": 3,
+      "final_groups": 4,
+      "top_historical_schedules": [
+        [
+          "L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00",
+          14
+        ],
+        [
+          "L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30",
+          9
+        ],
+        [
+          "L:19:00-20:30|Mi:19:00-20:30|V:19:00-20:30",
+          4
+        ],
+        [
+          "L:17:30-19:00",
+          3
+        ],
+        [
+          "L:14:30-16:00|Mi:14:30-16:00|V:14:30-16:00",
+          3
+        ]
+      ],
+      "logged_chosen": [
+        {
+          "uea": "1112034",
+          "grupo": "CCB01",
+          "horario": "L:11:30-13:00|Mi:11:30-13:00|V:11:30-13:00",
+          "score_sijh_log": 2.14577037,
+          "penalty_raw_log": 0.017035405474969623,
+          "score_rcl_log": 2.1628057754749697,
+          "projected_uea_count": 1,
+          "penalty_blocked": false
+        },
+        {
+          "uea": "1112022",
+          "grupo": "CCB01",
+          "horario": "M:08:30-10:00|J:08:30-10:00",
+          "score_sijh_log": 1.99046784,
+          "penalty_raw_log": -0.04365206729295351,
+          "score_rcl_log": 1.9468157727070465,
+          "projected_uea_count": 2,
+          "penalty_blocked": false
+        },
+        {
+          "uea": "1112030",
+          "grupo": "CTG05",
+          "horario": "L:07:00-08:30|Mi:07:00-08:30|V:07:00-08:30",
+          "score_sijh_log": 1.60823517,
+          "penalty_raw_log": -0.47696562943340337,
+          "score_rcl_log": 1.1312695405665965,
+          "projected_uea_count": 3,
+          "penalty_blocked": false
+        },
+        {
+          "uea": "1112030",
+          "grupo": "CTG04",
+          "horario": "L:08:30-10:00|Mi:08:30-10:00|V:08:30-10:00",
+          "score_sijh_log": 1.60823517,
+          "penalty_raw_log": -0.6266144390139374,
+          "score_rcl_log": 0.9816207309860625,
+          "projected_uea_count": 3,
+          "penalty_blocked": false
+        }
+      ],
+      "direct_assigned": [
+        {
+          "uea": "1112022",
+          "horario": "M:08:30-10:00|J:08:30-10:00",
+          "kde_score": 0.0,
+          "kde_horas": 0.0,
+          "kde_dias": 7e-05,
+          "penalty_seq": 0.12001381650034759,
+          "loads": [
+            -0.0,
+            -0.8947097,
+            -1.80599056,
+            -2.70905732
+          ]
+        },
+        {
+          "uea": "1112030",
+          "horario": "L:07:00-08:30|Mi:07:00-08:30|V:07:00-08:30",
+          "kde_score": 0.0,
+          "kde_horas": 0.0,
+          "kde_dias": 0.804958,
+          "penalty_seq": 0.022553408353162385,
+          "loads": [
+            -0.0,
+            -0.8947097,
+            -1.80599056,
+            -2.70905732
+          ]
+        },
+        {
+          "uea": "1112030",
+          "horario": "L:08:30-10:00|Mi:08:30-10:00|V:08:30-10:00",
+          "kde_score": 0.0,
+          "kde_horas": 0.0,
+          "kde_dias": 0.804958,
+          "penalty_seq": -3.317294411395933,
+          "loads": [
+            -0.0,
+            -0.8947097,
+            -1.80599056,
+            -2.70905732
+          ]
+        },
+        {
+          "uea": "1112034",
+          "horario": "L:11:30-13:00|Mi:11:30-13:00|V:11:30-13:00",
+          "kde_score": 0.111906,
+          "kde_horas": 0.011848,
+          "kde_dias": 0.804958,
+          "penalty_seq": -10.966280989376688,
+          "loads": [
+            -0.0,
+            -0.8947097,
+            -1.80599056,
+            -2.70905732
+          ]
+        }
+      ]
+    },
+    "28650": {
+      "n_trimestres_raw": 32,
+      "hist_load_counts_raw": {
+        "2": 18,
+        "1": 9,
+        "3": 5
+      },
+      "model_profile": {
+        "histograma_ueas": {
+          "2": 12,
+          "1": 8,
+          "3": 4
+        },
+        "frontier_ueas": 3,
+        "cv_ueas": 0.3748277841470601,
+        "wmean_ueas": 2.0467287975122614,
+        "wstd_ueas": 0.7210234309758518,
+        "n_trimestres": 24
+      },
+      "load_curve": [
+        -0.0,
+        -0.44599294,
+        -1.70190578,
+        -2.70437254
+      ],
+      "kernel_peak_w": 2.0,
+      "final_unique_ueas": 2,
+      "final_groups": 3,
+      "top_historical_schedules": [
+        [
+          "L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30",
+          12
+        ],
+        [
+          "L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00",
+          8
+        ],
+        [
+          "L:10:00-11:30|Mi:10:00-11:30|V:10:00-11:30",
+          5
+        ],
+        [
+          "L:14:30-16:00|Mi:14:30-16:00|V:14:30-16:00",
+          4
+        ],
+        [
+          "M:16:00-17:30|J:16:00-17:30",
+          3
+        ]
+      ],
+      "logged_chosen": [
+        {
+          "uea": "1112013",
+          "grupo": "CAT06",
+          "horario": "L:11:30-13:00|Mi:11:30-13:00|V:11:30-13:00",
+          "score_sijh_log": 2.32524001,
+          "penalty_raw_log": 0.04214799698693352,
+          "score_rcl_log": 2.3673880069869333,
+          "projected_uea_count": 1,
+          "penalty_blocked": false
+        },
+        {
+          "uea": "1112013",
+          "grupo": "CAT09",
+          "horario": "L:10:00-11:30|Mi:10:00-11:30|V:10:00-11:30",
+          "score_sijh_log": 2.32524001,
+          "penalty_raw_log": 0.031187846064919665,
+          "score_rcl_log": 2.3564278560649194,
+          "projected_uea_count": 1,
+          "penalty_blocked": false
+        },
+        {
+          "uea": "1112034",
+          "grupo": "CCB81",
+          "horario": "L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30",
+          "score_sijh_log": 2.31023332,
+          "penalty_raw_log": -0.3141084695503559,
+          "score_rcl_log": 1.996124850449644,
+          "projected_uea_count": 2,
+          "penalty_blocked": false
+        }
+      ],
+      "direct_assigned": [
+        {
+          "uea": "1112013",
+          "horario": "L:11:30-13:00|Mi:11:30-13:00|V:11:30-13:00",
+          "kde_score": 0.180514,
+          "kde_horas": 0.068669,
+          "kde_dias": 0.972502,
+          "penalty_seq": 0.07488016891997915,
+          "loads": [
+            -0.0,
+            -0.44599294,
+            -1.70190578,
+            -2.70437254
+          ]
+        },
+        {
+          "uea": "1112013",
+          "horario": "L:10:00-11:30|Mi:10:00-11:30|V:10:00-11:30",
+          "kde_score": 0.216857,
+          "kde_horas": 0.099665,
+          "kde_dias": 0.972502,
+          "penalty_seq": 0.0566794973189617,
+          "loads": [
+            -0.0,
+            -0.44599294,
+            -1.70190578,
+            -2.70437254
+          ]
+        },
+        {
+          "uea": "1112034",
+          "horario": "L:16:00-17:30|Mi:16:00-17:30|V:16:00-17:30",
+          "kde_score": 1.272502,
+          "kde_horas": 1.0,
+          "kde_dias": 0.972502,
+          "penalty_seq": -0.41502621730412625,
+          "loads": [
+            -0.0,
+            -0.44599294,
+            -1.70190578,
+            -2.70437254
+          ]
+        }
+      ]
+    },
+    "14416": {
+      "n_trimestres_raw": 25,
+      "hist_load_counts_raw": {
+        "2": 13,
+        "1": 6,
+        "3": 6
+      },
+      "model_profile": {
+        "histograma_ueas": {
+          "2": 12,
+          "1": 5,
+          "3": 2
+        },
+        "frontier_ueas": 3,
+        "cv_ueas": 0.31815796359028703,
+        "wmean_ueas": 1.8356867986356293,
+        "wstd_ueas": 0.5471751851881409,
+        "n_trimestres": 19
+      },
+      "load_curve": [
+        -0.0,
+        -0.80680905,
+        -1.79028223,
+        -2.70857173
+      ],
+      "kernel_peak_w": 2.0,
+      "final_unique_ueas": 0,
+      "final_groups": 0,
+      "top_historical_schedules": [
+        [
+          "L:07:00-08:30|Mi:07:00-08:30|V:07:00-08:30",
+          15
+        ],
+        [
+          "L:08:30-10:00|Mi:08:30-10:00|V:08:30-10:00",
+          5
+        ],
+        [
+          "L:17:30-19:00|Mi:17:30-19:00|V:17:30-19:00",
+          4
+        ],
+        [
+          "L:08:30-10:00|V:08:30-10:00",
+          3
+        ],
+        [
+          "L:10:00-11:30|Mi:10:00-11:30|V:10:00-11:30",
+          3
+        ]
+      ],
+      "logged_chosen": [],
+      "direct_assigned": []
+    }
+  },
+  "figures": {
+    "watch_load_curves": "C:\\tmp\\carga_improbable\\watch_load_curves.png",
+    "eco_19834_kde_surface": "C:\\tmp\\carga_improbable\\eco_19834_kde_surface.png",
+    "eco_28650_kde_surface": "C:\\tmp\\carga_improbable\\eco_28650_kde_surface.png",
+    "eco_19834_rcl_vs_kde": "C:\\tmp\\carga_improbable\\eco_19834_rcl_vs_kde.png",
+    "eco_28650_rcl_vs_kde": "C:\\tmp\\carga_improbable\\eco_28650_rcl_vs_kde.png"
+  }
+}

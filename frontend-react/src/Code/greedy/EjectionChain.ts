@@ -333,15 +333,6 @@ export class EjectionChain {
         return this._buscarProfesoresDelAreaExcluyendo(grafo, idArea, movimiento.numEcoOriginal);
     }
 
-    private _barajarCandidatos(candidatos: ProfesorDTO[]): ProfesorDTO[] {
-        const barajados = [...candidatos];
-        for (let i = barajados.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [barajados[i], barajados[j]] = [barajados[j], barajados[i]];
-        }
-        return barajados;
-    }
-
     private _ejecutarIteracionSwap(
         grafo: GrafoBipartito,
         fsm: FSMAsignador,
@@ -351,11 +342,10 @@ export class EjectionChain {
         estado: EstadoOptimizacion
     ): void {
         this._eyectarAsignacion(grafo, fsm, movimiento.idGrupo);
-        const candidatosBarajados = this._barajarCandidatos(candidatos);
 
-        let swapRealizado = false;
+        let mejorMovimiento: CandidatoEvaluadoSwap | null = null;
 
-        for (const candidato of candidatosBarajados) {
+        for (const candidato of candidatos) {
             if (!this._intentarAsignacionFSM(grafo, fsm, candidato.numeroEconomico, movimiento.idGrupo)) {
                 continue;
             }
@@ -363,35 +353,37 @@ export class EjectionChain {
             grafo.asignarMutable(candidato.numeroEconomico, movimiento.idGrupo);
             fsm.actualizarGrafo(grafo);
 
-            swapRealizado = this._evaluarYDecidirSwap(
-                grafo, fsm, funcionZ, movimiento, estado
-            );
-            break;
+            const zNuevo = funcionZ.evaluarGrafo(grafo).Z;
+            const clasificacion = this._criterio.clasificarDelta(zNuevo, estado.zActual);
+
+            if (!mejorMovimiento || zNuevo > mejorMovimiento.zNuevo) {
+                mejorMovimiento = { candidato, zNuevo, clasificacion };
+            }
+
+            grafo.desasignarMutable(movimiento.idGrupo);
+            fsm.actualizarGrafo(grafo);
         }
 
-        if (!swapRealizado) {
+        if (
+            mejorMovimiento
+            && mejorMovimiento.clasificacion === ClasificacionDelta.MEJORA_SIGNIFICATIVA
+        ) {
+            grafo.asignarMutable(mejorMovimiento.candidato.numeroEconomico, movimiento.idGrupo);
+            fsm.actualizarGrafo(grafo);
+            this._aceptarSwap(estado, mejorMovimiento.zNuevo);
+            return;
+        }
+
+        if (mejorMovimiento) {
+            this._contabilizarRechazo(estado.telemetria, mejorMovimiento.clasificacion);
+        } else {
+            estado.telemetria.rechazadasSinMejora++;
+        }
+
+        if (!grafo.asignacionesInversas.has(movimiento.idGrupo)) {
             this._restaurarAsignacion(grafo, fsm, movimiento.numEcoOriginal, movimiento.idGrupo);
-            estado.sinMejora++;
         }
-    }
-
-    private _evaluarYDecidirSwap(
-        grafo: GrafoBipartito,
-        fsm: FSMAsignador,
-        funcionZ: FuncionObjetivoZ,
-        movimiento: { idGrupo: number; numEcoOriginal: number },
-        estado: EstadoOptimizacion
-    ): boolean {
-        const zNuevo = funcionZ.evaluarGrafo(grafo).Z;
-        const clasificacion = this._criterio.clasificarDelta(zNuevo, estado.zActual);
-
-        if (clasificacion === ClasificacionDelta.MEJORA_SIGNIFICATIVA) {
-            this._aceptarSwap(estado, zNuevo);
-            return true;
-        }
-
-        this._rechazarSwap(grafo, fsm, movimiento, estado, clasificacion);
-        return false;
+        estado.sinMejora++;
     }
 
     private _aceptarSwap(estado: EstadoOptimizacion, zNuevo: number): void {
@@ -399,19 +391,6 @@ export class EjectionChain {
         estado.zActual = zNuevo;
         estado.telemetria.aceptadasPorMejora++;
         estado.sinMejora = 0;
-    }
-
-    private _rechazarSwap(
-        grafo: GrafoBipartito,
-        fsm: FSMAsignador,
-        movimiento: { idGrupo: number; numEcoOriginal: number },
-        estado: EstadoOptimizacion,
-        clasificacion: ClasificacionDelta
-    ): void {
-        grafo.desasignarMutable(movimiento.idGrupo);
-        this._restaurarAsignacion(grafo, fsm, movimiento.numEcoOriginal, movimiento.idGrupo);
-        estado.sinMejora++;
-        this._contabilizarRechazo(estado.telemetria, clasificacion);
     }
 
     private _contabilizarRechazo(
@@ -437,4 +416,10 @@ interface EstadoOptimizacion {
     sinMejora: number;
     iteracion: number;
     telemetria: TelemetriaOptimizacion;
+}
+
+interface CandidatoEvaluadoSwap {
+    candidato: ProfesorDTO;
+    zNuevo: number;
+    clasificacion: ClasificacionDelta;
 }
